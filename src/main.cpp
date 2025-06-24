@@ -39,8 +39,8 @@ const uint16_t MQTT_PORT= 1883;
 const char* MQTT_TOPIC  = "home/sensors/bme688_sequential101";
 
 // Device metadata
-const char* DEVICE_ID = "ESP32_BME688_CAFE_001";
-const char* LOCATION  = "Coffee_Lab_Station_1";
+const char* DEVICE_ID = "sensor1";
+const char* LOCATION  = "disney";
 const float  VOLUME_L = 1.5f;
 
 // ────────────────────────────────────────────────────────────────

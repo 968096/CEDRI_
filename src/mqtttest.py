@@ -1,12 +1,10 @@
-#!/usr/bin/env python3
-
 import os
 import signal
 import logging
-from datetime import datetime
 import csv
+from datetime import datetime
 import paho.mqtt.client as mqtt
-from measurement_pb2 import SensorReading
+from measurement_pb2 import SensorReadingLite
 
 BROKER    = "broker.emqx.io"
 PORT      = 1883
@@ -20,12 +18,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger("mqtt-csv-consumer")
 
-# Prepare CSV header
 CSV_FIELDS = [
-    "device_id", "location", "volume_l", "sensor_id", "heater_profile",
+    "device_id", "location_id", "sensor_id", "heater_profile",
     "measurement_step", "temp_c", "humidity_pct", "pressure_hpa",
     "gas_resistance_ohm", "gas_valid", "heat_stable", "timestamp"
 ]
+
 if not os.path.isfile(OUT_FILE):
     with open(OUT_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
@@ -40,12 +38,11 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     try:
-        reading = SensorReading()
+        reading = SensorReadingLite()
         reading.ParseFromString(msg.payload)
         line = [
             reading.device_id,
-            reading.location,
-            reading.volume_l,
+            reading.location_id,
             reading.sensor_id,
             reading.heater_profile,
             reading.measurement_step,
@@ -60,7 +57,8 @@ def on_message(client, userdata, msg):
         with open(OUT_FILE, "a", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow(line)
-        print(f"[{datetime.now():%Y-%m-%d %H:%M:%S}] → Wrote row: {line}")
+        payload_size = len(msg.payload)
+        print(f"[{datetime.now():%Y-%m-%d %H:%M:%S}] Payload bytes: {payload_size} | CSV: {','.join(str(x) for x in line)}")
     except Exception as e:
         logger.error("Failed to parse Protobuf message: %s", e)
 
