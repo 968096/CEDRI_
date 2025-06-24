@@ -3,7 +3,7 @@
 
 #include <pb_encode.h>
 #include <pb_decode.h>
-#include <../lib/protobuf/measurement.pb.h>
+#include  <measurement.pb.h>
 #include <string.h>
 
 class ProtobufHandler {
