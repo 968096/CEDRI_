@@ -20,7 +20,7 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
-#include <protobuf_handler.h>
+#include "protobuf_handler.h"
 #include "measurement.pb.h"
 
 // ────────────────────────────────────────────────────────────────
@@ -83,7 +83,6 @@ Bme68x            bme[N_KIT_SENS];
 comm_mux           commSetup[N_KIT_SENS];
 WiFiClient        wifiClient;
 PubSubClient      mqtt(wifiClient);
-QueueHandle_t     csvQueue;
 SemaphoreHandle_t spiMutex;
 
 // Tracking
@@ -138,7 +137,7 @@ void connectMQTT(){
 // ────────────────────────────────────────────────────────────────
 // Queue Protobuf for MQTT
 // ────────────────────────────────────────────────────────────────
-void queueProtobufForMQTT(uint8_t id, const char* profile, uint8_t step, float tc, float hu, float pr, uint32_t gr, bool gv, bool hs, uint32_t ts) {
+void queueProtobufForMQTT(uint8_t id, const char* profile, uint8_t step, float tc, float hu, float pr, uint32_t gr, bool gv, bool hs, uint64_t ts) {
   uint8_t protobufBuffer[MQTT_MAX_PACKET_SIZE];
   size_t messageLength;
   bool success = ProtobufHandler::packSensorReading(
@@ -216,6 +215,11 @@ void measurementTask(void*){
       if(sensorActive[i]) triggerMeasurement(i,currentStep);
     }
     delay(HEAT_STABILIZE);
+
+    // Debug: print stack usage
+    UBaseType_t stackHighWater = uxTaskGetStackHighWaterMark(NULL);
+    Serial.printf("Measure task stack high water mark: %u bytes\n", stackHighWater * sizeof(StackType_t));
+
     vTaskDelayUntil(&lastWake,pdMS_TO_TICKS(STEP_DURATION));
   }
 }
@@ -257,11 +261,11 @@ void setup(){
   mqtt.setServer(MQTT_BROKER,MQTT_PORT);
   mqtt.setKeepAlive(60);
 
-  csvQueue = xQueueCreate(64,sizeof(CSVMessage_t));
   spiMutex  = xSemaphoreCreateMutex();
 
-  // spawn RTOS tasks
-  xTaskCreatePinnedToCore(measurementTask, "Measure", 4096, NULL, 2, NULL, 1);
+  // Increase stack size for measurement task to avoid overflow
+  const uint32_t MEASURE_TASK_STACK = 12288; // 12 KB
+  xTaskCreatePinnedToCore(measurementTask, "Measure", MEASURE_TASK_STACK, NULL, 2, NULL, 1);
   xTaskCreatePinnedToCore(mqttTask,       "MQTT",    4096, NULL, 1, NULL, 0);
   xTaskCreatePinnedToCore(statusTask,     "Status",  2048, NULL, 1, NULL, 1);
 }
