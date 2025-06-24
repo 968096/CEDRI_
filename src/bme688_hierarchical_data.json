@@ -1,4 +1,130 @@
 # BME688 Hierarchical Data Log
-# Started: 2025-06-18T10:31:53.664218
+# Started: 2025-06-18T10:42:04.184496
 # Format: One JSON object per message
+==================================================
+{
+  "device": {
+    "device_id": "ESP32_BME688_CAFE_001",
+    "location": "Coffee_Lab_Station_1",
+    "volume_l": 1.5,
+    "battery_pct": 0,
+    "sensors": [
+      {
+        "sensor_id": 2,
+        "heater_profile": "HP-321",
+        "measurements": [
+          {
+            "measurement_step": 1,
+            "set_temp_c": 100,
+            "temp_c": 44.41,
+            "humidity_pct": 17.33,
+            "pressure_hpa": 94319.7,
+            "gas_resistance_ohm": 6400000,
+            "gas_valid": false,
+            "heat_stable": false,
+            "timestamp": 2718
+          },
+          {
+            "measurement_step": 5,
+            "set_temp_c": 200,
+            "temp_c": 46.15,
+            "humidity_pct": 16.28,
+            "pressure_hpa": 94320.45,
+            "gas_resistance_ohm": 20585,
+            "gas_valid": true,
+            "heat_stable": true,
+            "timestamp": 12717
+          },
+          {
+            "measurement_step": 7,
+            "set_temp_c": 320,
+            "temp_c": 46.5,
+            "humidity_pct": 16.04,
+            "pressure_hpa": 94318.47,
+            "gas_resistance_ohm": 115211,
+            "gas_valid": true,
+            "heat_stable": true,
+            "timestamp": 30717
+          },
+          {
+            "measurement_step": 9,
+            "set_temp_c": 320,
+            "temp_c": 45.38,
+            "humidity_pct": 16.51,
+            "pressure_hpa": 94345.59,
+            "gas_resistance_ohm": 1835948,
+            "gas_valid": true,
+            "heat_stable": false,
+            "timestamp": 24717
+          }
+        ]
+      }
+    ]
+  },
+  "received_at": "2025-06-18T10:42:31.602477",
+  "message_size_bytes": 913
+}
+==================================================
+{
+  "device": {
+    "device_id": "ESP32_BME688_CAFE_001",
+    "location": "Coffee_Lab_Station_1",
+    "volume_l": 1.5,
+    "battery_pct": 0,
+    "sensors": [
+      {
+        "sensor_id": 1,
+        "heater_profile": "HP-301",
+        "measurements": [
+          {
+            "measurement_step": 1,
+            "set_temp_c": 100,
+            "temp_c": 44.89,
+            "humidity_pct": 15.87,
+            "pressure_hpa": 94326.67,
+            "gas_resistance_ohm": 3159884,
+            "gas_valid": true,
+            "heat_stable": true,
+            "timestamp": 42711
+          },
+          {
+            "measurement_step": 3,
+            "set_temp_c": 200,
+            "temp_c": 45.27,
+            "humidity_pct": 15.77,
+            "pressure_hpa": 94324.88,
+            "gas_resistance_ohm": 4161544,
+            "gas_valid": true,
+            "heat_stable": true,
+            "timestamp": 60711
+          },
+          {
+            "measurement_step": 6,
+            "set_temp_c": 200,
+            "temp_c": 47.34,
+            "humidity_pct": 15.19,
+            "pressure_hpa": 94330.7,
+            "gas_resistance_ohm": 98860,
+            "gas_valid": true,
+            "heat_stable": true,
+            "timestamp": 54711
+          },
+          {
+            "measurement_step": 9,
+            "set_temp_c": 320,
+            "temp_c": 47.01,
+            "humidity_pct": 15.71,
+            "pressure_hpa": 94326.95,
+            "gas_resistance_ohm": 78696,
+            "gas_valid": true,
+            "heat_stable": true,
+            "timestamp": 48711
+          }
+        ]
+      }
+    ]
+  },
+  "received_at": "2025-06-18T10:42:54.934062",
+  "message_size_bytes": 911
+}
 ==================================================

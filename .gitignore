@@ -1,1 +1,14 @@
-.pio
+# Ignorar diretórios e arquivos de build do PlatformIO
+.pio/
+.pioenvs/
+.build/
+.vscode/
+*.elf
+*.bin
+*.map
+*.hex
+*.d
+*.a
+*.o
+*.pyc
+__pycache__/
