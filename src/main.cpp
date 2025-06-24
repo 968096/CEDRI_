@@ -20,6 +20,8 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
+#include "../protobuf_handler.h"
+#include "../lib/protobuf/measurement.pb.h"
 
 // ────────────────────────────────────────────────────────────────
 // Configuration
@@ -55,17 +57,6 @@ uint16_t tempProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
   { 50, 50,350,350,350,140,140,350,350,350}
 };
 
-uint16_t mulProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
-  { 5, 2,10,30, 5, 5, 5, 5, 5, 5},
-  { 3, 2, 8,25, 4, 4, 4, 4, 4, 4},
-  { 7, 2,12,35, 6, 6, 6, 6, 6, 6},
-  { 4, 3, 9,20, 5, 5, 5, 5, 5, 5},
-  { 6, 4,11,28, 7, 7, 7, 7, 7, 7},
-  { 8, 1,15,40, 8, 8, 8, 8, 8, 8},
-  { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5},
-  { 2, 4, 6, 8,10,12,14,16,18,20}
-};
-
 uint16_t durProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
   {  700,  280, 1400, 4200,  700,  700,  700,  700,  700,  700},
   {  280, 5740,  280,  280, 1680, 1960, 1960,  280, 1960, 3920},
@@ -89,7 +80,7 @@ const char* hpNames[N_KIT_SENS] = {
 // Hardware & RTOS objects
 // ────────────────────────────────────────────────────────────────
 Bme68x            bme[N_KIT_SENS];
-commMux           commSetup[N_KIT_SENS];
+comm_mux           commSetup[N_KIT_SENS];
 WiFiClient        wifiClient;
 PubSubClient      mqtt(wifiClient);
 QueueHandle_t     csvQueue;
@@ -101,12 +92,6 @@ uint32_t totalReadings[N_KIT_SENS] = {0};
 uint32_t validReadings[N_KIT_SENS] = {0};
 uint32_t profileCycles            = 0;
 uint8_t  currentStep              = 0;
-
-// CSV message
-struct CSVMessage_t {
-  char   payload[256];
-  size_t len;
-};
 
 // ────────────────────────────────────────────────────────────────
 // Print status
@@ -151,19 +136,20 @@ void connectMQTT(){
 }
 
 // ────────────────────────────────────────────────────────────────
-// Queue CSV for MQTT
+// Queue Protobuf for MQTT
 // ────────────────────────────────────────────────────────────────
-void queueCSV(uint8_t id, float tc,float hu,float pr,uint32_t gr,
-              bool gv,bool hs,uint8_t step,uint32_t ts){
-  CSVMessage_t m;
-  int n = snprintf(m.payload,sizeof(m.payload),
-    "%s,%s,%.2f,%u,%s,%u,%.2f,%.2f,%.2f,%u,%u,%u,%u",
-    DEVICE_ID,LOCATION,VOLUME_L,
-    id, hpNames[id], step+1,
-    tc,hu,pr,gr, gv?1:0, hs?1:0, ts);
-  if(n<0) return;
-  m.len=n;
-  xQueueSend(csvQueue,&m,portMAX_DELAY);
+void queueProtobufForMQTT(uint8_t id, const char* profile, uint8_t step, float tc, float hu, float pr, uint32_t gr, bool gv, bool hs, uint32_t ts) {
+  uint8_t protobufBuffer[MQTT_MAX_PACKET_SIZE];
+  size_t messageLength;
+  bool success = ProtobufHandler::packSensorReading(
+    id, profile, step, tc, hu, pr, gr, gv, hs, ts,
+    protobufBuffer, sizeof(protobufBuffer), &messageLength);
+
+  if (success) {
+    mqtt.publish(MQTT_TOPIC, protobufBuffer, messageLength);
+  } else {
+    Serial.println("Failed to encode Protobuf message");
+  }
 }
 
 // ────────────────────────────────────────────────────────────────
@@ -180,7 +166,7 @@ void triggerMeasurement(uint8_t id,uint8_t step){
 }
 
 // ────────────────────────────────────────────────────────────────
-// Collect data
+// Collect data and queue Protobuf
 // ────────────────────────────────────────────────────────────────
 void collectResults(uint8_t step){
   for(uint8_t i=0;i<N_KIT_SENS;i++){
@@ -195,9 +181,7 @@ void collectResults(uint8_t step){
           bool gv = data.status & BME68X_GASM_VALID_MSK;
           bool hs = data.status & BME68X_HEAT_STAB_MSK;
           if(gv && hs) validReadings[i]++;
-          queueCSV(i,data.temperature,data.humidity,
-                   data.pressure,data.gas_resistance,
-                   gv,hs,step,millis());
+          queueProtobufForMQTT(i, hpNames[i], step, data.temperature, data.humidity, data.pressure, data.gas_resistance, gv, hs, millis());
         }
       } while(left);
     }
@@ -208,20 +192,10 @@ void collectResults(uint8_t step){
 // MQTT Task
 // ────────────────────────────────────────────────────────────────
 void mqttTask(void*){
-  CSVMessage_t msg;
-  TickType_t last = xTaskGetTickCount();
   connectWiFi(); connectMQTT();
   while(true){
     mqtt.loop();
-    while(xQueueReceive(csvQueue,&msg,0)==pdTRUE){
-      bool ok;
-      do{
-        ok = mqtt.publish(MQTT_TOPIC,msg.payload,msg.len);
-        mqtt.loop();
-        if(!ok) vTaskDelay(pdMS_TO_TICKS(100));
-      }while(!ok);
-    }
-    vTaskDelayUntil(&last,pdMS_TO_TICKS(10));
+    vTaskDelay(pdMS_TO_TICKS(10));
   }
 }
 
@@ -267,13 +241,13 @@ void setup(){
   Wire.begin(23,22);
   Wire.setClock(400000);
   SPI.begin();
-  commMuxBegin(Wire,SPI);
+  comm_mux_begin(Wire,SPI);
 
   // init sensors
   for(uint8_t i=0;i<N_KIT_SENS;i++){
-    commSetup[i]=commMuxSetConfig(Wire,SPI,i,commSetup[i]);
+    commSetup[i]=comm_mux_set_config(Wire,SPI,i,commSetup[i]);
     bme[i].begin(BME68X_SPI_INTF,
-                 commMuxRead,commMuxWrite,commMuxDelay,
+                 comm_mux_read,comm_mux_write,comm_mux_delay,
                  &commSetup[i]);
     if(bme[i].checkStatus()) sensorActive[i]=false;
     else { bme[i].setTPH(); bme[i].setOpMode(BME68X_FORCED_MODE); sensorActive[i]=true; }

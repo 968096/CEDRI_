@@ -3,12 +3,11 @@
 
 #include <pb_encode.h>
 #include <pb_decode.h>
-#include "bme688_data.pb.h"
+#include <../lib/protobuf/measurement.pb.h>
 #include <string.h>
 
 class ProtobufHandler {
 public:
-    // Converter uma medição em mensagem protobuf
     static bool packSensorReading(
         uint8_t id, const char* profile,
         uint8_t step, float temp_c,
@@ -19,7 +18,6 @@ public:
     ) {
         cedri_SensorReading message = cedri_SensorReading_init_zero;
 
-        // Preencher os dados da mensagem
         strncpy(message.device_id, DEVICE_ID, sizeof(message.device_id));
         strncpy(message.location, LOCATION, sizeof(message.location));
         message.volume_l = VOLUME_L;
@@ -34,10 +32,7 @@ public:
         message.heat_stable = heat_stable;
         message.timestamp = timestamp;
 
-        // Configurar stream de saída
         pb_ostream_t stream = pb_ostream_from_buffer(buffer, buffer_size);
-
-        // Serializar a mensagem
         bool status = pb_encode(&stream, cedri_SensorReading_fields, &message);
         *message_length = stream.bytes_written;
 
