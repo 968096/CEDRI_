@@ -3,8 +3,13 @@
 
 #include <pb_encode.h>
 #include <pb_decode.h>
-#include  <measurement.pb.h>
+#include "measurement.pb.h"
 #include <string.h>
+
+// These must be defined in your main.cpp or elsewhere:
+extern const char* DEVICE_ID;
+extern const char* LOCATION;
+extern const float VOLUME_L;
 
 class ProtobufHandler {
 public:
@@ -13,7 +18,7 @@ public:
         uint8_t step, float temp_c,
         float humidity_pct, float pressure_hpa,
         uint32_t gas_res_ohm, bool gas_valid,
-        bool heat_stable, uint32_t timestamp,
+        bool heat_stable, uint64_t timestamp,
         uint8_t* buffer, size_t buffer_size, size_t* message_length
     ) {
         cedri_SensorReading message = cedri_SensorReading_init_zero;

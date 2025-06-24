@@ -20,8 +20,8 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
-#include "../protobuf_handler.h"
-#include "../lib/protobuf/measurement.pb.h"
+#include <protobuf_handler.h>
+#include "measurement.pb.h"
 
 // ────────────────────────────────────────────────────────────────
 // Configuration
