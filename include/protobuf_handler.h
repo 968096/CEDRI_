@@ -6,10 +6,19 @@
 #include "measurement.pb.h"
 #include <string.h>
 
-// These must be defined in your main.cpp or elsewhere:
+// Externs for your global device info
 extern const char* DEVICE_ID;
 extern const char* LOCATION;
 extern const float VOLUME_L;
+
+// Callback for encoding strings
+static bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void * const *arg)
+{
+    const char *str = (const char*)(*arg);
+    if (!pb_encode_tag_for_field(stream, field))
+        return false;
+    return pb_encode_string(stream, (const uint8_t*)str, strlen(str));
+}
 
 class ProtobufHandler {
 public:
@@ -23,11 +32,18 @@ public:
     ) {
         cedri_SensorReading message = cedri_SensorReading_init_zero;
 
-        strncpy(message.device_id, DEVICE_ID, sizeof(message.device_id));
-        strncpy(message.location, LOCATION, sizeof(message.location));
+        // Set up callback for each string
+        message.device_id.funcs.encode = &encode_string;
+        message.device_id.arg = (void*)DEVICE_ID;
+
+        message.location.funcs.encode = &encode_string;
+        message.location.arg = (void*)LOCATION;
+
+        message.heater_profile.funcs.encode = &encode_string;
+        message.heater_profile.arg = (void*)profile;
+
         message.volume_l = VOLUME_L;
         message.sensor_id = id;
-        strncpy(message.heater_profile, profile, sizeof(message.heater_profile));
         message.measurement_step = step;
         message.temp_c = temp_c;
         message.humidity_pct = humidity_pct;
