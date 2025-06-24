@@ -32,8 +32,8 @@
 #define HEAT_STABILIZE   2000  // ms
 
 // 🌐 NETWORK SETTINGS
-const char* WIFI_SSID   = "HUAWEI nova 3";
-const char* WIFI_PASS   = "01100111";
+const char* WIFI_SSID   = "Quiet House";
+const char* WIFI_PASS   = "quiethouse2025@";
 const char* MQTT_BROKER = "broker.emqx.io";
 const uint16_t MQTT_PORT= 1883;
 const char* MQTT_TOPIC  = "home/sensors/bme688_sequential101";
