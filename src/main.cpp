@@ -15,7 +15,7 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include "bme68xLibrary.h"
-#include <../lib/demo/src/commMux.h>
+#include <commMux.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
@@ -30,12 +30,11 @@
 #define HEAT_STABILIZE   2000  // ms
 
 // 🌐 NETWORK SETTINGS
-const char* WIFI_SSID   = "Quiet House";
-const char* WIFI_PASS   = "quiethouse2025@";
+const char* WIFI_SSID   = "HUAWEI nova 3";
+const char* WIFI_PASS   = "01100111";
 const char* MQTT_BROKER = "broker.emqx.io";
 const uint16_t MQTT_PORT= 1883;
-// <-- now publishing to “100” -->
-const char* MQTT_TOPIC  = "home/sensors/bme688_sequential11";
+const char* MQTT_TOPIC  = "home/sensors/bme688_sequential101";
 
 // Device metadata
 const char* DEVICE_ID = "ESP32_BME688_CAFE_001";
@@ -46,14 +45,14 @@ const float  VOLUME_L = 1.5f;
 // Profiles (unchanged)
 // ────────────────────────────────────────────────────────────────
 uint16_t tempProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
-  {100,320,170,320,240,240,240,320,320,320},
-  {100,320,170,320,240,240,240,320,320,320},
-  {70,350,163,350,256,256,256,350,250,350},
-  {70,350,163,350,256,256,256,350,350,350},
-  {210,265,265,320,320,265,210,155,100,155},
-  {210,280,280,350,350,280,210,140,70,140},
-  {210,280,280,350,350,280,210,140,70,140},
-  { 210,280,280,350,350,280,210,140,70,140}
+  {320,100,100,100,200,200,200,320,320,320},
+  {100,100,200,200,200,200,320,320,320,320},
+  {100,320,320,200,200,200,320,320,320,320},
+  {100,320,320,200,200,200,320,320,320,320},
+  {100,320,320,200,200,200,320,320,320,320},
+  {100,320,320,200,200,200,320,320,320,320},
+  { 50, 50,350,350,350,140,140,350,350,350},
+  { 50, 50,350,350,350,140,140,350,350,350}
 };
 
 uint16_t mulProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
@@ -68,29 +67,29 @@ uint16_t mulProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
 };
 
 uint16_t durProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
-  {  6020,  6300, 12320, 12600,  12880,  15680,  18620,  18900,  21700,  24640},
-  {  8960, 9240,  18200,  18480, 18760, 23100, 27580,  27860, 32200, 36680},
-  { 6020,  6300,  12320,  12600, 12880, 15680,  18620, 18900, 21700, 24640},
-  { 8960,  9240, 18200,  18480, 18760, 23100,  27580, 27860, 32200, 36680},
-  { 3360,  3640,  6720,  7000, 10080, 13440,  16800, 20160, 23520, 26880},
-  { 4480,  4760,  8960,  9240, 13440, 17920,  22400, 26880, 31360, 35840},
-  { 3360, 3640,  6720,  7000,1008, 13440, 16800,  20160,  23520,26880},
-  {4480,4760, 8960, 9240,13440,17920,22400,  26880,  31360,35840}
+  {  700,  280, 1400, 4200,  700,  700,  700,  700,  700,  700},
+  {  280, 5740,  280,  280, 1680, 1960, 1960,  280, 1960, 3920},
+  { 6020,  280,  280,  280, 2940, 2940,  280, 1960, 1960, 1960},
+  { 8960,  280,  280,  280, 4340, 4340,  280, 2800, 2940, 2940},
+  { 6020,  280,  280,  280, 2940, 2940,  280, 1960, 1960, 1960},
+  { 8960,  280,  280,  280, 4340, 4340,  280, 2800, 2940, 2940},
+  { 9800, 9800,  140,  140,19320, 9800, 9800,  140,  140,19320},
+  {14000,14000,  140,  140,27720,14000,14000,  140,  140,27720}
 };
 
 // ────────────────────────────────────────────────────────────────
 // Only use the HP-names now
 // ────────────────────────────────────────────────────────────────
 const char* hpNames[N_KIT_SENS] = {
-  "HP-411","HP-412","HP-413","HP-414",
-  "HP-501","HP-502","HP-503","HP-504"
+  "HP-354","HP-301","HP-321","HP-322",
+  "HP-323","HP-324","HP-331","HP-332"
 };
 
 // ────────────────────────────────────────────────────────────────
 // Hardware & RTOS objects
 // ────────────────────────────────────────────────────────────────
 Bme68x            bme[N_KIT_SENS];
-comm_mux           commSetup[N_KIT_SENS];
+commMux           commSetup[N_KIT_SENS];
 WiFiClient        wifiClient;
 PubSubClient      mqtt(wifiClient);
 QueueHandle_t     csvQueue;
@@ -102,7 +101,6 @@ uint32_t totalReadings[N_KIT_SENS] = {0};
 uint32_t validReadings[N_KIT_SENS] = {0};
 uint32_t profileCycles            = 0;
 uint8_t  currentStep              = 0;
-uint32_t stepStartTime            = 0;
 
 // CSV message
 struct CSVMessage_t {
@@ -111,7 +109,7 @@ struct CSVMessage_t {
 };
 
 // ────────────────────────────────────────────────────────────────
-// Print status: now shows only HP-names
+// Print status
 // ────────────────────────────────────────────────────────────────
 void printStatus() {
   Serial.println("\n=== SENSOR STATUS ===");
@@ -149,8 +147,7 @@ void connectWiFi(){
 void connectMQTT(){
   while(!mqtt.connected()){
     if(mqtt.connect("ESP32_BME688_CLIENT")) Serial.println("MQTT connected");
-    else {Serial.printf("MQTT fail rc=%d\n",mqtt.state());delay(2000);}
-  }
+    else {Serial.printf("MQTT fail rc=%d\n",mqtt.state());delay(2000);}  }
 }
 
 // ────────────────────────────────────────────────────────────────
@@ -170,29 +167,6 @@ void queueCSV(uint8_t id, float tc,float hu,float pr,uint32_t gr,
 }
 
 // ────────────────────────────────────────────────────────────────
-// MQTT task
-// ────────────────────────────────────────────────────────────────
-void mqttTask(void*){
-  CSVMessage_t msg;
-  TickType_t last = xTaskGetTickCount();
-  connectWiFi(); connectMQTT();
-  while(true){
-    mqtt.loop();
-    while(xQueueReceive(csvQueue,&msg,0)==pdTRUE){
-      Serial.printf("[MQTT] Publishing to %s: %s\n",MQTT_TOPIC,msg.payload);
-      bool ok;
-      do{
-        ok = mqtt.publish(MQTT_TOPIC,msg.payload,msg.len);
-        mqtt.loop();
-        if(!ok) vTaskDelay(pdMS_TO_TICKS(100));
-      }while(!ok);
-      Serial.printf("[MQTT] Published %u bytes\n",msg.len);
-    }
-    vTaskDelayUntil(&last,pdMS_TO_TICKS(10));
-  }
-}
-
-// ────────────────────────────────────────────────────────────────
 // Trigger one forced-mode measurement
 // ────────────────────────────────────────────────────────────────
 void triggerMeasurement(uint8_t id,uint8_t step){
@@ -206,7 +180,8 @@ void triggerMeasurement(uint8_t id,uint8_t step){
 }
 
 // ────────────────────────────────────────────────────────────────
-// Collect data (fixed do/while)
+// Collect data
+// ────────────────────────────────────────────────────────────────
 void collectResults(uint8_t step){
   for(uint8_t i=0;i<N_KIT_SENS;i++){
     if(!sensorActive[i]) continue;
@@ -220,11 +195,6 @@ void collectResults(uint8_t step){
           bool gv = data.status & BME68X_GASM_VALID_MSK;
           bool hs = data.status & BME68X_HEAT_STAB_MSK;
           if(gv && hs) validReadings[i]++;
-          // print raw CSV to Serial
-          Serial.printf("%u,%s,%u,%u,%u,%.2f,%.2f,%.2f,%u,%u,%u,%u\n",
-            i, hpNames[i], step, tempProfiles[i][step],
-            data.temperature,data.humidity,data.pressure,
-            data.gas_resistance, gv?1:0, hs?1:0, data.status);
           queueCSV(i,data.temperature,data.humidity,
                    data.pressure,data.gas_resistance,
                    gv,hs,step,millis());
@@ -235,57 +205,32 @@ void collectResults(uint8_t step){
 }
 
 // ────────────────────────────────────────────────────────────────
-// setup()
-void setup(){
-  Serial.begin(115200);
-  while(!Serial) delay(10);
-  Serial.println("=== BME688 Forced Mode + MQTT ===");
-
-  Wire.begin(23,22);
-  Wire.setClock(400000);
-  SPI.begin();
-  comm_mux_begin(Wire,SPI);
-  Serial.println("commMux initialized");
-
-  // optional expander test
-  Wire.beginTransmission(0x20);
-  Serial.println(Wire.endTransmission()==0?"Expander OK":"Expander FAIL");
-
-  // init sensors
-  for(uint8_t i=0;i<N_KIT_SENS;i++){
-    Serial.printf("Init %s… ", hpNames[i]);
-    commSetup[i]=comm_mux_set_config(Wire,SPI,i,commSetup[i]);
-    bme[i].begin(BME68X_SPI_INTF,
-                 comm_mux_read,comm_mux_write,comm_mux_delay,
-                 &commSetup[i]);
-    if(bme[i].checkStatus()){
-      Serial.println("FAIL"); sensorActive[i]=false;
-    } else {
-      bme[i].setTPH();
-      bme[i].setOpMode(BME68X_FORCED_MODE);
-      sensorActive[i]=true;
-      Serial.println("OK");
+// MQTT Task
+// ────────────────────────────────────────────────────────────────
+void mqttTask(void*){
+  CSVMessage_t msg;
+  TickType_t last = xTaskGetTickCount();
+  connectWiFi(); connectMQTT();
+  while(true){
+    mqtt.loop();
+    while(xQueueReceive(csvQueue,&msg,0)==pdTRUE){
+      bool ok;
+      do{
+        ok = mqtt.publish(MQTT_TOPIC,msg.payload,msg.len);
+        mqtt.loop();
+        if(!ok) vTaskDelay(pdMS_TO_TICKS(100));
+      }while(!ok);
     }
+    vTaskDelayUntil(&last,pdMS_TO_TICKS(10));
   }
-
-  mqtt.setBufferSize(4096);
-  mqtt.setServer(MQTT_BROKER,MQTT_PORT);
-  mqtt.setKeepAlive(60);
-
-  csvQueue = xQueueCreate(64,sizeof(CSVMessage_t));
-  spiMutex  = xSemaphoreCreateMutex();
-  xTaskCreatePinnedToCore(mqttTask,"MqttTask",4096,NULL,1,NULL,1);
-
-  printStatus();
-  Serial.println("Starting profile cycling…");
-  stepStartTime = millis();
 }
 
 // ────────────────────────────────────────────────────────────────
-// loop()
-void loop(){
-  static uint32_t lastStatus=0;
-  if(millis()-stepStartTime >= STEP_DURATION){
+// Measurement Task
+// ────────────────────────────────────────────────────────────────
+void measurementTask(void*){
+  TickType_t lastWake = xTaskGetTickCount();
+  for(;;){
     collectResults(currentStep);
     currentStep = (currentStep+1)%MAX_MEASUREMENTS;
     if(currentStep==0){
@@ -293,15 +238,60 @@ void loop(){
       Serial.printf("=== Completed cycle %u ===\n\n",profileCycles);
     }
     Serial.printf("Starting step %u…\n",currentStep);
-    for(uint8_t i=0;i<N_KIT_SENS;i++)
-      if(sensorActive[i])
-        triggerMeasurement(i,currentStep);
+    for(uint8_t i=0;i<N_KIT_SENS;i++){
+      if(sensorActive[i]) triggerMeasurement(i,currentStep);
+    }
     delay(HEAT_STABILIZE);
-    stepStartTime=millis();
+    vTaskDelayUntil(&lastWake,pdMS_TO_TICKS(STEP_DURATION));
   }
-  if(millis()-lastStatus>60000){
+}
+
+// ────────────────────────────────────────────────────────────────
+// Status Task
+// ────────────────────────────────────────────────────────────────
+void statusTask(void*){
+  for(;;){
+    vTaskDelay(pdMS_TO_TICKS(60000));
     printStatus();
-    lastStatus=millis();
   }
-  delay(100);
+}
+
+// ────────────────────────────────────────────────────────────────
+// setup() and loop()
+// ────────────────────────────────────────────────────────────────
+void setup(){
+  Serial.begin(115200);
+  while(!Serial) delay(10);
+  Serial.println("=== BME688 Forced Mode + MQTT (RTOS) ===");
+
+  Wire.begin(23,22);
+  Wire.setClock(400000);
+  SPI.begin();
+  commMuxBegin(Wire,SPI);
+
+  // init sensors
+  for(uint8_t i=0;i<N_KIT_SENS;i++){
+    commSetup[i]=commMuxSetConfig(Wire,SPI,i,commSetup[i]);
+    bme[i].begin(BME68X_SPI_INTF,
+                 commMuxRead,commMuxWrite,commMuxDelay,
+                 &commSetup[i]);
+    if(bme[i].checkStatus()) sensorActive[i]=false;
+    else { bme[i].setTPH(); bme[i].setOpMode(BME68X_FORCED_MODE); sensorActive[i]=true; }
+  }
+
+  mqtt.setBufferSize(MQTT_MAX_PACKET_SIZE);
+  mqtt.setServer(MQTT_BROKER,MQTT_PORT);
+  mqtt.setKeepAlive(60);
+
+  csvQueue = xQueueCreate(64,sizeof(CSVMessage_t));
+  spiMutex  = xSemaphoreCreateMutex();
+
+  // spawn RTOS tasks
+  xTaskCreatePinnedToCore(measurementTask, "Measure", 4096, NULL, 2, NULL, 1);
+  xTaskCreatePinnedToCore(mqttTask,       "MQTT",    4096, NULL, 1, NULL, 0);
+  xTaskCreatePinnedToCore(statusTask,     "Status",  2048, NULL, 1, NULL, 1);
+}
+
+void loop(){
+  vTaskDelay(pdMS_TO_TICKS(1000));
 }
