@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package cedri;
+
+// Mensagem para um conjunto de leituras de um sensor
+message SensorReading {
+  string device_id = 1;
+  string location = 2;
+  float volume_l = 3;
+  uint32 sensor_id = 4;
+  string heater_profile = 5;
+  uint32 measurement_step = 6;
+  float temp_c = 7;
+  float humidity_pct = 8;
+  float pressure_hpa = 9;
+  uint32 gas_resistance_ohm = 10;
+  bool gas_valid = 11;
+  bool heat_stable = 12;
+  uint64 timestamp = 13;
+}
+
+// Mensagem para múltiplas leituras (caso deseje enviar em lote)
+message SensorReadingBatch {
+  repeated SensorReading readings = 1;
+}
