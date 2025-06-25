@@ -4,7 +4,7 @@ import logging
 import csv
 from datetime import datetime
 import paho.mqtt.client as mqtt
-from measurement_pb2 import SensorReadingLite
+from measurement_pb2 import SensorReading
 
 BROKER    = "broker.emqx.io"
 PORT      = 1883
@@ -19,13 +19,23 @@ logging.basicConfig(
 logger = logging.getLogger("mqtt-csv-consumer")
 
 CSV_FIELDS = [
-    "device_id", "location_id", "sensor_id", "heater_profile",
+    "device_id", "location", "volume_l", "sensor_id", "heater_profile",
     "measurement_step", "temp_c", "humidity_pct", "pressure_hpa",
     "gas_resistance_ohm", "gas_valid", "heat_stable", "timestamp"
 ]
 
-if not os.path.isfile(OUT_FILE):
+CSV_INFO = (
+    "# device_id: sensor name, location: physical location, volume_l: chamber volume (L), "
+    "sensor_id: sensor index (0-7), heater_profile: profile name, measurement_step: heating step, "
+    "temp_c: temperature (C), humidity_pct: RH %, pressure_hpa: pressure (hPa), "
+    "gas_resistance_ohm: gas sensor resistance, gas_valid: gas validity, heat_stable: heater stability, "
+    "timestamp: ms"
+)
+
+# Only write info and header if the file does not exist or is empty
+if not os.path.isfile(OUT_FILE) or os.path.getsize(OUT_FILE) == 0:
     with open(OUT_FILE, "w", newline="", encoding="utf-8") as f:
+        f.write(CSV_INFO + "\n")
         writer = csv.writer(f)
         writer.writerow(CSV_FIELDS)
 
@@ -38,11 +48,12 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     try:
-        reading = SensorReadingLite()
+        reading = SensorReading()
         reading.ParseFromString(msg.payload)
         line = [
             reading.device_id,
-            reading.location_id,
+            reading.location,
+            reading.volume_l,
             reading.sensor_id,
             reading.heater_profile,
             reading.measurement_step,
