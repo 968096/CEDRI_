@@ -14,7 +14,7 @@ enum HeaterProfile {
 }
 
 message SensorReadingLite {
-  uint32 device_id = 1;         // esperado usar até uint16_t no código
+  uint32 device_id = 1;         // esperado usar até uint16_t no código (0..65535)
   uint32 location_id = 2;       // idem
   uint32 sensor_id = 3;         // esperado usar até uint8_t no código (0..7)
   HeaterProfile heater_profile = 4;
@@ -25,5 +25,5 @@ message SensorReadingLite {
   uint32 gas_resistance_ohm = 9;
   bool gas_valid = 10;
   bool heat_stable = 11;
-  uint32 timestamp = 12;        // esperado usar até uint32_t (Unix time em segundos ou ms)
+  uint32 timestamp = 12;        // esperado usar até uint32_t (Unix time)
 }

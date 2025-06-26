@@ -1,5 +1,5 @@
 /**
- * BME688_Forced_Mode_MQTT.ino
+ * BME688_Forced_Mode_MQTT_Optimized.cpp
  *
  * BME688 Multi-Sensor System using FORCED MODE for precise control
  * Manual control of 10-step heating profiles with synchronized measurements
@@ -7,20 +7,21 @@
  *
  * Hardware: ESP32 Feather + BME688 Dev Kit (8 sensors)
  * Communication: I2C (pins 23,22) + SPI for sensor data
+ *
+ * OPTIMIZED: Payload as compact as possible (see measurement.proto)
  */
 
 #define MQTT_MAX_PACKET_SIZE 4096
 
 #include <WiFi.h>
 #include <PubSubClient.h>
-#include <ArduinoJson.h>
 #include "bme68xLibrary.h"
 #include <commMux.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
-#include "protobuf_handler.h"
+#include "pb_encode.h"
 #include "measurement.pb.h"
 
 // ────────────────────────────────────────────────────────────────
@@ -32,16 +33,15 @@
 #define HEAT_STABILIZE   2000  // ms
 
 // 🌐 NETWORK SETTINGS
-const char* WIFI_SSID   = "Quiet House";
+const char* WIFI_SSID   = "Quiet House1";
 const char* WIFI_PASS   = "quiethouse2025@";
 const char* MQTT_BROKER = "broker.emqx.io";
 const uint16_t MQTT_PORT= 1883;
 const char* MQTT_TOPIC  = "home/sensors/bme688_sequential101";
 
-// Device metadata
-const char* DEVICE_ID = "sensor1";
-const char* LOCATION  = "disney";
-const float  VOLUME_L = 1.5f;
+// Device metadata (as uint16_t)
+const uint16_t DEVICE_ID = 1;     // <== use números para otimizar
+const uint16_t LOCATION_ID = 1;   // <== use números para otimizar
 
 // ────────────────────────────────────────────────────────────────
 // Profiles (unchanged)
@@ -68,19 +68,23 @@ uint16_t durProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
   {14000,14000,  140,  140,27720,14000,14000,  140,  140,27720}
 };
 
-// ────────────────────────────────────────────────────────────────
-// Only use the HP-names now
-// ────────────────────────────────────────────────────────────────
-const char* hpNames[N_KIT_SENS] = {
-  "HP-354","HP-301","HP-321","HP-322",
-  "HP-323","HP-324","HP-331","HP-332"
+// Enum mapping for HeaterProfile
+enum HeaterProfile {
+  HP_354 = 0,
+  HP_301 = 1,
+  HP_321 = 2,
+  HP_322 = 3,
+  HP_323 = 4,
+  HP_324 = 5,
+  HP_331 = 6,
+  HP_332 = 7
 };
 
 // ────────────────────────────────────────────────────────────────
 // Hardware & RTOS objects
 // ────────────────────────────────────────────────────────────────
 Bme68x            bme[N_KIT_SENS];
-comm_mux           commSetup[N_KIT_SENS];
+comm_mux          commSetup[N_KIT_SENS];
 WiFiClient        wifiClient;
 PubSubClient      mqtt(wifiClient);
 SemaphoreHandle_t spiMutex;
@@ -100,7 +104,7 @@ void printStatus() {
   int active=0;
   uint32_t tot=0, val=0;
   for(uint8_t i=0;i<N_KIT_SENS;i++){
-    Serial.printf("Sensor %u (%s): ", i, hpNames[i]);
+    Serial.printf("Sensor %u (HP_%03u): ", i, i+354); // HP_354 etc.
     if(sensorActive[i]){
       active++; tot+=totalReadings[i]; val+=validReadings[i];
       Serial.printf("ACTIVE | Total:%u | Valid:%u | Cur:%u°C\n",
@@ -135,17 +139,33 @@ void connectMQTT(){
 }
 
 // ────────────────────────────────────────────────────────────────
-// Queue Protobuf for MQTT
+// Protobuf helper (Nanopb)
 // ────────────────────────────────────────────────────────────────
-void queueProtobufForMQTT(uint8_t id, const char* profile, uint8_t step, float tc, float hu, float pr, uint32_t gr, bool gv, bool hs, uint64_t ts) {
-  uint8_t protobufBuffer[MQTT_MAX_PACKET_SIZE];
-  size_t messageLength;
-  bool success = ProtobufHandler::packSensorReading(
-    id, profile, step, tc, hu, pr, gr, gv, hs, ts,
-    protobufBuffer, sizeof(protobufBuffer), &messageLength);
+void publishSensorReadingLite(uint8_t sensor_idx, uint8_t measurement_step, float temp_c, float humidity_pct, float pressure_hpa, uint32_t gas_resistance_ohm, bool gas_valid, bool heat_stable, uint32_t timestamp_ms) {
+  cedri_SensorReadingLite proto = cedri_SensorReadingLite_init_zero;
+  proto.device_id = (uint32_t)DEVICE_ID;
+  proto.location_id = (uint32_t)LOCATION_ID;
+  proto.sensor_id = (uint32_t)sensor_idx;
+  proto.heater_profile = static_cast<cedri_HeaterProfile>(sensor_idx);
+  proto.measurement_step = (uint32_t)measurement_step;
+  proto.temp_c = temp_c;
+  proto.humidity_pct = humidity_pct;
+  proto.pressure_hpa = pressure_hpa;
+  proto.gas_resistance_ohm = gas_resistance_ohm;
+  proto.gas_valid = gas_valid;
+  proto.heat_stable = heat_stable;
+  proto.timestamp = timestamp_ms;
 
-  if (success) {
-    mqtt.publish(MQTT_TOPIC, protobufBuffer, messageLength);
+  if(proto.device_id > 65535) proto.device_id = 65535;
+  if(proto.location_id > 65535) proto.location_id = 65535;
+  if(proto.sensor_id > 255) proto.sensor_id = 255;
+  if(proto.measurement_step > 255) proto.measurement_step = 255;
+
+  uint8_t buffer[128];
+  pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
+  if(pb_encode(&stream, cedri_SensorReadingLite_fields, &proto)) {
+    mqtt.publish(MQTT_TOPIC, buffer, stream.bytes_written);
+    Serial.printf("Payload size: %zu bytes\n", stream.bytes_written);
   } else {
     Serial.println("Failed to encode Protobuf message");
   }
@@ -165,9 +185,10 @@ void triggerMeasurement(uint8_t id,uint8_t step){
 }
 
 // ────────────────────────────────────────────────────────────────
-// Collect data and queue Protobuf
+// Collect data and publish Protobuf
 // ────────────────────────────────────────────────────────────────
 void collectResults(uint8_t step){
+  uint32_t now = millis();
   for(uint8_t i=0;i<N_KIT_SENS;i++){
     if(!sensorActive[i]) continue;
     if(bme[i].fetchData()){
@@ -180,7 +201,11 @@ void collectResults(uint8_t step){
           bool gv = data.status & BME68X_GASM_VALID_MSK;
           bool hs = data.status & BME68X_HEAT_STAB_MSK;
           if(gv && hs) validReadings[i]++;
-          queueProtobufForMQTT(i, hpNames[i], step, data.temperature, data.humidity, data.pressure, data.gas_resistance, gv, hs, millis());
+          publishSensorReadingLite(
+            i, step,
+            data.temperature, data.humidity, data.pressure, data.gas_resistance,
+            gv, hs, now
+          );
         }
       } while(left);
     }
@@ -226,7 +251,7 @@ void measurementTask(void*){
 
 // ────────────────────────────────────────────────────────────────
 // Status Task
-// ──────────────────────────────────────────────────                               ──────────────
+// ────────────────────────────────────────────────────────────────
 void statusTask(void*){
   for(;;){
     vTaskDelay(pdMS_TO_TICKS(60000));
@@ -240,7 +265,7 @@ void statusTask(void*){
 void setup(){
   Serial.begin(115200);
   while(!Serial) delay(10);
-  Serial.println("=== BME688 Forced Mode + MQTT (RTOS) ===");
+  Serial.println("=== BME688 Forced Mode + MQTT (RTOS, compact PB) ===");
 
   Wire.begin(23,22);
   Wire.setClock(400000);
