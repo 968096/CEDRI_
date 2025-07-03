@@ -7,13 +7,12 @@ import csv
 import json
 from datetime import datetime
 import paho.mqtt.client as mqtt
-from measurement_pb2 import SensorReadingLite, GpsReading
+from measurement_pb2 import SensorGpsReading  # <-- Importa a mensagem única
 
 BROKER = "172.31.255.254"
 PORT = 1883
 TOPIC = "application/3458bf8d-a319-4085-88cf-ca9cc9e11e6c/device/+/event/up"
 OUT_FILE  = "bme688_lora_data1.csv"
-GPS_FILE  = "../src/gps_lora_data.csv"
 QOS       = 1
 
 logging.basicConfig(level=logging.INFO)
@@ -22,22 +21,15 @@ logger = logging.getLogger("mqtt-lora-consumer")
 CSV_FIELDS = [
     "device_id", "location_id", "sensor_id", "heater_profile",
     "measurement_step", "temp_c", "humidity_pct", "pressure_hpa",
-    "gas_resistance_ohm", "gas_valid", "heat_stable", "timestamp"
+    "gas_resistance_ohm", "gas_valid", "heat_stable", "timestamp",
+    "latitude", "longitude", "satellites"
 ]
 
-GPS_FIELDS = [
-    "device_id", "latitude", "longitude", "satellites", "timestamp"
-]
-
+# Cria o CSV se não existir
 if not os.path.isfile(OUT_FILE) or os.path.getsize(OUT_FILE) == 0:
     with open(OUT_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(CSV_FIELDS)
-
-if not os.path.isfile(GPS_FILE) or os.path.getsize(GPS_FILE) == 0:
-    with open(GPS_FILE, "w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow(GPS_FIELDS)
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
@@ -49,22 +41,19 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     try:
-        print(f"[MQTT DEBUG] Topic: {msg.topic}")
-        print(f"[MQTT DEBUG] Raw Payload: {msg.payload}")
         payload_json = json.loads(msg.payload.decode("utf-8"))
         b64_payload = payload_json.get("data")
         if not b64_payload:
-            logger.warning("⚠️ No 'data' field in MQTT message.")
             return
 
         raw = base64.b64decode(b64_payload)
 
-        # Try SensorReadingLite first
-        reading = SensorReadingLite()
+        # Parse como SensorGpsReading
+        reading = SensorGpsReading()
         try:
             reading.ParseFromString(raw)
-            # Heuristic: if essential fields are not default, it's SensorReadingLite
-            if reading.device_id and reading.sensor_id < 100:
+            # Só grava se device_id e GPS válidos
+            if reading.device_id and (abs(reading.latitude) > 0.00001 or abs(reading.longitude) > 0.00001):
                 row = [
                     reading.device_id,
                     reading.location_id,
@@ -77,7 +66,10 @@ def on_message(client, userdata, msg):
                     reading.gas_resistance_ohm,
                     int(reading.gas_valid),
                     int(reading.heat_stable),
-                    reading.timestamp
+                    reading.timestamp,
+                    reading.latitude,
+                    reading.longitude,
+                    reading.satellites
                 ]
                 with open(OUT_FILE, "a", newline="", encoding="utf-8") as f:
                     writer = csv.writer(f)
@@ -86,29 +78,6 @@ def on_message(client, userdata, msg):
                 return
         except Exception as e:
             pass
-
-        # Try GpsReading if not SensorReadingLite
-        gps_reading = GpsReading()
-        try:
-            gps_reading.ParseFromString(raw)
-            # Heuristic: if latitude is not zero, it's a GPS fix
-            if gps_reading.device_id and abs(gps_reading.latitude) > 0.00001:
-                gps_row = [
-                    gps_reading.device_id,
-                    gps_reading.latitude,
-                    gps_reading.longitude,
-                    gps_reading.satellites,
-                    gps_reading.timestamp
-                ]
-                with open(GPS_FILE, "a", newline="", encoding="utf-8") as f:
-                    writer = csv.writer(f)
-                    writer.writerow(gps_row)
-                print(f"[{datetime.now():%Y-%m-%d %H:%M:%S}] GPS: {','.join(map(str, gps_row))}")
-                return
-        except Exception as e:
-            pass
-
-        logger.warning("⚠️ Received message is not recognized as SensorReadingLite or GpsReading.")
 
     except Exception as e:
         logger.error(f"❌ Failed to decode message: {e}")
