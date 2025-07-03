@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package cedri;
 
+// Permanece igual, caso ainda use BME68x
 enum HeaterProfile {
   HP_354 = 0;
   HP_301 = 1;
@@ -13,6 +14,7 @@ enum HeaterProfile {
   HP_332 = 7;
 }
 
+// Leitura dos sensores BME68x, como antes
 message SensorReadingLite {
   uint32 device_id = 1;         // esperado usar até uint16_t no código (0..65535)
   uint32 location_id = 2;       // idem
@@ -26,4 +28,13 @@ message SensorReadingLite {
   bool gas_valid = 10;
   bool heat_stable = 11;
   uint32 timestamp = 12;        // esperado usar até uint32_t (Unix time)
+}
+
+// NOVA mensagem para leitura de GPS, enxuta para LoRaWAN
+message GpsReading {
+  uint32 device_id = 1;         // esperado usar até uint16_t no código (0..65535)
+  float latitude = 2;           // precisão simples (float, 4 bytes)
+  float longitude = 3;          // precisão simples (float, 4 bytes)
+  uint32 timestamp = 4;         // opcional, pode ser millis() ou unix
+  uint32 satellites = 5;        // opcional, pode usar até uint8_t no código
 }

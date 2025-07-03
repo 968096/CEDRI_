@@ -1,51 +1,52 @@
-/**
- * BME688_Forced_Mode_MQTT_Optimized.cpp
- *
- * BME688 Multi-Sensor System using FORCED MODE for precise control
- * Manual control of 10-step heating profiles with synchronized measurements
- * With MQTT publishing capability for reliable data transmission
- *
- * Hardware: ESP32 Feather + BME688 Dev Kit (8 sensors)
- * Communication: I2C (pins 23,22) + SPI for sensor data
- *
- * OPTIMIZED: Payload as compact as possible (see measurement.proto)
- */
-
-#define MQTT_MAX_PACKET_SIZE 4096
-
-#include <WiFi.h>
-#include <PubSubClient.h>
+#include <Arduino.h>
+#include <Wire.h>
+#include <SPI.h>
+#include "lorae5.h"
 #include "bme68xLibrary.h"
 #include <commMux.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "freertos/queue.h"
 #include "freertos/semphr.h"
 #include "pb_encode.h"
 #include "measurement.pb.h"
 
-// ────────────────────────────────────────────────────────────────
-// Configuration
-// ────────────────────────────────────────────────────────────────
+// GPS libraries
+#include <TinyGPSPlus.h>
+#include <HardwareSerial.h>
+
+// ========== CONFIGURATION ==========
+
+// Number of BME68x sensors and measurement steps
 #define N_KIT_SENS       8
 #define MAX_MEASUREMENTS 10
-#define STEP_DURATION    5000  // ms
-#define HEAT_STABILIZE   2000  // ms
 
-// 🌐 NETWORK SETTINGS
-const char* WIFI_SSID   = "Quiet House1";
-const char* WIFI_PASS   = "quiethouse2025@";
-const char* MQTT_BROKER = "broker.emqx.io";
-const uint16_t MQTT_PORT= 1883;
-const char* MQTT_TOPIC  = "home/sensors/bme688_sequential101";
+// Timing for sensor routine
+#define STEP_DURATION    5000  // ms between each measurement step
+#define HEAT_STABILIZE   2000  // ms to wait after heater change
 
-// Device metadata (as uint16_t)
-const uint16_t DEVICE_ID = 1;     // <== use números para otimizar
-const uint16_t LOCATION_ID = 1;   // <== use números para otimizar
+// LoRa module pins and baudrate (Serial1)
+#define LORA_RX_PIN    16
+#define LORA_TX_PIN    17
+#define LORA_BAUD      9600
 
-// ────────────────────────────────────────────────────────────────
-// Profiles (unchanged)
-// ────────────────────────────────────────────────────────────────
+// GPS module pins and baudrate (HardwareSerial 2)
+#define GPS_RX_PIN     33  // Adjust to your wiring
+#define GPS_TX_PIN     32
+#define GPS_BAUD       9600
+
+const String devEUI  = "0011223344556677";
+const String appEUI  = "e30b08a3c0764c37";
+const String appKey  = "00112233445566778899aabbccddeeff";
+const String devAddr = "", nwkSKey = "", appSKey = "";
+
+LORAE5 lorae5(devEUI, appEUI, appKey, devAddr, nwkSKey, appSKey);
+
+const uint16_t DEVICE_ID = 1;
+const uint16_t LOCATION_ID = 1;
+
+// ========== SENSOR PROFILES ==========
+
+// Predefined heater profiles and durations for BME68x sensors
 uint16_t tempProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
   {320,100,100,100,200,200,200,320,320,320},
   {100,100,200,200,200,200,320,320,320,320},
@@ -68,86 +69,39 @@ uint16_t durProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
   {14000,14000,  140,  140,27720,14000,14000,  140,  140,27720}
 };
 
-// Enum mapping for HeaterProfile
-enum HeaterProfile {
-  HP_354 = 0,
-  HP_301 = 1,
-  HP_321 = 2,
-  HP_322 = 3,
-  HP_323 = 4,
-  HP_324 = 5,
-  HP_331 = 6,
-  HP_332 = 7
-};
+// ========== SENSOR OBJECTS ==========
 
-// ────────────────────────────────────────────────────────────────
-// Hardware & RTOS objects
-// ────────────────────────────────────────────────────────────────
-Bme68x            bme[N_KIT_SENS];
-comm_mux          commSetup[N_KIT_SENS];
-WiFiClient        wifiClient;
-PubSubClient      mqtt(wifiClient);
-SemaphoreHandle_t spiMutex;
-
-// Tracking
-bool     sensorActive[N_KIT_SENS]  = {false};
+Bme68x bme[N_KIT_SENS];
+comm_mux commSetup[N_KIT_SENS];
+bool sensorActive[N_KIT_SENS] = {false};
 uint32_t totalReadings[N_KIT_SENS] = {0};
 uint32_t validReadings[N_KIT_SENS] = {0};
-uint32_t profileCycles            = 0;
-uint8_t  currentStep              = 0;
+uint8_t currentStep = 0;
+uint32_t profileCycles = 0;
 
-// ────────────────────────────────────────────────────────────────
-// Print status
-// ────────────────────────────────────────────────────────────────
-void printStatus() {
-  Serial.println("\n=== SENSOR STATUS ===");
-  int active=0;
-  uint32_t tot=0, val=0;
-  for(uint8_t i=0;i<N_KIT_SENS;i++){
-    Serial.printf("Sensor %u (HP_%03u): ", i, i+354); // HP_354 etc.
-    if(sensorActive[i]){
-      active++; tot+=totalReadings[i]; val+=validReadings[i];
-      Serial.printf("ACTIVE | Total:%u | Valid:%u | Cur:%u°C\n",
-                    totalReadings[i], validReadings[i], tempProfiles[i][currentStep]);
-    } else {
-      Serial.println("INACTIVE");
-    }
-  }
-  Serial.printf("\nActive %d/%d | Step:%u | Cycles:%u\n",
-                active, N_KIT_SENS, currentStep, profileCycles);
-  Serial.printf("Tot:%u | Valid:%u ", tot, val);
-  if(tot) Serial.printf("| Success:%u%%\n",(val*100)/tot);
-  Serial.printf("Heap:%u bytes | Uptime:%us\n",
-                ESP.getFreeHeap(), millis()/1000);
-  Serial.println("=====================\n");
-}
+// ========== GPS OBJECTS ==========
 
-// ────────────────────────────────────────────────────────────────
-// WiFi / MQTT helpers
-// ────────────────────────────────────────────────────────────────
-void connectWiFi(){
-  WiFi.begin(WIFI_SSID,WIFI_PASS);
-  Serial.print("Connecting to WiFi");
-  while(WiFi.status()!=WL_CONNECTED){Serial.print('.');delay(500);}
-  Serial.println(" ✓");
-}
+HardwareSerial SerialGPS(2);
+TinyGPSPlus gps;
 
-void connectMQTT(){
-  while(!mqtt.connected()){
-    if(mqtt.connect("ESP32_BME688_CLIENT")) Serial.println("MQTT connected");
-    else {Serial.printf("MQTT fail rc=%d\n",mqtt.state());delay(2000);}  }
-}
+// ========== SHARED GPS DATA AND MUTEX ==========
 
-// ────────────────────────────────────────────────────────────────
-// Protobuf helper (Nanopb)
-// ────────────────────────────────────────────────────────────────
+// Shared variables for latest GPS fix, protected by mutex
+float shared_lat = 0.0, shared_lon = 0.0;
+uint8_t shared_sats = 0;
+uint32_t shared_gps_timestamp = 0;
+SemaphoreHandle_t gpsMutex;
+
+// ========== PROTOBUF ENCODING FOR SENSORS ==========
+
+// Encodes and sends a BME68x sensor reading using Protobuf and LoRa
 void publishSensorReadingLite(uint8_t sensor_idx, uint8_t measurement_step, float temp_c, float humidity_pct, float pressure_hpa, uint32_t gas_resistance_ohm, bool gas_valid, bool heat_stable, uint32_t timestamp_ms) {
   cedri_SensorReadingLite proto = cedri_SensorReadingLite_init_zero;
-  proto.device_id = (uint32_t)DEVICE_ID;
-  proto.location_id = (uint32_t)LOCATION_ID;
-  proto.sensor_id = (uint32_t)sensor_idx;
+  proto.device_id = DEVICE_ID;
+  proto.location_id = LOCATION_ID;
+  proto.sensor_id = sensor_idx;
   proto.heater_profile = static_cast<cedri_HeaterProfile>(sensor_idx);
-  proto.measurement_step = (uint32_t)measurement_step;
+  proto.measurement_step = measurement_step;
   proto.temp_c = temp_c;
   proto.humidity_pct = humidity_pct;
   proto.pressure_hpa = pressure_hpa;
@@ -156,145 +110,201 @@ void publishSensorReadingLite(uint8_t sensor_idx, uint8_t measurement_step, floa
   proto.heat_stable = heat_stable;
   proto.timestamp = timestamp_ms;
 
-  if(proto.device_id > 65535) proto.device_id = 65535;
-  if(proto.location_id > 65535) proto.location_id = 65535;
-  if(proto.sensor_id > 255) proto.sensor_id = 255;
-  if(proto.measurement_step > 255) proto.measurement_step = 255;
-
-  uint8_t buffer[128];
+  uint8_t buffer[64];
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
-  if(pb_encode(&stream, cedri_SensorReadingLite_fields, &proto)) {
-    mqtt.publish(MQTT_TOPIC, buffer, stream.bytes_written);
-    Serial.printf("Payload size: %zu bytes\n", stream.bytes_written);
+  if (pb_encode(&stream, cedri_SensorReadingLite_fields, &proto)) {
+    Serial.printf("Encoded payload size: %zu bytes\n", stream.bytes_written);
+    lorae5.sendData(buffer, stream.bytes_written);
+    Serial.printf("✓ Sent %zu bytes over LoRa for sensor %d\n", stream.bytes_written, sensor_idx);
   } else {
-    Serial.println("Failed to encode Protobuf message");
+    Serial.println("✗ Failed to encode Protobuf message");
   }
 }
 
-// ────────────────────────────────────────────────────────────────
-// Trigger one forced-mode measurement
-// ────────────────────────────────────────────────────────────────
-void triggerMeasurement(uint8_t id,uint8_t step){
-  if(!sensorActive[id]) return;
-  uint16_t t=tempProfiles[id][step];
-  uint16_t d=durProfiles[id][step];
-  bme[id].setHeaterProf(t,d);
-  bme[id].setOpMode(BME68X_FORCED_MODE);
-  uint32_t us=bme[id].getMeasDur(BME68X_FORCED_MODE);
-  delay((us+999)/1000);
+// ========== PROTOBUF ENCODING FOR GPS ==========
+
+// Encodes and sends the latest GPS reading using Protobuf and LoRa
+void publishGpsReading(float lat, float lon, uint8_t sats, uint32_t timestamp) {
+  cedri_GpsReading proto = cedri_GpsReading_init_zero;
+  proto.device_id = DEVICE_ID;
+  proto.latitude = lat;
+  proto.longitude = lon;
+  proto.satellites = sats;
+  proto.timestamp = timestamp;
+
+  uint8_t buffer[32];
+  pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
+  if (pb_encode(&stream, cedri_GpsReading_fields, &proto)) {
+    Serial.printf("[GPS] Encoded payload size: %zu bytes\n", stream.bytes_written);
+    lorae5.sendData(buffer, stream.bytes_written);
+    Serial.printf("[GPS] ✓ Sent %zu bytes over LoRa\n", stream.bytes_written);
+  } else {
+    Serial.println("[GPS] ✗ Failed to encode Protobuf message");
+  }
 }
 
-// ────────────────────────────────────────────────────────────────
-// Collect data and publish Protobuf
-// ────────────────────────────────────────────────────────────────
-void collectResults(uint8_t step){
+// ========== GPS TASK ==========
+
+// Continuously reads from the GPS serial port and updates the shared variables with the latest fix
+void gpsTask(void*) {
+  for (;;) {
+    while (SerialGPS.available()) {
+      gps.encode(SerialGPS.read());
+    }
+    if (gps.location.isValid()) {
+      if (xSemaphoreTake(gpsMutex, portMAX_DELAY)) {
+        shared_lat = gps.location.lat();
+        shared_lon = gps.location.lng();
+        shared_sats = gps.satellites.value();
+        shared_gps_timestamp = millis(); // Optionally, use gps.time.value() for UTC
+        xSemaphoreGive(gpsMutex);
+      }
+    }
+    vTaskDelay(pdMS_TO_TICKS(1000)); // Update every second
+  }
+}
+
+// ========== LORA GPS TASK ==========
+
+// Periodically sends the latest valid GPS fix over LoRa (if fix is good enough)
+void loraGpsTask(void*) {
+  for (;;) {
+    float lat = 0.0, lon = 0.0;
+    uint8_t sats = 0;
+    uint32_t timestamp = 0;
+
+    if (xSemaphoreTake(gpsMutex, portMAX_DELAY)) {
+      lat = shared_lat;
+      lon = shared_lon;
+      sats = shared_sats;
+      timestamp = shared_gps_timestamp;
+      xSemaphoreGive(gpsMutex);
+    }
+
+    if (sats >= 3) { // Only send if GPS fix is reasonably reliable
+      publishGpsReading(lat, lon, sats, timestamp);
+    } else {
+      Serial.println("[GPS] No valid fix available for LoRa transmission.");
+    }
+
+    vTaskDelay(pdMS_TO_TICKS(15000)); // Send every 15 seconds (adjust as needed)
+  }
+}
+
+// ========== SENSOR ROUTINE TASKS ==========
+
+// Triggers a heater cycle and waits for measurement
+void triggerMeasurement(uint8_t id, uint8_t step) {
+  if (!sensorActive[id]) return;
+  uint16_t t = tempProfiles[id][step];
+  uint16_t d = durProfiles[id][step];
+  bme[id].setHeaterProf(t, d);
+  bme[id].setOpMode(BME68X_FORCED_MODE);
+  uint32_t us = bme[id].getMeasDur(BME68X_FORCED_MODE);
+  delay((us + 999) / 1000);
+}
+
+// Collects all available data from sensors and sends it via LoRa
+void collectResults(uint8_t step) {
   uint32_t now = millis();
-  for(uint8_t i=0;i<N_KIT_SENS;i++){
-    if(!sensorActive[i]) continue;
-    if(bme[i].fetchData()){
+  for (uint8_t i = 0; i < N_KIT_SENS; i++) {
+    if (!sensorActive[i]) continue;
+
+    Serial.printf("[Step %d] Fetching data from sensor %d...\n", step, i);
+
+    if (bme[i].fetchData()) {
       bme68xData data;
       uint8_t left;
       do {
         left = bme[i].getData(data);
-        if(data.status & BME68X_NEW_DATA_MSK){
+        if (data.status & BME68X_NEW_DATA_MSK) {
           totalReadings[i]++;
           bool gv = data.status & BME68X_GASM_VALID_MSK;
           bool hs = data.status & BME68X_HEAT_STAB_MSK;
-          if(gv && hs) validReadings[i]++;
-          publishSensorReadingLite(
-            i, step,
-            data.temperature, data.humidity, data.pressure, data.gas_resistance,
-            gv, hs, now
-          );
+          if (gv && hs) validReadings[i]++;
+          publishSensorReadingLite(i, step, data.temperature, data.humidity, data.pressure, data.gas_resistance, gv, hs, now);
+          delay(5000); // Delay between individual sensor transmissions
         }
-      } while(left);
+      } while (left);
     }
   }
 }
 
-// ────────────────────────────────────────────────────────────────
-// MQTT Task
-// ────────────────────────────────────────────────────────────────
-void mqttTask(void*){
-  connectWiFi(); connectMQTT();
-  while(true){
-    mqtt.loop();
-    vTaskDelay(pdMS_TO_TICKS(10));
-  }
-}
-
-// ────────────────────────────────────────────────────────────────
-// Measurement Task
-// ────────────────────────────────────────────────────────────────
-void measurementTask(void*){
+// Main sensor measurement state machine task
+void measurementTask(void*) {
   TickType_t lastWake = xTaskGetTickCount();
-  for(;;){
+  for (;;) {
     collectResults(currentStep);
-    currentStep = (currentStep+1)%MAX_MEASUREMENTS;
-    if(currentStep==0){
-      profileCycles++;
-      Serial.printf("=== Completed cycle %u ===\n\n",profileCycles);
+    currentStep = (currentStep + 1) % MAX_MEASUREMENTS;
+    if (currentStep == 0) profileCycles++;
+
+    for (uint8_t i = 0; i < N_KIT_SENS; i++) {
+      if (sensorActive[i]) triggerMeasurement(i, currentStep);
     }
-    Serial.printf("Starting step %u…\n",currentStep);
-    for(uint8_t i=0;i<N_KIT_SENS;i++){
-      if(sensorActive[i]) triggerMeasurement(i,currentStep);
-    }
+
     delay(HEAT_STABILIZE);
-
-    // Debug: print stack usage
-    UBaseType_t stackHighWater = uxTaskGetStackHighWaterMark(NULL);
-    Serial.printf("Measure task stack high water mark: %u bytes\n", stackHighWater * sizeof(StackType_t));
-
-    vTaskDelayUntil(&lastWake,pdMS_TO_TICKS(STEP_DURATION));
+    vTaskDelayUntil(&lastWake, pdMS_TO_TICKS(STEP_DURATION));
   }
 }
 
-// ────────────────────────────────────────────────────────────────
-// Status Task
-// ────────────────────────────────────────────────────────────────
-void statusTask(void*){
-  for(;;){
-    vTaskDelay(pdMS_TO_TICKS(60000));
-    printStatus();
-  }
-}
+// ========== INITIALIZATION ==========
 
-// ────────────────────────────────────────────────────────────────
-// setup() and loop()
-// ────────────────────────────────────────────────────────────────
-void setup(){
+void setup() {
   Serial.begin(115200);
-  while(!Serial) delay(10);
-  Serial.println("=== BME688 Forced Mode + MQTT (RTOS, compact PB) ===");
+  while (!Serial) delay(10);
 
-  Wire.begin(23,22);
+  // Initialize the mutex for GPS data protection
+  gpsMutex = xSemaphoreCreateMutex();
+
+  // Initialize LoRa serial and LoRaWAN module
+  Serial1.begin(LORA_BAUD, SERIAL_8N1, LORA_RX_PIN, LORA_TX_PIN);
+  delay(100);
+  lorae5.setup_hardware(&Serial, &Serial1);
+  lorae5.printInfo();
+
+  lorae5.setup_lorawan(EU868, true, CLASS_A, 7, false, false, 8, false, 10000);
+  Serial.print("[S] Joining LoRaWAN...");
+  while (!lorae5.join()) {
+    Serial.print(".");
+    delay(2000);
+  }
+  Serial.println("\n✓ Joined LoRaWAN");
+
+  // Initialize I2C, SPI, and multiplexed sensor communication
+  Wire.begin(23, 22);
   Wire.setClock(400000);
   SPI.begin();
-  comm_mux_begin(Wire,SPI);
+  comm_mux_begin(Wire, SPI);
 
-  // init sensors
-  for(uint8_t i=0;i<N_KIT_SENS;i++){
-    commSetup[i]=comm_mux_set_config(Wire,SPI,i,commSetup[i]);
-    bme[i].begin(BME68X_SPI_INTF,
-                 comm_mux_read,comm_mux_write,comm_mux_delay,
-                 &commSetup[i]);
-    if(bme[i].checkStatus()) sensorActive[i]=false;
-    else { bme[i].setTPH(); bme[i].setOpMode(BME68X_FORCED_MODE); sensorActive[i]=true; }
+  // Initialize all BME68x sensors
+  for (uint8_t i = 0; i < N_KIT_SENS; i++) {
+    commSetup[i] = comm_mux_set_config(Wire, SPI, i, commSetup[i]);
+    bme[i].begin(BME68X_SPI_INTF, comm_mux_read, comm_mux_write, comm_mux_delay, &commSetup[i]);
+
+    if (!bme[i].checkStatus()) {
+      bme[i].setTPH();
+      bme[i].setOpMode(BME68X_FORCED_MODE);
+      sensorActive[i] = true;
+      Serial.printf("✓ Sensor %d initialized successfully\n", i);
+    } else {
+      Serial.printf("✗ Sensor %d failed to initialize\n", i);
+    }
   }
 
-  mqtt.setBufferSize(MQTT_MAX_PACKET_SIZE);
-  mqtt.setServer(MQTT_BROKER,MQTT_PORT);
-  mqtt.setKeepAlive(60);
+  // Initialize GPS module (HardwareSerial2)
+  SerialGPS.begin(GPS_BAUD, SERIAL_8N1, GPS_RX_PIN, GPS_TX_PIN);
+  Serial.println("[GPS] GPS module initialized. Waiting for fix...");
 
-  spiMutex  = xSemaphoreCreateMutex();
-
-  // Increase stack size for measurement task to avoid overflow
-  const uint32_t MEASURE_TASK_STACK = 12288; // 12 KB
+  // Create the measurement, GPS, and LoRa GPS tasks
+  const uint32_t MEASURE_TASK_STACK = 12288;
   xTaskCreatePinnedToCore(measurementTask, "Measure", MEASURE_TASK_STACK, NULL, 2, NULL, 1);
-  xTaskCreatePinnedToCore(mqttTask,       "MQTT",    4096, NULL, 1, NULL, 0);
-  xTaskCreatePinnedToCore(statusTask,     "Status",  2048, NULL, 1, NULL, 1);
+  xTaskCreatePinnedToCore(gpsTask,         "GPSTask", 4096, NULL, 1, NULL, 1);
+  xTaskCreatePinnedToCore(loraGpsTask,     "LoRaGPS", 4096, NULL, 1, NULL, 1);
 }
 
-void loop(){
+// ========== MAIN LOOP ==========
+
+void loop() {
+  // The main loop is left empty, as all work is handled by FreeRTOS tasks
   vTaskDelay(pdMS_TO_TICKS(1000));
 }
