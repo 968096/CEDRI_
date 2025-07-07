@@ -53,7 +53,7 @@ def on_message(client, userdata, msg):
         try:
             reading.ParseFromString(raw)
             # Só grava se device_id e GPS válidos
-            if reading.device_id and (abs(reading.latitude) > 0.00001 or abs(reading.longitude) > 0.00001):
+            if reading.device_id:
                 row = [
                     reading.device_id,
                     reading.location_id,

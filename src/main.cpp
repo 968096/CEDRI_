@@ -13,12 +13,12 @@
 #include <TinyGPSPlus.h>
 #include <HardwareSerial.h>
 
-// ========== CONFIGURATION ==========
+// ========== CONFIGURATION & GPS FALLBACK ==========
 
-#define N_KIT_SENS       8
-#define MAX_MEASUREMENTS 10
-#define STEP_DURATION    5000
-#define HEAT_STABILIZE   2000
+#define N_KIT_SENS          8
+#define MAX_MEASUREMENTS   10
+#define STEP_DURATION    5000   // ms between each measurement cycle
+#define HEAT_STABILIZE   2000   // ms settle time after heater on
 
 #define LORA_RX_PIN    16
 #define LORA_TX_PIN    17
@@ -33,9 +33,13 @@ const String appEUI  = "e30b08a3c0764c37";
 const String appKey  = "00112233445566778899aabbccddeeff";
 const String devAddr = "", nwkSKey = "", appSKey = "";
 
-LORAE5 lorae5(devEUI, appEUI, appKey, devAddr, nwkSKey, appSKey);
+// Fallback behavior: set GPS_REQUIRED to true to require a fix, false to use placeholders
+#define GPS_REQUIRED         false
+#define GPS_PLACEHOLDER_LAT  0.0f
+#define GPS_PLACEHOLDER_LON  0.0f
+#define GPS_PLACEHOLDER_SATS 0
 
-const uint16_t DEVICE_ID = 1;
+const uint16_t DEVICE_ID   = 1;
 const uint16_t LOCATION_ID = 1;
 
 // ========== SENSOR PROFILES ==========
@@ -64,46 +68,58 @@ uint16_t durProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
 
 // ========== SENSOR OBJECTS ==========
 
-Bme68x bme[N_KIT_SENS];
-comm_mux commSetup[N_KIT_SENS];
-bool sensorActive[N_KIT_SENS] = {false};
-uint8_t currentStep = 0;
+Bme68x           bme[N_KIT_SENS];
+comm_mux         commSetup[N_KIT_SENS];
+bool             sensorActive[N_KIT_SENS] = {false};
+uint8_t          currentStep = 0;
 
 // ========== GPS OBJECTS ==========
 
-HardwareSerial SerialGPS(2);
-TinyGPSPlus gps;
+HardwareSerial   SerialGPS(2);
+TinyGPSPlus      gps;
 
-// ========== SHARED GPS DATA AND MUTEX ==========
+// ========== SHARED GPS DATA & MUTEX ==========
 
-float shared_lat = 0.0, shared_lon = 0.0;
-uint8_t shared_sats = 0;
+float            shared_lat = 0.0f, shared_lon = 0.0f;
+uint8_t          shared_sats = 0;
 SemaphoreHandle_t gpsMutex;
 
-// ========== PAYLOAD (PROTOBUF) ==========
+// ========== LORA OBJECT ==========
+
+LORAE5 lorae5(devEUI, appEUI, appKey, devAddr, nwkSKey, appSKey);
+
+// ========== PROTOBUF PAYLOAD ==========
 
 void sendSensorGpsReading(
-    uint8_t sensor_idx, uint8_t measurement_step,
-    float temp_c, float humidity_pct, float pressure_hpa,
-    uint32_t gas_resistance_ohm, bool gas_valid, bool heat_stable, uint32_t timestamp_ms,
-    float latitude, float longitude, uint32_t satellites
+    uint8_t sensor_idx,
+    uint8_t measurement_step,
+    float   temp_c,
+    float   humidity_pct,
+    float   pressure_hpa,
+    uint32_t gas_resistance_ohm,
+    bool    gas_valid,
+    bool    heat_stable,
+    uint32_t timestamp_ms,
+    float   latitude,
+    float   longitude,
+    uint32_t satellites
 ) {
     cedri_SensorGpsReading proto = cedri_SensorGpsReading_init_zero;
-    proto.device_id = DEVICE_ID;
-    proto.location_id = LOCATION_ID;
-    proto.sensor_id = sensor_idx;
-    proto.heater_profile = static_cast<cedri_HeaterProfile>(sensor_idx);
-    proto.measurement_step = measurement_step;
-    proto.temp_c = temp_c;
-    proto.humidity_pct = humidity_pct;
-    proto.pressure_hpa = pressure_hpa;
+    proto.device_id       = DEVICE_ID;
+    proto.location_id     = LOCATION_ID;
+    proto.sensor_id       = sensor_idx;
+    proto.heater_profile  = static_cast<cedri_HeaterProfile>(sensor_idx);
+    proto.measurement_step= measurement_step;
+    proto.temp_c          = temp_c;
+    proto.humidity_pct    = humidity_pct;
+    proto.pressure_hpa    = pressure_hpa;
     proto.gas_resistance_ohm = gas_resistance_ohm;
-    proto.gas_valid = gas_valid;
-    proto.heat_stable = heat_stable;
-    proto.timestamp = timestamp_ms;
-    proto.latitude = latitude;
-    proto.longitude = longitude;
-    proto.satellites = satellites;
+    proto.gas_valid       = gas_valid;
+    proto.heat_stable     = heat_stable;
+    proto.timestamp       = timestamp_ms;
+    proto.latitude        = latitude;
+    proto.longitude       = longitude;
+    proto.satellites      = satellites;
 
     uint8_t buffer[64];
     pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
@@ -113,27 +129,32 @@ void sendSensorGpsReading(
     }
 }
 
-// ========== SENSOR+GPS COLETA E ENVIO ==========
+// ========== COLLECT & SEND WITH GPS FALLBACK ==========
 
 void collectAndSend(uint8_t step) {
     uint32_t now = millis();
-    float lat = 0, lon = 0;
-    uint32_t sats = 0;
+    float    lat = GPS_PLACEHOLDER_LAT;
+    float    lon = GPS_PLACEHOLDER_LON;
+    uint8_t  sats= GPS_PLACEHOLDER_SATS;
 
-    // Leia dados do GPS protegendo por mutex
     if (xSemaphoreTake(gpsMutex, portMAX_DELAY)) {
-        lat = shared_lat;
-        lon = shared_lon;
+        lat  = shared_lat;
+        lon  = shared_lon;
         sats = shared_sats;
         xSemaphoreGive(gpsMutex);
     }
 
-    // Só envia se GPS fixado (mínimo 3 satélites e lat/lon válidos)
-    if (sats < 3 || (lat == 0.0 && lon == 0.0)) return;
+    if (GPS_REQUIRED) {
+        if (sats < 3 || (lat == 0.0f && lon == 0.0f)) {
+            Serial.println("[DBG] no GPS fix – skipping send");
+            return;
+        }
+    } else {
+        if (sats < 3) Serial.println("[DBG] using placeholder GPS values");
+    }
 
     for (uint8_t i = 0; i < N_KIT_SENS; i++) {
         if (!sensorActive[i]) continue;
-
         if (bme[i].fetchData()) {
             bme68xData data;
             uint8_t left;
@@ -151,14 +172,14 @@ void collectAndSend(uint8_t step) {
                         now,
                         lat, lon, sats
                     );
-                    delay(3000); // duty cycle
+                    delay(3000);
                 }
             } while (left);
         }
     }
 }
 
-// ========== TASK DE MEDIÇÃO ==========
+// ========== MEASUREMENT TASK ==========
 
 void measurementTask(void*) {
     TickType_t lastWake = xTaskGetTickCount();
@@ -184,13 +205,11 @@ void measurementTask(void*) {
 
 void gpsTask(void*) {
     for (;;) {
-        while (SerialGPS.available()) {
-            gps.encode(SerialGPS.read());
-        }
+        while (SerialGPS.available()) gps.encode(SerialGPS.read());
         if (gps.location.isValid()) {
             if (xSemaphoreTake(gpsMutex, portMAX_DELAY)) {
-                shared_lat = gps.location.lat();
-                shared_lon = gps.location.lng();
+                shared_lat  = gps.location.lat();
+                shared_lon  = gps.location.lng();
                 shared_sats = gps.satellites.value();
                 xSemaphoreGive(gpsMutex);
             }
@@ -228,7 +247,7 @@ void setup() {
     for (uint8_t i = 0; i < N_KIT_SENS; i++) {
         commSetup[i] = comm_mux_set_config(Wire, SPI, i, commSetup[i]);
         bme[i].begin(BME68X_SPI_INTF, comm_mux_read, comm_mux_write, comm_mux_delay, &commSetup[i]);
-        if (!bme[i].checkStatus()) {
+        if (bme[i].checkStatus() == 0) {
             bme[i].setTPH();
             bme[i].setOpMode(BME68X_FORCED_MODE);
             sensorActive[i] = true;
@@ -238,8 +257,10 @@ void setup() {
     SerialGPS.begin(GPS_BAUD, SERIAL_8N1, GPS_RX_PIN, GPS_TX_PIN);
 
     xTaskCreatePinnedToCore(measurementTask, "Measure", 12288, NULL, 2, NULL, 1);
-    xTaskCreatePinnedToCore(gpsTask,         "GPSTask", 4096, NULL, 1, NULL, 1);
+    xTaskCreatePinnedToCore(gpsTask,         "GPSTask", 4096,  NULL, 1, NULL,  1);
 }
+
+// ========== LOOP ==========
 
 void loop() {
     vTaskDelay(pdMS_TO_TICKS(1000));

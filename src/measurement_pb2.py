@@ -34,7 +34,7 @@ SensorGpsReading = _reflection.GeneratedProtocolMessageType('SensorGpsReading', 
   'DESCRIPTOR' : _SENSORGPSREADING,
   '__module__' : 'measurement_pb2'
   # @@protoc_insertion_point(class_scope:cedri.SensorGpsReading)
-  })
+})
 _sym_db.RegisterMessage(SensorGpsReading)
 
 if _descriptor._USE_C_DESCRIPTORS == False:
