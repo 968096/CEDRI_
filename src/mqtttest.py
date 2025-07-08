@@ -22,7 +22,7 @@ CSV_FIELDS = [
     "device_id", "location_id", "sensor_id", "heater_profile",
     "measurement_step", "temp_c", "humidity_pct", "pressure_hpa",
     "gas_resistance_ohm", "gas_valid", "heat_stable", "timestamp",
-    "latitude", "longitude", "satellites"
+    "latitude", "longitude", "volume_l"
 ]
 
 # Cria o CSV se não existir
@@ -69,7 +69,7 @@ def on_message(client, userdata, msg):
                     reading.timestamp,
                     reading.latitude,
                     reading.longitude,
-                    reading.satellites
+                    reading.volume_l    # <<< NOVO campo volume_l
                 ]
                 with open(OUT_FILE, "a", newline="", encoding="utf-8") as f:
                     writer = csv.writer(f)
@@ -77,7 +77,7 @@ def on_message(client, userdata, msg):
                 print(f"[{datetime.now():%Y-%m-%d %H:%M:%S}] CSV: {','.join(map(str, row))}")
                 return
         except Exception as e:
-            pass
+            logger.error(f"❌ Failed to decode protobuf: {e}")
 
     except Exception as e:
         logger.error(f"❌ Failed to decode message: {e}")

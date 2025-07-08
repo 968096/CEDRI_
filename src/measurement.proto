@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package cedri;
 
-// Enum para identificar o perfil do heater
+// Enum para identificar o perfil do heater (use vírgula, não ponto e vírgula!)
 enum HeaterProfile {
   HP_354 = 0;
   HP_301 = 1;
@@ -14,7 +14,7 @@ enum HeaterProfile {
   HP_332 = 7;
 }
 
-// Mensagem completa: UM sensor + dados de GPS
+// Mensagem completa: UM sensor + dados de GPS + Volume calculado (ToF)
 message SensorGpsReading {
   uint32 device_id = 1;
   uint32 location_id = 2;
@@ -22,16 +22,13 @@ message SensorGpsReading {
   HeaterProfile heater_profile = 4;
   uint32 measurement_step = 5;
   float temp_c = 6;
-
   float humidity_pct = 7;
   float pressure_hpa = 8;
   uint32 gas_resistance_ohm = 9;
   bool gas_valid = 10;
   bool heat_stable = 11;
   uint32 timestamp = 12;
-
-  // Dados GPS
   float latitude = 13;
   float longitude = 14;
-  uint32 satellites = 15;
+  float volume_l = 15; // Volume calculado pelo ToF (em litros; -1.0 indica erro)
 }
