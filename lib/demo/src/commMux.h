@@ -42,6 +42,12 @@
 #include "Arduino.h"
 #include "Wire.h"
 #include "SPI.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
+
+// External mutex declarations (defined in main.cpp)
+extern SemaphoreHandle_t spiBusMutex;
+extern SemaphoreHandle_t i2cBusMutex;
 
 /**
  * Datatype working as an interface descriptor

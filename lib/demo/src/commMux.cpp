@@ -99,18 +99,45 @@ int8_t comm_mux_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length
 
 	if (comm)
 	{
-		set_chip_select(comm->wireobj, comm->select);
-
-		comm->spiobj->beginTransaction(SPISettings(COMM_SPEED, MSBFIRST, SPI_MODE0));
-		comm->spiobj->transfer(reg_addr);
-
-		for (i = 0; i < length; i++)
+		// Take I2C mutex for chip select operations
+		if (xSemaphoreTake(i2cBusMutex, pdMS_TO_TICKS(1000)) == pdTRUE)
 		{
-			comm->spiobj->transfer(reg_data[i]);
+			set_chip_select(comm->wireobj, comm->select);
+			xSemaphoreGive(i2cBusMutex);
 		}
-		comm->spiobj->endTransaction();
+		else
+		{
+			return 1; // Timeout error
+		}
 
-		set_chip_select(comm->wireobj, I2C_EXPANDER_OUTPUT_DESELECT);
+		// Take SPI mutex for data transfer
+		if (xSemaphoreTake(spiBusMutex, pdMS_TO_TICKS(1000)) == pdTRUE)
+		{
+			comm->spiobj->beginTransaction(SPISettings(COMM_SPEED, MSBFIRST, SPI_MODE0));
+			comm->spiobj->transfer(reg_addr);
+
+			for (i = 0; i < length; i++)
+			{
+				comm->spiobj->transfer(reg_data[i]);
+			}
+			comm->spiobj->endTransaction();
+			xSemaphoreGive(spiBusMutex);
+		}
+		else
+		{
+			return 1; // Timeout error
+		}
+
+		// Take I2C mutex again for deselect
+		if (xSemaphoreTake(i2cBusMutex, pdMS_TO_TICKS(1000)) == pdTRUE)
+		{
+			set_chip_select(comm->wireobj, I2C_EXPANDER_OUTPUT_DESELECT);
+			xSemaphoreGive(i2cBusMutex);
+		}
+		else
+		{
+			return 1; // Timeout error
+		}
 
 		return 0;
 	}
@@ -128,18 +155,45 @@ int8_t comm_mux_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void 
 
 	if (comm)
 	{
-		set_chip_select(comm->wireobj, comm->select);
-
-		comm->spiobj->beginTransaction(SPISettings(COMM_SPEED, MSBFIRST, SPI_MODE0));
-		comm->spiobj->transfer(reg_addr);
-
-		for (i = 0; i < length; i++)
+		// Take I2C mutex for chip select operations
+		if (xSemaphoreTake(i2cBusMutex, pdMS_TO_TICKS(1000)) == pdTRUE)
 		{
-			reg_data[i] = comm->spiobj->transfer(0xFF);
+			set_chip_select(comm->wireobj, comm->select);
+			xSemaphoreGive(i2cBusMutex);
 		}
-		comm->spiobj->endTransaction();
+		else
+		{
+			return 1; // Timeout error
+		}
 
-		set_chip_select(comm->wireobj, I2C_EXPANDER_OUTPUT_DESELECT);
+		// Take SPI mutex for data transfer
+		if (xSemaphoreTake(spiBusMutex, pdMS_TO_TICKS(1000)) == pdTRUE)
+		{
+			comm->spiobj->beginTransaction(SPISettings(COMM_SPEED, MSBFIRST, SPI_MODE0));
+			comm->spiobj->transfer(reg_addr);
+
+			for (i = 0; i < length; i++)
+			{
+				reg_data[i] = comm->spiobj->transfer(0xFF);
+			}
+			comm->spiobj->endTransaction();
+			xSemaphoreGive(spiBusMutex);
+		}
+		else
+		{
+			return 1; // Timeout error
+		}
+
+		// Take I2C mutex again for deselect
+		if (xSemaphoreTake(i2cBusMutex, pdMS_TO_TICKS(1000)) == pdTRUE)
+		{
+			set_chip_select(comm->wireobj, I2C_EXPANDER_OUTPUT_DESELECT);
+			xSemaphoreGive(i2cBusMutex);
+		}
+		else
+		{
+			return 1; // Timeout error
+		}
 
 		return 0;
 	}

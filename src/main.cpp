@@ -78,11 +78,18 @@ uint8_t          currentStep = 0;
 HardwareSerial   SerialGPS(2);
 TinyGPSPlus      gps;
 
-// ========== SHARED GPS DATA & MUTEX ==========
+// ========== SHARED GPS DATA & SYNCHRONIZATION ==========
 
 float            shared_lat = 0.0f, shared_lon = 0.0f;
 uint8_t          shared_sats = 0;
 SemaphoreHandle_t gpsMutex;
+
+// ========== COMMUNICATION BUS SYNCHRONIZATION ==========
+
+SemaphoreHandle_t spiBusMutex;
+SemaphoreHandle_t i2cBusMutex;
+SemaphoreHandle_t lorawanMutex;
+SemaphoreHandle_t serialMutex;
 
 // ========== LORA OBJECT ==========
 
@@ -124,8 +131,24 @@ void sendSensorGpsReading(
     uint8_t buffer[64];
     pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
     if (pb_encode(&stream, cedri_SensorGpsReading_fields, &proto)) {
-        lorae5.sendData(buffer, stream.bytes_written);
-        Serial.printf("[PAYLOAD] %zu bytes sent\n", stream.bytes_written);
+        // Synchronize LoRaWAN transmission
+        if (xSemaphoreTake(lorawanMutex, pdMS_TO_TICKS(5000)) == pdTRUE) {
+            lorae5.sendData(buffer, stream.bytes_written);
+            
+            // Synchronize serial output
+            if (xSemaphoreTake(serialMutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+                Serial.printf("[PAYLOAD] %zu bytes sent\n", stream.bytes_written);
+                xSemaphoreGive(serialMutex);
+            }
+            
+            xSemaphoreGive(lorawanMutex);
+        } else {
+            // Timeout error - log with serial protection
+            if (xSemaphoreTake(serialMutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+                Serial.println("[ERROR] LoRaWAN transmission timeout");
+                xSemaphoreGive(serialMutex);
+            }
+        }
     }
 }
 
@@ -146,11 +169,19 @@ void collectAndSend(uint8_t step) {
 
     if (GPS_REQUIRED) {
         if (sats < 3 || (lat == 0.0f && lon == 0.0f)) {
-            Serial.println("[DBG] no GPS fix – skipping send");
+            if (xSemaphoreTake(serialMutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+                Serial.println("[DBG] no GPS fix – skipping send");
+                xSemaphoreGive(serialMutex);
+            }
             return;
         }
     } else {
-        if (sats < 3) Serial.println("[DBG] using placeholder GPS values");
+        if (sats < 3) {
+            if (xSemaphoreTake(serialMutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+                Serial.println("[DBG] using placeholder GPS values");
+                xSemaphoreGive(serialMutex);
+            }
+        }
     }
 
     for (uint8_t i = 0; i < N_KIT_SENS; i++) {
@@ -172,7 +203,7 @@ void collectAndSend(uint8_t step) {
                         now,
                         lat, lon, sats
                     );
-                    delay(3000);
+                    vTaskDelay(pdMS_TO_TICKS(3000)); // Use RTOS delay instead of delay()
                 }
             } while (left);
         }
@@ -193,10 +224,10 @@ void measurementTask(void*) {
                 bme[i].setHeaterProf(t, d);
                 bme[i].setOpMode(BME68X_FORCED_MODE);
                 uint32_t us = bme[i].getMeasDur(BME68X_FORCED_MODE);
-                delay((us + 999) / 1000);
+                vTaskDelay(pdMS_TO_TICKS((us + 999) / 1000)); // Use RTOS delay
             }
         }
-        delay(HEAT_STABILIZE);
+        vTaskDelay(pdMS_TO_TICKS(HEAT_STABILIZE)); // Use RTOS delay
         vTaskDelayUntil(&lastWake, pdMS_TO_TICKS(STEP_DURATION));
     }
 }
@@ -224,7 +255,21 @@ void setup() {
     Serial.begin(115200);
     while (!Serial) delay(10);
 
+    // Initialize all synchronization primitives
     gpsMutex = xSemaphoreCreateMutex();
+    spiBusMutex = xSemaphoreCreateMutex();
+    i2cBusMutex = xSemaphoreCreateMutex();
+    lorawanMutex = xSemaphoreCreateMutex();
+    serialMutex = xSemaphoreCreateMutex();
+
+    // Check if mutex creation was successful
+    if (!gpsMutex || !spiBusMutex || !i2cBusMutex || !lorawanMutex || !serialMutex) {
+        if (xSemaphoreTake(serialMutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+            Serial.println("[ERROR] Failed to create mutexes! Halting...");
+            xSemaphoreGive(serialMutex);
+        }
+        while(1) vTaskDelay(pdMS_TO_TICKS(1000)); // Halt execution
+    }
 
     Serial1.begin(LORA_BAUD, SERIAL_8N1, LORA_RX_PIN, LORA_TX_PIN);
     delay(100);
@@ -232,12 +277,21 @@ void setup() {
     lorae5.printInfo();
 
     lorae5.setup_lorawan(EU868, true, CLASS_A, 7, false, false, 8, false, 10000);
-    Serial.print("[S] Joining LoRaWAN...");
+    if (xSemaphoreTake(serialMutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+        Serial.print("[S] Joining LoRaWAN...");
+        xSemaphoreGive(serialMutex);
+    }
     while (!lorae5.join()) {
-        Serial.print(".");
+        if (xSemaphoreTake(serialMutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+            Serial.print(".");
+            xSemaphoreGive(serialMutex);
+        }
         delay(2000);
     }
-    Serial.println("\n✓ Joined LoRaWAN");
+    if (xSemaphoreTake(serialMutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+        Serial.println("\n✓ Joined LoRaWAN");
+        xSemaphoreGive(serialMutex);
+    }
 
     Wire.begin(23, 22);
     Wire.setClock(400000);
@@ -257,7 +311,7 @@ void setup() {
     SerialGPS.begin(GPS_BAUD, SERIAL_8N1, GPS_RX_PIN, GPS_TX_PIN);
 
     xTaskCreatePinnedToCore(measurementTask, "Measure", 12288, NULL, 2, NULL, 1);
-    xTaskCreatePinnedToCore(gpsTask,         "GPSTask", 4096,  NULL, 1, NULL,  1);
+    xTaskCreatePinnedToCore(gpsTask,         "GPSTask", 4096,  NULL, 1, NULL, 0); // Move GPS to core 0
 }
 
 // ========== LOOP ==========
