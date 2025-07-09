@@ -29,10 +29,9 @@
 #define GPS_TX_PIN        32
 #define GPS_BAUD          9600
 
-#define RESERVOIR_RADIUS_CM 40.0f
-#define RESERVOIR_HEIGHT_M  1.1f
+#define RESERVOIR_RADIUS_CM 40.0f //raio
+#define RESERVOIR_HEIGHT_M  1.1f //metros
 
-// Mutex timeout definitions (in milliseconds)
 #define MUTEX_TIMEOUT_MS    1000
 #define MUTEX_TIMEOUT_TICKS pdMS_TO_TICKS(MUTEX_TIMEOUT_MS)
 
@@ -85,7 +84,6 @@ float            shared_lat = 0.0f, shared_lon = 0.0f;
 uint8_t          shared_sats = 0;
 SemaphoreHandle_t gpsMutex;
 
-// Mutexes for shared resources
 SemaphoreHandle_t spiMutex;
 SemaphoreHandle_t i2cMutex;
 SemaphoreHandle_t lorawanMutex;
@@ -97,82 +95,6 @@ Adafruit_VL53L0X lox = Adafruit_VL53L0X();
 
 // ===== UTILS =====
 
-// Thread-safe wrapper functions for commMux operations
-int8_t safe_comm_mux_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr) {
-    int8_t result = 1;
-    // Both I2C and SPI are used in commMux operations, so we need both mutexes
-    if (xSemaphoreTake(i2cMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        if (xSemaphoreTake(spiMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-            result = comm_mux_write(reg_addr, reg_data, length, intf_ptr);
-            xSemaphoreGive(spiMutex);
-        } else {
-            safePrintln("[ERROR] SPI mutex timeout in safe_comm_mux_write");
-        }
-        xSemaphoreGive(i2cMutex);
-    } else {
-        safePrintln("[ERROR] I2C mutex timeout in safe_comm_mux_write");
-    }
-    return result;
-}
-
-int8_t safe_comm_mux_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr) {
-    int8_t result = 1;
-    // Both I2C and SPI are used in commMux operations, so we need both mutexes
-    if (xSemaphoreTake(i2cMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        if (xSemaphoreTake(spiMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-            result = comm_mux_read(reg_addr, reg_data, length, intf_ptr);
-            xSemaphoreGive(spiMutex);
-        } else {
-            safePrintln("[ERROR] SPI mutex timeout in safe_comm_mux_read");
-        }
-        xSemaphoreGive(i2cMutex);
-    } else {
-        safePrintln("[ERROR] I2C mutex timeout in safe_comm_mux_read");
-    }
-    return result;
-}
-
-// Thread-safe helper functions for shared resources
-bool getSensorState(uint8_t idx) {
-    if (xSemaphoreTake(sensorStateMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        bool state = sensorActive[idx];
-        xSemaphoreGive(sensorStateMutex);
-        return state;
-    }
-    return false; // Default to false on timeout
-}
-
-void setSensorState(uint8_t idx, bool state) {
-    if (xSemaphoreTake(sensorStateMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        sensorActive[idx] = state;
-        xSemaphoreGive(sensorStateMutex);
-    }
-}
-
-uint8_t getCurrentStep() {
-    if (xSemaphoreTake(sensorStateMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        uint8_t step = currentStep;
-        xSemaphoreGive(sensorStateMutex);
-        return step;
-    }
-    return 0; // Default to 0 on timeout
-}
-
-void setCurrentStep(uint8_t step) {
-    if (xSemaphoreTake(sensorStateMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        currentStep = step;
-        xSemaphoreGive(sensorStateMutex);
-    }
-}
-
-void incrementCurrentStep() {
-    if (xSemaphoreTake(sensorStateMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        currentStep = (currentStep + 1) % MAX_MEASUREMENTS;
-        xSemaphoreGive(sensorStateMutex);
-    }
-}
-
-// Thread-safe serial printing
 void safePrint(const char* message) {
     if (xSemaphoreTake(serialMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
         Serial.print(message);
@@ -189,25 +111,98 @@ void safePrintln(const char* message) {
 
 void safePrintf(const char* format, ...) {
     if (xSemaphoreTake(serialMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
+        char buffer[256];
         va_list args;
         va_start(args, format);
-        Serial.printf(format, args);
+        vsnprintf(buffer, sizeof(buffer), format, args);
         va_end(args);
+        Serial.print(buffer);
         xSemaphoreGive(serialMutex);
     }
 }
 
+// Thread-safe wrapper functions for commMux operations
+int8_t safe_comm_mux_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr) {
+    int8_t result = 1;
+    if (xSemaphoreTake(i2cMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
+        if (xSemaphoreTake(spiMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
+            result = comm_mux_write(reg_addr, reg_data, length, intf_ptr);
+            xSemaphoreGive(spiMutex);
+        } else {
+            safePrintln("[ERROR] SPI mutex timeout in safe_comm_mux_write");
+        }
+        xSemaphoreGive(i2cMutex);
+    } else {
+        safePrintln("[ERROR] I2C mutex timeout in safe_comm_mux_write");
+    }
+    return result;
+}
+
+int8_t safe_comm_mux_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr) {
+    int8_t result = 1;
+    if (xSemaphoreTake(i2cMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
+        if (xSemaphoreTake(spiMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
+            result = comm_mux_read(reg_addr, reg_data, length, intf_ptr);
+            xSemaphoreGive(spiMutex);
+        } else {
+            safePrintln("[ERROR] SPI mutex timeout in safe_comm_mux_read");
+        }
+        xSemaphoreGive(i2cMutex);
+    } else {
+        safePrintln("[ERROR] I2C mutex timeout in safe_comm_mux_read");
+    }
+    return result;
+}
+
+// Thread-safe helper functions for shared resources
+bool getSensorState(uint8_t idx) {
+    bool state = false;
+    if (xSemaphoreTake(sensorStateMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
+        state = sensorActive[idx];
+        xSemaphoreGive(sensorStateMutex);
+    }
+    return state;
+}
+
+void setSensorState(uint8_t idx, bool state) {
+    if (xSemaphoreTake(sensorStateMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
+        sensorActive[idx] = state;
+        xSemaphoreGive(sensorStateMutex);
+    }
+}
+
+uint8_t getCurrentStep() {
+    uint8_t step = 0;
+    if (xSemaphoreTake(sensorStateMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
+        step = currentStep;
+        xSemaphoreGive(sensorStateMutex);
+    }
+    return step;
+}
+
+void setCurrentStep(uint8_t step) {
+    if (xSemaphoreTake(sensorStateMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
+        currentStep = step;
+        xSemaphoreGive(sensorStateMutex);
+    }
+}
+
+void incrementCurrentStep() {
+    if (xSemaphoreTake(sensorStateMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
+        currentStep = (currentStep + 1) % MAX_MEASUREMENTS;
+        xSemaphoreGive(sensorStateMutex);
+    }
+}
+
+// Read ToF sensor and calculate liquid volume
 float readToFVolume() {
     const float raio_cm = RESERVOIR_RADIUS_CM;
     const float altura_total_m = RESERVOIR_HEIGHT_M;
     const float pi = 3.14159265f;
     float volume_l = -1.0f;
-    
-    // Protect I2C access with mutex
     if (xSemaphoreTake(i2cMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
         VL53L0X_RangingMeasurementData_t measure;
         lox.rangingTest(&measure, false);
-        
         if (measure.RangeStatus != 4) {
             float distancia_m = measure.RangeMilliMeter / 1000.0f;
             float altura_liquido = altura_total_m - distancia_m;
@@ -216,15 +211,14 @@ float readToFVolume() {
             float raio_m = raio_cm / 100.0f;
             volume_l = pi * raio_m * raio_m * altura_liquido * 1000.0f;
         }
-        
         xSemaphoreGive(i2cMutex);
     } else {
         safePrintln("[ERROR] I2C mutex timeout in readToFVolume");
     }
-    
     return volume_l;
 }
 
+// Send sensor and GPS reading via LoRa
 void sendSensorGpsReading(
     uint8_t sensor_idx,
     uint8_t measurement_step,
@@ -256,16 +250,14 @@ void sendSensorGpsReading(
     proto.latitude        = latitude;
     proto.longitude       = longitude;
     proto.volume_l        = volume_l;
-    
+
     uint8_t buffer[96];
     pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
-    
+
     if (pb_encode(&stream, cedri_SensorGpsReading_fields, &proto)) {
-        // Protect LoRaWAN access with mutex
         if (xSemaphoreTake(lorawanMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
             lorae5.sendData(buffer, stream.bytes_written);
             xSemaphoreGive(lorawanMutex);
-            
             safePrintf("[PAYLOAD] %zu bytes sent\n", stream.bytes_written);
         } else {
             safePrintln("[ERROR] LoRaWAN mutex timeout in sendSensorGpsReading");
@@ -277,10 +269,10 @@ void sendSensorGpsReading(
 
 // ===== TASKS =====
 
+// GPS task: reads GPS and updates shared variables
 void gpsTask(void*) {
     while (true) {
         while (SerialGPS.available()) gps.encode(SerialGPS.read());
-        
         if (gps.location.isValid()) {
             if (xSemaphoreTake(gpsMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
                 shared_lat  = gps.location.lat();
@@ -291,23 +283,22 @@ void gpsTask(void*) {
                 safePrintln("[ERROR] GPS mutex timeout in gpsTask");
             }
         }
-        
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 
+// Main measurement task: reads sensors, prepares and sends data
 void measurementTask(void*) {
     TickType_t lastWake = xTaskGetTickCount();
     float lat, lon;
     uint8_t sats;
-    
+
     while (true) {
         uint32_t now = millis();
         lat = GPS_PLACEHOLDER_LAT;
         lon = GPS_PLACEHOLDER_LON;
         sats = GPS_PLACEHOLDER_SATS;
-        
-        // Get GPS data with timeout protection
+
         if (xSemaphoreTake(gpsMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
             lat  = shared_lat;
             lon  = shared_lon;
@@ -328,10 +319,9 @@ void measurementTask(void*) {
             }
         }
 
-        // Process sensors (thread-safe commMux access via safe wrapper functions)
         for (uint8_t i = 0; i < N_KIT_SENS; i++) {
             if (!getSensorState(i)) continue;
-            
+
             if (bme[i].fetchData()) {
                 bme68xData data;
                 uint8_t left;
@@ -358,8 +348,7 @@ void measurementTask(void*) {
 
         incrementCurrentStep();
         currentMeasurementStep = getCurrentStep();
-        
-        // Set heater profiles for next measurement (thread-safe)
+
         for (uint8_t i = 0; i < N_KIT_SENS; i++) {
             if (getSensorState(i)) {
                 uint16_t t = tempProfiles[i][currentMeasurementStep];
@@ -370,26 +359,24 @@ void measurementTask(void*) {
                 vTaskDelay(pdMS_TO_TICKS((us + 999) / 1000));
             }
         }
-        
+
         vTaskDelay(pdMS_TO_TICKS(HEAT_STABILIZE));
         vTaskDelayUntil(&lastWake, pdMS_TO_TICKS(STEP_DURATION));
     }
 }
 
-// Extra task: periodic self-test
+// Self-test task: periodically tests sensor states and ToF
 void selfTestTask(void*) {
     while (true) {
         bool allSensors = true;
-        
-        // Check sensor states with mutex protection
+
         for (uint8_t i = 0; i < N_KIT_SENS; i++) {
             if (!getSensorState(i)) {
                 allSensors = false;
                 break;
             }
         }
-        
-        // Test VL53L0X with I2C mutex protection
+
         if (xSemaphoreTake(i2cMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
             if (!lox.begin()) {
                 safePrintln("[SELFTEST] VL53L0X failed.");
@@ -398,11 +385,11 @@ void selfTestTask(void*) {
         } else {
             safePrintln("[ERROR] I2C mutex timeout in selfTestTask");
         }
-        
+
         if (!allSensors) {
             safePrintln("[SELFTEST] One or more BME688 sensors failed.");
         }
-        
+
         vTaskDelay(pdMS_TO_TICKS(60000));
     }
 }
@@ -411,27 +398,24 @@ void selfTestTask(void*) {
 void setup() {
     Serial.begin(115200);
     while (!Serial) vTaskDelay(10);
-    
-    // Create all mutexes
+
     gpsMutex = xSemaphoreCreateMutex();
     spiMutex = xSemaphoreCreateMutex();
     i2cMutex = xSemaphoreCreateMutex();
     lorawanMutex = xSemaphoreCreateMutex();
     serialMutex = xSemaphoreCreateMutex();
     sensorStateMutex = xSemaphoreCreateMutex();
-    
-    // Verify mutex creation
+
     if (!gpsMutex || !spiMutex || !i2cMutex || !lorawanMutex || !serialMutex || !sensorStateMutex) {
         Serial.println("[FATAL] Failed to create mutexes!");
         while(1) vTaskDelay(1000);
     }
-    
+
     safePrintln("[INIT] All mutexes created successfully");
 
-    // Initialize LoRaWAN with mutex protection
     Serial1.begin(LORA_BAUD, SERIAL_8N1, LORA_RX_PIN, LORA_TX_PIN);
     vTaskDelay(100);
-    
+
     if (xSemaphoreTake(lorawanMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
         lorae5.setup_hardware(&Serial, &Serial1);
         lorae5.printInfo();
@@ -440,7 +424,7 @@ void setup() {
     } else {
         safePrintln("[ERROR] LoRaWAN mutex timeout in setup");
     }
-    
+
     safePrint("[S] Joining LoRaWAN...");
     bool joined = false;
     while (!joined) {
@@ -455,7 +439,6 @@ void setup() {
     }
     safePrintln("\n✓ Joined LoRaWAN");
 
-    // Initialize I2C and SPI with mutex protection (for initial setup)
     if (xSemaphoreTake(i2cMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
         if (xSemaphoreTake(spiMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
             Wire.begin(23, 22);
@@ -471,7 +454,6 @@ void setup() {
         safePrintln("[ERROR] I2C mutex timeout in setup");
     }
 
-    // Initialize BME688 sensors with thread-safe commMux access
     for (uint8_t i = 0; i < N_KIT_SENS; i++) {
         commSetup[i] = comm_mux_set_config(Wire, SPI, i, commSetup[i]);
         bme[i].begin(BME68X_SPI_INTF, safe_comm_mux_read, safe_comm_mux_write, comm_mux_delay, &commSetup[i]);
@@ -484,7 +466,6 @@ void setup() {
 
     SerialGPS.begin(GPS_BAUD, SERIAL_8N1, GPS_RX_PIN, GPS_TX_PIN);
 
-    // Initialize VL53L0X with I2C protection
     if (xSemaphoreTake(i2cMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
         if (!lox.begin()) {
             safePrintln("Failed to boot VL53L0X");
@@ -494,16 +475,10 @@ void setup() {
     }
     safePrintln("VL53L0X API successfully started.");
 
-    // Create tasks with optimized core placement and priorities
-    // High priority measurement task on core 1 (performance core)
-    xTaskCreatePinnedToCore(measurementTask, "Measure", 12288, NULL, 3, NULL, 1);
-    
-    // Lower priority GPS task on core 0 (efficiency core)
+    xTaskCreatePinnedToCore(measurementTask, "Measure", 16384, NULL, 3, NULL, 1);
     xTaskCreatePinnedToCore(gpsTask, "GPSTask", 4096, NULL, 2, NULL, 0);
-    
-    // Lowest priority self-test task on core 0
     xTaskCreatePinnedToCore(selfTestTask, "SelfTest", 2048, NULL, 1, NULL, 0);
-    
+
     safePrintln("[INIT] All tasks created successfully");
 }
 
