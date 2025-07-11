@@ -69,7 +69,7 @@ def on_message(client, userdata, msg):
                     reading.timestamp,
                     reading.latitude,
                     reading.longitude,
-                    reading.volume_l    # <<< NOVO campo volume_l
+                    reading.volume_l
                 ]
                 with open(OUT_FILE, "a", newline="", encoding="utf-8") as f:
                     writer = csv.writer(f)
