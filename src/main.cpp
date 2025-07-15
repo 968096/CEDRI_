@@ -1,24 +1,33 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
-#include <cstdarg>
+#include <commMux.h>
 #include "lorae5.h"
 #include "bme68xLibrary.h"
-#include <commMux.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
-#include "freertos/queue.h"
 #include "pb_encode.h"
 #include "measurement.pb.h"
 #include <TinyGPSPlus.h>
 #include <HardwareSerial.h>
-#include "Adafruit_VL53L0X.h"
+#include <Adafruit_VL53L0X.h>
+
+// ===== DEBUG =====
+#define DEBUG_LEVEL 1
+
+#if DEBUG_LEVEL > 0
+  #define DEBUG_PRINTF(...)   Serial.printf(__VA_ARGS__)
+  #define DEBUG_PRINTLN(...)  Serial.println(__VA_ARGS__)
+#else
+  #define DEBUG_PRINTF(...)
+  #define DEBUG_PRINTLN(...)
+#endif
 
 // ===== CONFIGURATION =====
-#define N_KIT_SENS        8
+#define N_KIT_SENS         8
 #define MAX_MEASUREMENTS  10
-#define STEP_DURATION     10000
+#define STEP_DURATION     5000
 #define HEAT_STABILIZE    2000
 
 #define LORA_RX_PIN       16
@@ -32,10 +41,6 @@
 #define RESERVOIR_RADIUS_CM 40.0f
 #define RESERVOIR_HEIGHT_M  1.1f
 
-#define MUTEX_TIMEOUT_MS    1000
-#define MUTEX_TIMEOUT_TICKS pdMS_TO_TICKS(MUTEX_TIMEOUT_MS)
-#define LORA_QUEUE_LEN      32
-
 #define GPS_REQUIRED         false
 #define GPS_PLACEHOLDER_LAT  0.0f
 #define GPS_PLACEHOLDER_LON  0.0f
@@ -44,7 +49,7 @@
 const uint16_t DEVICE_ID   = 1;
 const uint16_t LOCATION_ID = 1;
 
-// ===== SENSOR PROFILES =====
+// ===== HEATER PROFILES =====
 uint16_t tempProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
   {320,100,100,100,200,200,200,320,320,320},
   {100,100,200,200,200,200,320,320,320,320},
@@ -55,7 +60,6 @@ uint16_t tempProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
   { 50, 50,350,350,350,140,140,350,350,350},
   { 50, 50,350,350,350,140,140,350,350,350}
 };
-
 uint16_t durProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
   {  700,  280, 1400, 4200,  700,  700,  700,  700,  700,  700},
   {  280, 5740,  280,  280, 1680, 1960, 1960,  280, 1960, 3920},
@@ -67,7 +71,7 @@ uint16_t durProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
   {14000,14000,  140,  140,27720,14000,14000,  140,  140,27720}
 };
 
-// ===== OBJECTS =====
+// ===== GLOBALS & OBJECTS =====
 Bme68x           bme[N_KIT_SENS];
 comm_mux         commSetup[N_KIT_SENS];
 bool             sensorActive[N_KIT_SENS] = {false};
@@ -75,108 +79,51 @@ uint8_t          currentStep = 0;
 
 HardwareSerial   SerialGPS(2);
 TinyGPSPlus      gps;
-
 float            shared_lat = 0.0f, shared_lon = 0.0f;
 uint8_t          shared_sats = 0;
 SemaphoreHandle_t gpsMutex;
 
-SemaphoreHandle_t spiMutex;
-SemaphoreHandle_t i2cMutex;
-SemaphoreHandle_t serialMutex;
-SemaphoreHandle_t sensorStateMutex;
+SemaphoreHandle_t loraTxSemaphore;
+// ===== MUTEX PARA BARRAMENTO COMPARTILHADO =====
+SemaphoreHandle_t i2cMutex; // Protege BME688 e VL53L0X
 
-QueueHandle_t    loraUplinkQueue;
+LORAE5           lorae5(
+  F("0011223344556677"),
+  F("e30b08a3c0764c37"),
+  F("00112233445566778899aabbccddeeff"),
+  F(""), F(""), F("")
+);
 
-LORAE5 lorae5("0011223344556677", "e30b08a3c0764c37", "00112233445566778899aabbccddeeff", "", "", "");
-Adafruit_VL53L0X lox = Adafruit_VL53L0X();
+Adafruit_VL53L0X lox;
 
-struct LoraUplinkMsg {
-  uint8_t data[96];
-  size_t len;
-};
-
-// ===== UTILS =====
-
-void safePrint(const char* message) {
-    if (xSemaphoreTake(serialMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        Serial.print(message);
-        xSemaphoreGive(serialMutex);
-    }
-}
-void safePrintln(const char* message) {
-    if (xSemaphoreTake(serialMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        Serial.println(message);
-        xSemaphoreGive(serialMutex);
-    }
-}
-void safePrintf(const char* format, ...) {
-    if (xSemaphoreTake(serialMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        char buffer[256];
-        va_list args;
-        va_start(args, format);
-        vsnprintf(buffer, sizeof(buffer), format, args);
-        va_end(args);
-        Serial.print(buffer);
-        xSemaphoreGive(serialMutex);
-    }
-}
-
-// Thread-safe helpers
-bool getSensorState(uint8_t idx) {
-    bool state = false;
-    if (xSemaphoreTake(sensorStateMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        state = sensorActive[idx];
-        xSemaphoreGive(sensorStateMutex);
-    }
-    return state;
-}
-void setSensorState(uint8_t idx, bool state) {
-    if (xSemaphoreTake(sensorStateMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        sensorActive[idx] = state;
-        xSemaphoreGive(sensorStateMutex);
-    }
-}
-uint8_t getCurrentStep() {
-    uint8_t step = 0;
-    if (xSemaphoreTake(sensorStateMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        step = currentStep;
-        xSemaphoreGive(sensorStateMutex);
-    }
-    return step;
-}
-void incrementCurrentStep() {
-    if (xSemaphoreTake(sensorStateMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        currentStep = (currentStep + 1) % MAX_MEASUREMENTS;
-        xSemaphoreGive(sensorStateMutex);
-    }
-}
-
-// Read ToF sensor and calculate liquid volume
+// ===== UTILITIES =====
 float readToFVolume() {
     const float pi = 3.14159265f;
-    float volume_l = -1.0f;
-    if (xSemaphoreTake(i2cMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        VL53L0X_RangingMeasurementData_t measure;
-        lox.rangingTest(&measure, false);
-        if (measure.RangeStatus != 4) {
-            float dist = measure.RangeMilliMeter / 1000.0f;
-            float h_liquid = RESERVOIR_HEIGHT_M - dist;
-            h_liquid = constrain(h_liquid, 0.0f, RESERVOIR_HEIGHT_M);
-            float r = RESERVOIR_RADIUS_CM / 100.0f;
-            volume_l = pi * r * r * h_liquid * 1000.0f;
-        }
+    VL53L0X_RangingMeasurementData_t m;
+    // PROTEGE ACESSO AO BARRAMENTO
+    if (xSemaphoreTake(i2cMutex, pdMS_TO_TICKS(1000))) {
+        lox.rangingTest(&m, false);
         xSemaphoreGive(i2cMutex);
+    } else {
+        DEBUG_PRINTLN("[ERROR] VL53L0X I2C bus lock timeout");
+        return -1.0f;
     }
-    return volume_l;
+    if (m.RangeStatus == 4) return -1.0f;
+    float dist = m.RangeMilliMeter / 1000.0f;           // m
+    float h_liquid = RESERVOIR_HEIGHT_M - dist;
+    h_liquid = constrain(h_liquid, 0.0f, RESERVOIR_HEIGHT_M);
+    float r = RESERVOIR_RADIUS_CM / 100.0f;             // m
+    return pi * r * r * h_liquid * 1000.0f;             // L
 }
 
-void enqueueSensorGpsReading(
+void sendSensorGpsReading(
     uint8_t sensor_idx, uint8_t measurement_step,
     float temp_c, float humidity_pct, float pressure_hpa,
     uint32_t gas_resistance_ohm, bool gas_valid, bool heat_stable,
     uint32_t timestamp_ms, float latitude, float longitude,
     uint32_t satellites, float volume_l
 ) {
+    // 1) build protobuf
     cedri_SensorGpsReading proto = cedri_SensorGpsReading_init_zero;
     proto.device_id         = DEVICE_ID;
     proto.location_id       = LOCATION_ID;
@@ -197,37 +144,37 @@ void enqueueSensorGpsReading(
     uint8_t buf[96];
     pb_ostream_t os = pb_ostream_from_buffer(buf, sizeof(buf));
     if (!pb_encode(&os, cedri_SensorGpsReading_fields, &proto)) {
-        safePrintln("[ERROR] Protobuf encode failed");
+        Serial.println("[ERROR] Protobuf encode failed");
         return;
     }
-    LoraUplinkMsg msg;
-    memcpy(msg.data, buf, os.bytes_written);
-    msg.len = os.bytes_written;
 
-    // Espera espaço na fila se estiver cheia (rate limit)
-    while (uxQueueSpacesAvailable(loraUplinkQueue) == 0) {
-        safePrintln("[WARN] LoRa uplink queue full, aguardando espaço...");
-        vTaskDelay(pdMS_TO_TICKS(200));
-    }
-    if (xQueueSend(loraUplinkQueue, &msg, 0) != pdTRUE) {
-        safePrintln("[ERROR] Falha ao inserir na fila LoRa uplink!");
+    // 2) send uplink
+    lorae5.sendData(buf, os.bytes_written);
+    DEBUG_PRINTF("[PAYLOAD] %u bytes sent, waiting for TX…\n", os.bytes_written);
+
+    // 3) wait on TX-done semaphore (from LoRa monitor task)
+    if (xSemaphoreTake(loraTxSemaphore, pdMS_TO_TICKS(6000))) {
+        DEBUG_PRINTLN("[LoRa] TX complete");
+    } else {
+        DEBUG_PRINTLN("[LoRa] WARNING: no TX complete seen");
     }
 }
 
-// ===== TASKS =====
-
+// ===== FREERTOS TASKS =====
 void gpsTask(void*) {
-    while (true) {
-        while (SerialGPS.available()) gps.encode(SerialGPS.read());
+    for (;;) {
+        while (SerialGPS.available()) {
+            gps.encode(SerialGPS.read());
+        }
         if (gps.location.isValid()) {
-            if (xSemaphoreTake(gpsMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-                shared_lat = gps.location.lat();
-                shared_lon = gps.location.lng();
+            if (xSemaphoreTake(gpsMutex, portMAX_DELAY)) {
+                shared_lat  = gps.location.lat();
+                shared_lon  = gps.location.lng();
                 shared_sats = gps.satellites.value();
                 xSemaphoreGive(gpsMutex);
             }
         }
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(pdMS_TO_TICKS(2000));  // lower poll rate
     }
 }
 
@@ -237,7 +184,7 @@ void measurementTask(void*) {
         uint32_t now = millis();
         float lat = GPS_PLACEHOLDER_LAT, lon = GPS_PLACEHOLDER_LON;
         uint8_t sats = GPS_PLACEHOLDER_SATS;
-        if (xSemaphoreTake(gpsMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
+        if (xSemaphoreTake(gpsMutex, portMAX_DELAY)) {
             lat = shared_lat;
             lon = shared_lon;
             sats = shared_sats;
@@ -245,46 +192,57 @@ void measurementTask(void*) {
         }
 
         float vol = readToFVolume();
-        uint8_t currentMeasurementStep = getCurrentStep();
-
         if (GPS_REQUIRED && (sats < 3 || (lat == 0 && lon == 0))) {
-            incrementCurrentStep();
+            currentStep = (currentStep + 1) % MAX_MEASUREMENTS;
             vTaskDelayUntil(&lastWake, pdMS_TO_TICKS(STEP_DURATION));
             continue;
         }
 
+        // PROTEGE ACESSO BME688 COM MUTEX
         for (uint8_t i = 0; i < N_KIT_SENS; i++) {
-            if (!getSensorState(i)) continue;
-            if (bme[i].fetchData()) {
-                bme68xData d; uint8_t left;
-                do {
-                    left = bme[i].getData(d);
-                    if (d.status & BME68X_NEW_DATA_MSK) {
-                        enqueueSensorGpsReading(
-                            i, currentMeasurementStep,
-                            d.temperature, d.humidity, d.pressure,
-                            d.gas_resistance,
-                            d.status & BME68X_GASM_VALID_MSK,
-                            d.status & BME68X_HEAT_STAB_MSK,
-                            now, lat, lon, sats, vol
-                        );
-                        vTaskDelay(pdMS_TO_TICKS(50));
-                    }
-                } while (left);
+            if (!sensorActive[i]) continue;
+            if (xSemaphoreTake(i2cMutex, pdMS_TO_TICKS(1000))) {
+                if (bme[i].fetchData()) {
+                    bme68xData d; uint8_t left;
+                    do {
+                        left = bme[i].getData(d);
+                        if (d.status & BME68X_NEW_DATA_MSK) {
+                            xSemaphoreGive(i2cMutex);
+                            sendSensorGpsReading(
+                              i, currentStep,
+                              d.temperature, d.humidity, d.pressure,
+                              d.gas_resistance,
+                              d.status & BME68X_GASM_VALID_MSK,
+                              d.status & BME68X_HEAT_STAB_MSK,
+                              now, lat, lon, sats, vol
+                            );
+                            vTaskDelay(pdMS_TO_TICKS(50));
+                            // re-tenta pegar mutex caso tenha mais dados
+                            if (left && !xSemaphoreTake(i2cMutex, pdMS_TO_TICKS(1000))) break;
+                        }
+                    } while (left);
+                } else {
+                    xSemaphoreGive(i2cMutex);
+                }
+            } else {
+                DEBUG_PRINTLN("[ERROR] BME688 I2C bus lock timeout");
             }
         }
 
-        incrementCurrentStep();
-        currentMeasurementStep = getCurrentStep();
-
+        currentStep = (currentStep + 1) % MAX_MEASUREMENTS;
         for (uint8_t i = 0; i < N_KIT_SENS; i++) {
-            if (!getSensorState(i)) continue;
-            uint16_t t = tempProfiles[i][currentMeasurementStep];
-            uint16_t d = durProfiles[i][currentMeasurementStep];
-            bme[i].setHeaterProf(t,d);
-            bme[i].setOpMode(BME68X_FORCED_MODE);
-            uint32_t us = bme[i].getMeasDur(BME68X_FORCED_MODE);
-            vTaskDelay(pdMS_TO_TICKS((us+999)/1000));
+            if (!sensorActive[i]) continue;
+            if (xSemaphoreTake(i2cMutex, pdMS_TO_TICKS(1000))) {
+                uint16_t t = tempProfiles[i][currentStep];
+                uint16_t d = durProfiles[i][currentStep];
+                bme[i].setHeaterProf(t,d);
+                bme[i].setOpMode(BME68X_FORCED_MODE);
+                uint32_t us = bme[i].getMeasDur(BME68X_FORCED_MODE);
+                xSemaphoreGive(i2cMutex);
+                vTaskDelay(pdMS_TO_TICKS((us+999)/1000));
+            } else {
+                DEBUG_PRINTLN("[ERROR] BME688 I2C bus lock timeout (heater)");
+            }
         }
 
         vTaskDelay(pdMS_TO_TICKS(HEAT_STABILIZE));
@@ -292,107 +250,103 @@ void measurementTask(void*) {
     }
 }
 
-void loraUplinkTask(void*) {
-    LoraUplinkMsg msg;
-    for (;;) {
-        if (xQueueReceive(loraUplinkQueue, &msg, portMAX_DELAY) == pdTRUE) {
-            lorae5.sendData(msg.data, msg.len);
-            safePrintf("[LoRaUplink] Sent %d bytes\n", msg.len);
-        }
-    }
-}
-
 void selfTestTask(void*) {
     for (;;) {
-        bool allSensors = true;
-        for (uint8_t i = 0; i < N_KIT_SENS; i++) if (!getSensorState(i)) allSensors = false;
-        if (xSemaphoreTake(i2cMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-            if (!lox.begin()) safePrintln("[SELFTEST] VL53L0X fail");
-            xSemaphoreGive(i2cMutex);
+        bool allOK = true;
+        for (uint8_t i = 0; i < N_KIT_SENS; i++) {
+            if (!sensorActive[i]) allOK = false;
         }
-        if (!allSensors) safePrintln("[SELFTEST] BME688 fail");
+        // PROTEGE TESTE DO VL53L0X COM MUTEX
+        if (xSemaphoreTake(i2cMutex, pdMS_TO_TICKS(3000))) {
+            if (!lox.begin())       Serial.println("[SELFTEST] VL53L0X fail");
+            xSemaphoreGive(i2cMutex);
+        } else {
+            Serial.println("[ERROR] VL53L0X I2C bus lock timeout (selftest)");
+        }
+        if (!allOK) Serial.println("[SELFTEST] BME688 fail");
         vTaskDelay(pdMS_TO_TICKS(60000));
     }
 }
 
-// ===== SETUP =====
+void loraMonitorTask(void*) {
+    char buf[64];
+    size_t idx = 0;
+    for (;;) {
+        while (Serial1.available()) {
+            char c = Serial1.read();
+            if (c == '\r' || c == '\n') {
+                if (idx > 0) {
+                    buf[idx] = '\0';
+                    if (strstr(buf, "Transmission Done")) {
+                        xSemaphoreGive(loraTxSemaphore);
+                    }
+                    idx = 0;
+                }
+            } else if (idx < sizeof(buf) - 1) {
+                buf[idx++] = c;
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+}
+
 void setup() {
     Serial.begin(115200);
-    while (!Serial) vTaskDelay(10);
+    while (!Serial) vTaskDelay(pdMS_TO_TICKS(10));
 
-    gpsMutex = xSemaphoreCreateMutex();
-    spiMutex = xSemaphoreCreateMutex();
-    i2cMutex = xSemaphoreCreateMutex();
-    serialMutex = xSemaphoreCreateMutex();
-    sensorStateMutex = xSemaphoreCreateMutex();
-    loraUplinkQueue = xQueueCreate(LORA_QUEUE_LEN, sizeof(LoraUplinkMsg));
+    // Semaphores
+    gpsMutex        = xSemaphoreCreateMutex();
+    loraTxSemaphore = xSemaphoreCreateBinary();
+    i2cMutex        = xSemaphoreCreateMutex(); // MUTEX barramento
 
-    if (!gpsMutex || !spiMutex || !i2cMutex || !serialMutex || !sensorStateMutex || !loraUplinkQueue) {
-        Serial.println("[FATAL] Failed to create mutexes!");
-        while(1) vTaskDelay(1000);
-    }
-
-    safePrintln("[INIT] All mutexes and queues created successfully");
-
+    // LoRa E5 on Serial1
     Serial1.begin(LORA_BAUD, SERIAL_8N1, LORA_RX_PIN, LORA_TX_PIN);
-    vTaskDelay(100);
-
+    vTaskDelay(pdMS_TO_TICKS(100));
     lorae5.setup_hardware(&Serial, &Serial1);
     lorae5.printInfo();
     lorae5.setup_lorawan(EU868, true, CLASS_A, 7, false, false, 8, false, 10000);
 
-    safePrint("[S] Joining LoRaWAN...");
-    bool joined = false;
-    while (!joined) {
-        joined = lorae5.join();
-        if (!joined) {
-            safePrint(".");
-            vTaskDelay(2000);
-        }
+    Serial.print("[S] Joining LoRaWAN…");
+    while (!lorae5.join()) {
+        Serial.print(".");
+        vTaskDelay(pdMS_TO_TICKS(2000));
     }
-    safePrintln("\n✓ Joined LoRaWAN");
+    Serial.println("\n✓ Joined LoRaWAN");
 
-    if (xSemaphoreTake(i2cMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-        if (xSemaphoreTake(spiMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
-            Wire.begin(23, 22);
-            Wire.setClock(400000);
-            SPI.begin();
-            comm_mux_begin(Wire, SPI);
-            xSemaphoreGive(spiMutex);
-        }
-        xSemaphoreGive(i2cMutex);
-    }
-
+    // BME688 + commMux
+    Wire.begin(23,22); Wire.setClock(400000);
+    SPI.begin();
+    comm_mux_begin(Wire,SPI);
     for (uint8_t i = 0; i < N_KIT_SENS; i++) {
         commSetup[i] = comm_mux_set_config(Wire, SPI, i, commSetup[i]);
         bme[i].begin(BME68X_SPI_INTF, comm_mux_read, comm_mux_write, comm_mux_delay, &commSetup[i]);
         if (bme[i].checkStatus() == 0) {
             bme[i].setTPH();
             bme[i].setOpMode(BME68X_FORCED_MODE);
-            setSensorState(i, true);
+            sensorActive[i] = true;
         }
     }
 
+    // GPS
     SerialGPS.begin(GPS_BAUD, SERIAL_8N1, GPS_RX_PIN, GPS_TX_PIN);
 
-    if (xSemaphoreTake(i2cMutex, MUTEX_TIMEOUT_TICKS) == pdTRUE) {
+    // VL53L0X
+    if (xSemaphoreTake(i2cMutex, pdMS_TO_TICKS(1000))) {
         if (!lox.begin()) {
-            safePrintln("Failed to boot VL53L0X");
-            while(1) vTaskDelay(1000);
+            Serial.println("Failed to boot VL53L0X");
+            while (1);
         }
         xSemaphoreGive(i2cMutex);
     }
-    safePrintln("VL53L0X API successfully started.");
+    Serial.println("VL53L0X API successfully started.");
 
-    xTaskCreatePinnedToCore(measurementTask, "Measure", 16384, NULL, 3, NULL, 1);
-    xTaskCreatePinnedToCore(gpsTask, "GPSTask", 4096, NULL, 2, NULL, 0);
-    xTaskCreatePinnedToCore(selfTestTask, "SelfTest", 2048, NULL, 1, NULL, 0);
-    xTaskCreatePinnedToCore(loraUplinkTask, "LoRaUp", 4096, NULL, 2, NULL, 1);
-
-    safePrintln("[INIT] All tasks created successfully");
+    // Start tasks
+    xTaskCreatePinnedToCore(measurementTask, "Measure", 6144, NULL, 2, NULL, 1);
+    xTaskCreatePinnedToCore(gpsTask,        "GPSTask", 2048, NULL, 1, NULL, 1);
+    xTaskCreatePinnedToCore(selfTestTask,   "SelfTest",2048, NULL, 0, NULL, 1);
+    xTaskCreatePinnedToCore(loraMonitorTask,"LoRaMon", 4096, NULL, 3, NULL, 0);
 }
 
-// ===== LOOP =====
 void loop() {
     vTaskDelay(pdMS_TO_TICKS(1000));
 }
