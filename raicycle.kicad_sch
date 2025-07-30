@@ -2677,6 +2677,303 @@
 		(uuid "f0123456-3456-789a-bcde-678901234567")
 	)
 	
+	(wire
+		(pts
+			(xy 157.48 156.21) (xy 157.48 152.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "01234567-4567-89ab-cdef-789012345678")
+	)
+	
+	(wire
+		(pts
+			(xy 157.48 152.4) (xy 177.8 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "12345678-5678-9abc-def0-890123456789")
+	)
+	
+	(wire
+		(pts
+			(xy 177.8 129.54) (xy 177.8 137.16)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "23456789-6789-abcd-ef01-901234567890")
+	)
+	
+	(wire
+		(pts
+			(xy 157.48 163.83) (xy 157.48 167.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "34567890-789a-bcde-f012-012345678901")
+	)
+	
+	(wire
+		(pts
+			(xy 157.48 167.64) (xy 180.34 149.86)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "45678901-89ab-cdef-0123-123456789012")
+	)
+	
+	(wire
+		(pts
+			(xy 276.86 86.36) (xy 104.14 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "56789012-9abc-def0-1234-234567890123")
+	)
+	
+	(wire
+		(pts
+			(xy 276.86 88.9) (xy 109.22 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "67890123-abcd-ef01-2345-345678901234")
+	)
+	
+	(wire
+		(pts
+			(xy 276.86 139.7) (xy 104.14 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "78901234-bcde-f012-3456-456789012345")
+	)
+	
+	(wire
+		(pts
+			(xy 276.86 142.24) (xy 109.22 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "89012345-cdef-0123-4567-567890123456")
+	)
+	
+	(wire
+		(pts
+			(xy 292.1 86.36) (xy 292.1 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "90123456-def0-1234-5678-678901234567")
+	)
+	
+	(wire
+		(pts
+			(xy 292.1 88.9) (xy 292.1 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "01234567-ef01-2345-6789-789012345678")
+	)
+	
+	(wire
+		(pts
+			(xy 292.1 139.7) (xy 292.1 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "12345678-f012-3456-789a-890123456789")
+	)
+	
+	(wire
+		(pts
+			(xy 292.1 142.24) (xy 292.1 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "23456789-0123-4567-89ab-901234567890")
+	)
+	
+	(wire
+		(pts
+			(xy 60.96 96.52) (xy 60.96 91.44)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "34567890-1234-5678-9abc-012345678901")
+	)
+	
+	(wire
+		(pts
+			(xy 60.96 91.44) (xy 60.96 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "45678901-2345-6789-abcd-123456789012")
+	)
+	
+	(wire
+		(pts
+			(xy 60.96 104.14) (xy 60.96 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "56789012-3456-789a-bcde-234567890123")
+	)
+	
+	(wire
+		(pts
+			(xy 66.04 96.52) (xy 66.04 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "67890123-4567-89ab-cdef-345678901234")
+	)
+	
+	(wire
+		(pts
+			(xy 66.04 104.14) (xy 66.04 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "78901234-5678-9abc-def0-456789012345")
+	)
+	
+	(wire
+		(pts
+			(xy 60.96 109.22) (xy 66.04 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "89012345-6789-abcd-ef01-567890123456")
+	)
+	
+	(wire
+		(pts
+			(xy 66.04 109.22) (xy 76.2 121.92)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "90123456-789a-bcde-f012-678901234567")
+	)
+	
+	(wire
+		(pts
+			(xy 292.1 73.66) (xy 292.1 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "01234567-89ab-cdef-0123-789012345678")
+	)
+	
+	(wire
+		(pts
+			(xy 292.1 83.82) (xy 292.1 137.16)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "12345678-9abc-def0-1234-890123456789")
+	)
+	
+	(wire
+		(pts
+			(xy 276.86 91.44) (xy 276.86 147.32)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "23456789-abcd-ef01-2345-901234567890")
+	)
+	
+	(wire
+		(pts
+			(xy 292.1 83.82) (xy 276.86 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "34567890-bcde-f012-3456-012345678901")
+	)
+	
+	(wire
+		(pts
+			(xy 276.86 83.82) (xy 276.86 91.44)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "45678901-cdef-0123-4567-123456789012")
+	)
+	
+	(wire
+		(pts
+			(xy 292.1 137.16) (xy 276.86 137.16)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "56789012-def0-1234-5678-234567890123")
+	)
+	
+	(wire
+		(pts
+			(xy 276.86 137.16) (xy 276.86 147.32)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "67890123-ef01-2345-6789-345678901234")
+	)
+	
 	(text "CEDRI ESP32 Multi-Sensor LoRaWAN System\nKiCad 8.0 Schematic\n\nFeatures:\n- ESP32 Feather main controller\n- 8x BME688 environmental sensors\n- VL53L0X ToF sensor for volume measurement\n- Grove Wio-E5 LoRaWAN module\n- GPS Air530 module\n- Communication multiplexer\n- Proper power decoupling\n- I2C pull-ups\n- Analog power filtering\n- LiPo battery support"
 		(exclude_from_sim no)
 		(at 13.97 20.32 0)
@@ -2687,6 +2984,18 @@
 			(justify left bottom)
 		)
 		(uuid "11111111-2222-3333-4444-555555555555")
+	)
+	
+	(text "Professor's Design Improvements Implemented:\n\n1. I²C Pull-ups: 4.7k resistors on SDA/SCL lines\n2. AVDD Analog Power Filtering: L1 (10uH) + C4 (10uF)\n3. Power Decoupling: 100nF capacitors near each chip\n4. Separate Power Rails: USB 5V vs 3.3V regulated\n5. LiPo Battery Connection: J1 with proper handling\n6. Pull-downs: 10k resistors on unused inputs\n7. Clear Labeling: All signals properly labeled\n8. PCB-Ready: Ground and VDD plane preparation\n\nSensor Configuration:\n- BME688 sensors use SPI interface with unique CS lines\n- VL53L0X uses I²C for ToF volume measurement\n- LoRaWAN and GPS use UART communication\n- All sensors have individual decoupling capacitors"
+		(exclude_from_sim no)
+		(at 320.04 50.8 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "22222222-3333-4444-5555-666666666666")
 	)
 	
 	(label "SDA"
@@ -2709,6 +3018,72 @@
 			(justify left bottom)
 		)
 		(uuid "bbbbbbbb-cccc-dddd-eeee-ffffffffffff")
+	)
+	
+	(label "LORA_TX"
+		(at 292.1 86.36 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "cccccccc-dddd-eeee-ffff-000000000000")
+	)
+	
+	(label "LORA_RX"
+		(at 292.1 88.9 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "dddddddd-eeee-ffff-0000-111111111111")
+	)
+	
+	(label "GPS_TX"
+		(at 292.1 139.7 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "eeeeeeee-ffff-0000-1111-222222222222")
+	)
+	
+	(label "GPS_RX"
+		(at 292.1 142.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "ffffffff-0000-1111-2222-333333333333")
+	)
+	
+	(label "VCC_USB"
+		(at 35.56 73.66 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "00000000-1111-2222-3333-444444444444")
+	)
+	
+	(label "VCC_LIPO"
+		(at 33.02 53.34 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "11111111-2222-3333-4444-555555555555")
 	)
 	
 	(symbol
@@ -4248,6 +4623,663 @@
 			(project "raicycle"
 				(path "/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
 					(reference "#PWR09")
+					(unit 1)
+				)
+			)
+		)
+	)
+	
+	(symbol
+		(lib_id "Sensor_Environmental:BME688")
+		(at 180.34 139.7 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "33333333-4444-5555-6666-777777777779")
+		(property "Reference" "U4"
+			(at 171.45 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "BME688"
+			(at 181.61 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_LGA:Bosch_LGA-8_3x3mm_P0.8mm_ClockwisePinNumbering"
+			(at 207.01 148.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme688-ds000.pdf"
+			(at 180.34 149.86 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "4-in-1 sensor with gas, humidity, pressure and temperature, I2C and SPI interface, 1.71-3.6V, LGA-8"
+			(at 180.34 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "44444444-5555-6666-7777-888888888890")
+		)
+		(pin "2"
+			(uuid "55555555-6666-7777-8888-999999999991")
+		)
+		(pin "3"
+			(uuid "66666666-7777-8888-9999-aaaaaaaaaaaa2")
+		)
+		(pin "4"
+			(uuid "77777777-8888-9999-aaaa-bbbbbbbbbbbb3")
+		)
+		(pin "5"
+			(uuid "88888888-9999-aaaa-bbbb-cccccccccccc4")
+		)
+		(pin "6"
+			(uuid "99999999-aaaa-bbbb-cccc-dddddddddddd5")
+		)
+		(pin "7"
+			(uuid "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee6")
+		)
+		(pin "8"
+			(uuid "bbbbbbbb-cccc-dddd-eeee-ffffffffffff7")
+		)
+		(instances
+			(project "raicycle"
+				(path "/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+					(reference "U4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	
+	(symbol
+		(lib_id "Device:C")
+		(at 157.48 160.02 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "44444444-5555-6666-7777-888888888890")
+		(property "Reference" "C5"
+			(at 161.29 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100nF"
+			(at 161.29 161.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 158.4452 163.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 157.48 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 157.48 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "cccccccc-dddd-eeee-ffff-000000000001")
+		)
+		(pin "2"
+			(uuid "dddddddd-eeee-ffff-0000-111111111112")
+		)
+		(instances
+			(project "raicycle"
+				(path "/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+					(reference "C5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	
+	(symbol
+		(lib_id "Module:Grove_Wio-E5")
+		(at 284.48 86.36 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "55555555-6666-7777-8888-999999999991")
+		(property "Reference" "U5"
+			(at 275.59 77.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "Grove_Wio-E5"
+			(at 285.75 77.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Module:Grove_1x04_P2.54mm_Vertical"
+			(at 284.48 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://files.seeedstudio.com/products/317990687/res/LoRa-E5%20module%20datasheet_V1.0.pdf"
+			(at 284.48 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Grove Wio-E5 LoRaWAN Module with STM32WLE5JC"
+			(at 284.48 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "eeeeeeee-ffff-0000-1111-222222222223")
+		)
+		(pin "2"
+			(uuid "ffffffff-0000-1111-2222-333333333334")
+		)
+		(pin "3"
+			(uuid "00000000-1111-2222-3333-444444444445")
+		)
+		(pin "4"
+			(uuid "11111111-2222-3333-4444-555555555556")
+		)
+		(instances
+			(project "raicycle"
+				(path "/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+					(reference "U5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	
+	(symbol
+		(lib_id "Module:GPS_Air530")
+		(at 284.48 139.7 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "66666666-7777-8888-9999-aaaaaaaaaaaa2")
+		(property "Reference" "U6"
+			(at 275.59 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "GPS_Air530"
+			(at 285.75 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Module:Grove_1x04_P2.54mm_Vertical"
+			(at 284.48 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "http://www.ai-thinker.com/_media/esp8266/docs/esp-12f_product_specification_en.pdf"
+			(at 284.48 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "GPS Air530 Module"
+			(at 284.48 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "22222222-3333-4444-5555-666666666667")
+		)
+		(pin "2"
+			(uuid "33333333-4444-5555-6666-777777777778")
+		)
+		(pin "3"
+			(uuid "44444444-5555-6666-7777-888888888889")
+		)
+		(pin "4"
+			(uuid "55555555-6666-7777-8888-99999999999a")
+		)
+		(instances
+			(project "raicycle"
+				(path "/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+					(reference "U6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	
+	(symbol
+		(lib_id "Device:R")
+		(at 60.96 100.33 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "77777777-8888-9999-aaaa-bbbbbbbbbbbb3")
+		(property "Reference" "R3"
+			(at 63.5 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 63.5 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 59.182 100.33 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 60.96 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Pull-down resistor for unused input"
+			(at 60.96 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "66666666-7777-8888-9999-aaaaaaaaaaaac")
+		)
+		(pin "2"
+			(uuid "77777777-8888-9999-aaaa-bbbbbbbbbbbbd")
+		)
+		(instances
+			(project "raicycle"
+				(path "/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+					(reference "R3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	
+	(symbol
+		(lib_id "Device:R")
+		(at 66.04 100.33 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "88888888-9999-aaaa-bbbb-cccccccccccc4")
+		(property "Reference" "R4"
+			(at 68.58 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 68.58 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 64.262 100.33 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 66.04 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Pull-down resistor for unused input"
+			(at 66.04 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "88888888-9999-aaaa-bbbb-cccccccccccce")
+		)
+		(pin "2"
+			(uuid "99999999-aaaa-bbbb-cccc-dddddddddddf")
+		)
+		(instances
+			(project "raicycle"
+				(path "/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+					(reference "R4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	
+	(symbol
+		(lib_id "power:+3V3")
+		(at 292.1 73.66 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "99999999-aaaa-bbbb-cccc-ddddddddddd0")
+		(property "Reference" "#PWR10"
+			(at 292.1 77.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 292.1 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 292.1 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 292.1 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 292.1 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee1")
+		)
+		(instances
+			(project "raicycle"
+				(path "/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+					(reference "#PWR10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	
+	(symbol
+		(lib_id "power:GND")
+		(at 276.86 91.44 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee1")
+		(property "Reference" "#PWR11"
+			(at 276.86 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 276.86 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 276.86 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 276.86 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\""
+			(at 276.86 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "bbbbbbbb-cccc-dddd-eeee-ffffffffffff2")
+		)
+		(instances
+			(project "raicycle"
+				(path "/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+					(reference "#PWR11")
+					(unit 1)
+				)
+			)
+		)
+	)
+	
+	(symbol
+		(lib_id "power:GND")
+		(at 276.86 147.32 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "bbbbbbbb-cccc-dddd-eeee-ffffffffffff2")
+		(property "Reference" "#PWR12"
+			(at 276.86 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 276.86 152.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 276.86 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 276.86 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\""
+			(at 276.86 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "cccccccc-dddd-eeee-ffff-000000000003")
+		)
+		(instances
+			(project "raicycle"
+				(path "/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+					(reference "#PWR12")
 					(unit 1)
 				)
 			)
