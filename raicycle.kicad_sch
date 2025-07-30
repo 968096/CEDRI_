@@ -2082,10 +2082,434 @@
     )
   )
 
-  ;; Additional components and connections following KiCad 8.0 best practices
+  ;; Additional BME688 sensors (2-4 for demo, can be expanded to 8 total)
+  (symbol
+    (lib_id "Sensor:BME688")
+    (at 160.02 83.82 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "bme688-sensor-2")
+    (property "Reference" "U4"
+      (at 160.02 71.12 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Value" "BME688"
+      (at 160.02 73.66 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Footprint" "Package_LGA:Bosch_LGA-8_3x3mm_P0.8mm_ClockwisePinNumbering"
+      (at 160.02 93.98 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "BME688 Gas, Humidity, Pressure, Temperature Sensor #2"
+      (at 160.02 83.82 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "bme688-2-gnd")
+    )
+    (pin "2"
+      (uuid "bme688-2-csb")
+    )
+    (pin "3"
+      (uuid "bme688-2-sdi")
+    )
+    (pin "4"
+      (uuid "bme688-2-sck")
+    )
+    (pin "5"
+      (uuid "bme688-2-sdo")
+    )
+    (pin "6"
+      (uuid "bme688-2-vddio")
+    )
+    (pin "7"
+      (uuid "bme688-2-gnd2")
+    )
+    (pin "8"
+      (uuid "bme688-2-vdd")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "U4")
+          (unit 1)
+        )
+      )
+    )
+  )
 
-  ;; Text labels for power nets (KiCad 8.0 style)
-  (text "+3V3"
+  ;; BME688 #2 decoupling capacitor
+  (symbol
+    (lib_id "Device:C")
+    (at 177.8 71.12 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "bme688-2-decouple")
+    (property "Reference" "C4"
+      (at 181.61 71.12 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Value" "100nF"
+      (at 181.61 73.66 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+      (at 178.7652 74.93 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "Power Decoupling Capacitor BME688 #2"
+      (at 177.8 71.12 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "bme688-2-decouple-pin1")
+    )
+    (pin "2"
+      (uuid "bme688-2-decouple-pin2")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "C4")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  ;; VL53L0X power decoupling capacitor
+  (symbol
+    (lib_id "Device:C")
+    (at 147.32 60.96 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "vl53l0x-decouple")
+    (property "Reference" "C5"
+      (at 151.13 60.96 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Value" "100nF"
+      (at 151.13 63.5 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+      (at 148.2852 64.77 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "Power Decoupling Capacitor VL53L0X"
+      (at 147.32 60.96 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "vl53l0x-decouple-pin1")
+    )
+    (pin "2"
+      (uuid "vl53l0x-decouple-pin2")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "C5")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  ;; ESP32 additional power decoupling
+  (symbol
+    (lib_id "Device:C")
+    (at 22.86 30.48 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "esp32-decouple-1")
+    (property "Reference" "C10"
+      (at 26.67 30.48 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Value" "100nF"
+      (at 26.67 33.02 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+      (at 23.8252 34.29 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "ESP32 Power Decoupling Capacitor"
+      (at 22.86 30.48 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "esp32-decouple-1-pin1")
+    )
+    (pin "2"
+      (uuid "esp32-decouple-1-pin2")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "C10")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  ;; Additional wiring and connections
+  (wire
+    (pts
+      (xy 61.28 58.42) (xy 149.86 83.82)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-spi-mosi-to-bme688-2")
+  )
+
+  (wire
+    (pts
+      (xy 61.28 55.88) (xy 149.86 86.36)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-spi-sck-to-bme688-2")
+  )
+
+  (wire
+    (pts
+      (xy 170.18 88.9) (xy 61.28 60.96)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-spi-miso-from-bme688-2")
+  )
+
+  ;; Chip select connections for BME688 sensors
+  (wire
+    (pts
+      (xy 30.48 58.42) (xy 73.66 86.36)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-cs1-bme688-1")
+  )
+
+  (wire
+    (pts
+      (xy 30.48 55.88) (xy 149.86 86.36)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-cs2-bme688-2")
+  )
+
+  ;; Power connections for BME688 #2
+  (wire
+    (pts
+      (xy 177.8 68.58) (xy 160.02 73.66)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-bme688-2-vdd-decouple")
+  )
+
+  ;; VL53L0X power decoupling connection
+  (wire
+    (pts
+      (xy 147.32 58.42) (xy 124.46 35.56)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-vl53l0x-vdd-decouple")
+  )
+
+  ;; Ground connections
+  (wire
+    (pts
+      (xy 22.86 33.02) (xy 22.86 90.17)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-esp32-gnd-decouple")
+  )
+
+  (wire
+    (pts
+      (xy 147.32 63.5) (xy 147.32 90.17)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-vl53l0x-gnd-decouple")
+  )
+
+  (wire
+    (pts
+      (xy 177.8 74.93) (xy 177.8 90.17)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-bme688-2-gnd-decouple")
+  )
+
+  ;; Additional global labels for clarity
+  (global_label "CS1_BME688"
+    (shape input)
+    (at 30.48 58.42 0)
+    (fields_autoplaced)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+      (justify left)
+    )
+    (uuid "cs1-bme688-global")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 44.1443 58.42 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+        (hide yes)
+      )
+    )
+  )
+
+  (global_label "CS2_BME688"
+    (shape input)
+    (at 30.48 55.88 0)
+    (fields_autoplaced)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+      (justify left)
+    )
+    (uuid "cs2-bme688-global")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 44.1443 55.88 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+        (hide yes)
+      )
+    )
+  )
+
+  ;; Additional text labels for power nets (KiCad 8.0 style)
+  (text "+3V3" 
     (exclude_from_sim no)
     (at 78.74 20.32 0)
     (effects
@@ -2096,7 +2520,7 @@
     (uuid "text-3v3-label")
   )
 
-  (text "AVDD"
+  (text "AVDD" 
     (exclude_from_sim no)
     (at 147.32 20.32 0)
     (effects
@@ -2107,7 +2531,7 @@
     (uuid "text-avdd-label")
   )
 
-  (text "GND"
+  (text "GND" 
     (exclude_from_sim no)
     (at 22.86 93.98 0)
     (effects
