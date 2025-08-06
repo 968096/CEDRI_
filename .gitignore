@@ -12,3 +12,36 @@
 *.o
 *.pyc
 __pycache__/
+
+# KiCad temporary and backup files
+*.bak
+*.bck
+*~
+*.swp
+*.swo
+*.tmp
+*rescue-backup/
+*-bak
+*-cache.lib
+*-cache.dcm
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*.kicad_pro-bak
+
+# KiCad auto-generated files
+fp-info-cache
+*.log
+*.rpt
+*.csv
+*.lst
+
+# KiCad output directories (can be regenerated)
+gerbers/
+plots/
+fabrication/
+assembly/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+*.tmp
