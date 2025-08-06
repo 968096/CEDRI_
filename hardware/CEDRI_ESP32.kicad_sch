@@ -1,0 +1,317 @@
+(kicad_sch
+  (version 20231120)
+  (generator "eeschema")
+  (generator_version "8.0")
+  (uuid "e63e39d7-6ac0-4ffd-8aa3-1841a4541b55")
+  (paper "A4")
+  (title_block
+    (title "CEDRI ESP32 Multi-Sensor LoRaWAN System")
+    (date "2024-12-06")
+    (rev "1.0")
+    (company "CEDRI Project")
+    (comment 1 "ESP32 Feather with BME688 Feather Wing, VL53L0X, LoRaWAN, GPS")
+    (comment 2 "Refactored schematic with proper pin handling and power separation")
+  )
+  
+  ; Main power symbols
+  (symbol (lib_id "power:+3V3") (at 50 50 0) (unit 1)
+    (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+    (uuid "power-3v3-main")
+    (property "Reference" "#PWR01" (at 50 50 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "+3V3" (at 50 46.99 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "" (at 50 50 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (at 50 50 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid "3v3-main-pin-1"))
+  )
+  
+  (symbol (lib_id "power:GND") (at 50 250 0) (unit 1)
+    (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+    (uuid "power-gnd-main")
+    (property "Reference" "#PWR02" (at 50 250 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "GND" (at 50 253.01 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "" (at 50 250 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (at 50 250 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid "gnd-main-pin-1"))
+  )
+
+  ; ESP32 Feather Main Controller
+  (symbol (lib_id "RF_Module:ESP32-WROOM-32") (at 150 150 0) (unit 1)
+    (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+    (uuid "esp32-feather-main")
+    (property "Reference" "U1" (at 150 110 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "ESP32-FEATHER" (at 150 112.5 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "RF_Module:ESP32-WROOM-32" (at 150 150 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf" (at 150 150 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    ; Define main pins
+    (pin "1" (uuid "esp32-pin-gnd1"))       ; GND
+    (pin "2" (uuid "esp32-pin-3v3"))        ; 3V3
+    (pin "3" (uuid "esp32-pin-vbat"))       ; VBAT - to be separated
+    (pin "4" (uuid "esp32-pin-en"))         ; EN
+    (pin "5" (uuid "esp32-pin-usb"))        ; USB
+    (pin "6" (uuid "esp32-pin-13"))         ; GPIO13
+    (pin "7" (uuid "esp32-pin-12"))         ; GPIO12
+    (pin "8" (uuid "esp32-pin-27"))         ; GPIO27
+    (pin "9" (uuid "esp32-pin-33"))         ; GPIO33/A9 - UNUSED
+    (pin "10" (uuid "esp32-pin-15"))        ; GPIO15/A8 - UNUSED  
+    (pin "11" (uuid "esp32-pin-32"))        ; GPIO32/A7 - UNUSED
+    (pin "12" (uuid "esp32-pin-14"))        ; GPIO14/A6 - UNUSED
+    (pin "13" (uuid "esp32-pin-sck"))       ; SCK
+    (pin "14" (uuid "esp32-pin-mosi"))      ; MOSI
+    (pin "15" (uuid "esp32-pin-miso"))      ; MISO
+    (pin "16" (uuid "esp32-pin-rx"))        ; RX/GPIO3
+    (pin "17" (uuid "esp32-pin-tx"))        ; TX/GPIO1
+    (pin "18" (uuid "esp32-pin-4"))         ; GPIO4 - for communication mux
+    (pin "19" (uuid "esp32-pin-sda"))       ; SDA/GPIO21
+    (pin "20" (uuid "esp32-pin-scl"))       ; SCL/GPIO22
+    (pin "21" (uuid "esp32-pin-16"))        ; GPIO16
+    (pin "22" (uuid "esp32-pin-17"))        ; GPIO17
+    (pin "23" (uuid "esp32-pin-9"))         ; GPIO9
+    (pin "24" (uuid "esp32-pin-10"))        ; GPIO10
+    (pin "25" (uuid "esp32-pin-gnd2"))      ; GND
+  )
+
+  ; BME688 Feather Wing Development Kit
+  (symbol (lib_id "Sensor_Temperature:BME680") (at 300 100 0) (unit 1)
+    (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+    (uuid "bme688-feather-wing")
+    (property "Reference" "U2" (at 300 80 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "BME688-FEATHER-WING" (at 300 82.5 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Package_LGA:Bosch_LGA-8_2x2.5mm_P0.65mm_ClockwisePinNumbering" (at 300 100 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BME688-DS000.pdf" (at 300 100 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid "bme688-pin-vdd"))       ; VDD -> 3V3
+    (pin "2" (uuid "bme688-pin-gnd"))       ; GND
+    (pin "3" (uuid "bme688-pin-scl"))       ; SCL
+    (pin "4" (uuid "bme688-pin-sda"))       ; SDA
+  )
+
+  ; VL53L0X ToF Sensor  
+  (symbol (lib_id "Sensor_Optical:VL53L0X") (at 300 180 0) (unit 1)
+    (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+    (uuid "vl53l0x-tof-sensor")
+    (property "Reference" "U3" (at 300 160 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "VL53L0X-TOF" (at 300 162.5 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Package_LGA:ST_VL53L0X" (at 300 180 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "https://www.st.com/resource/en/datasheet/vl53l0x.pdf" (at 300 180 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid "vl53l0x-pin-vdd"))      ; VDD -> 3V3
+    (pin "2" (uuid "vl53l0x-pin-gnd"))      ; GND  
+    (pin "3" (uuid "vl53l0x-pin-scl"))      ; SCL
+    (pin "4" (uuid "vl53l0x-pin-sda"))      ; SDA
+  )
+
+  ; Grove Wio-E5 LoRaWAN Module
+  (symbol (lib_id "RF_Module:ESP32-WROOM-32") (at 300 260 0) (unit 1)
+    (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+    (uuid "grove-wio-e5-lorawan")
+    (property "Reference" "U4" (at 300 240 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "GROVE-WIO-E5" (at 300 242.5 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" (at 300 260 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "https://files.seeedstudio.com/products/317990687/res/LoRa-E5%20module%20datasheet_V1.0.pdf" (at 300 260 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid "wio-e5-pin-vcc"))       ; VCC -> 3V3
+    (pin "2" (uuid "wio-e5-pin-gnd"))       ; GND
+    (pin "3" (uuid "wio-e5-pin-tx"))        ; TX -> ESP32 RX
+    (pin "4" (uuid "wio-e5-pin-rx"))        ; RX -> ESP32 TX
+  )
+
+  ; GPS Air530 Module
+  (symbol (lib_id "RF_GPS:NEO-8Q") (at 450 180 0) (unit 1)
+    (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+    (uuid "gps-air530-module")
+    (property "Reference" "U5" (at 450 160 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "GPS-AIR530" (at 450 162.5 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "RF_GPS:ublox_NEO" (at 450 180 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "http://www.ai-thinker.com/_media/esp32/docs/esp32-a1s_product_specification.pdf" (at 450 180 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid "gps-pin-vcc"))          ; VCC -> 3V3
+    (pin "2" (uuid "gps-pin-gnd"))          ; GND
+    (pin "3" (uuid "gps-pin-tx"))           ; TX -> ESP32 RX (different serial)
+    (pin "4" (uuid "gps-pin-rx"))           ; RX -> ESP32 TX (different serial)
+  )
+
+  ; Pull-down resistors for unused pins
+  (symbol (lib_id "Device:R") (at 400 300 0) (unit 1)
+    (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+    (uuid "rpd-14-a6")
+    (property "Reference" "Rpd_14" (at 400 295 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "10k" (at 400 305 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (at 400 300 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (at 400 300 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid "rpd-14-pin-1"))         ; To GPIO14/A6
+    (pin "2" (uuid "rpd-14-pin-2"))         ; To GND
+  )
+
+  (symbol (lib_id "Device:R") (at 420 300 0) (unit 1)
+    (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+    (uuid "rpd-32-a7")
+    (property "Reference" "Rpd_32" (at 420 295 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "10k" (at 420 305 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (at 420 300 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (at 420 300 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid "rpd-32-pin-1"))         ; To GPIO32/A7
+    (pin "2" (uuid "rpd-32-pin-2"))         ; To GND
+  )
+
+  (symbol (lib_id "Device:R") (at 440 300 0) (unit 1)
+    (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+    (uuid "rpd-15-a8")
+    (property "Reference" "Rpd_15" (at 440 295 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "10k" (at 440 305 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (at 440 300 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (at 440 300 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid "rpd-15-pin-1"))         ; To GPIO15/A8
+    (pin "2" (uuid "rpd-15-pin-2"))         ; To GND
+  )
+
+  (symbol (lib_id "Device:R") (at 460 300 0) (unit 1)
+    (exclude_from_sim no) (in_bom yes) (on_board yes) (dnp no)
+    (uuid "rpd-33-a9")
+    (property "Reference" "Rpd_33" (at 460 295 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "10k" (at 460 305 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric" (at 460 300 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (at 460 300 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid "rpd-33-pin-1"))         ; To GPIO33/A9
+    (pin "2" (uuid "rpd-33-pin-2"))         ; To GND
+  )
+
+  ; VBAT_IN Net Label
+  (label "VBAT_IN" (at 120 130 0) (fields_autoplaced)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid "vbat-in-label")
+  )
+
+  ; Wire connections
+  
+  ; Power connections - 3V3 rail
+  (wire (pts (xy 50 50) (xy 130 50)) (stroke (width 0) (type default)) (uuid "wire-3v3-main"))
+  (wire (pts (xy 130 50) (xy 280 50)) (stroke (width 0) (type default)) (uuid "wire-3v3-to-bme688"))
+  (wire (pts (xy 280 50) (xy 280 170)) (stroke (width 0) (type default)) (uuid "wire-3v3-to-vl53l0x"))
+  (wire (pts (xy 280 170) (xy 280 250)) (stroke (width 0) (type default)) (uuid "wire-3v3-to-wio-e5"))
+  (wire (pts (xy 280 250) (xy 430 250)) (stroke (width 0) (type default)) (uuid "wire-3v3-to-gps"))
+  
+  ; VBAT separation - connect to ESP32 VBAT pin with label
+  (wire (pts (xy 120 130) (xy 130 130)) (stroke (width 0) (type default)) (uuid "wire-vbat-separated"))
+  
+  ; Ground connections
+  (wire (pts (xy 50 250) (xy 130 250)) (stroke (width 0) (type default)) (uuid "wire-gnd-main"))
+  (wire (pts (xy 130 250) (xy 280 250)) (stroke (width 0) (type default)) (uuid "wire-gnd-to-bme688"))
+  (wire (pts (xy 280 250) (xy 280 190)) (stroke (width 0) (type default)) (uuid "wire-gnd-to-vl53l0x"))
+  (wire (pts (xy 280 190) (xy 280 270)) (stroke (width 0) (type default)) (uuid "wire-gnd-to-wio-e5"))
+  (wire (pts (xy 280 270) (xy 430 270)) (stroke (width 0) (type default)) (uuid "wire-gnd-to-gps"))
+  
+  ; Pull-down resistor connections to GND
+  (wire (pts (xy 400 310) (xy 400 250)) (stroke (width 0) (type default)) (uuid "wire-rpd-14-to-gnd"))
+  (wire (pts (xy 420 310) (xy 420 250)) (stroke (width 0) (type default)) (uuid "wire-rpd-32-to-gnd"))
+  (wire (pts (xy 440 310) (xy 440 250)) (stroke (width 0) (type default)) (uuid "wire-rpd-15-to-gnd"))
+  (wire (pts (xy 460 310) (xy 460 250)) (stroke (width 0) (type default)) (uuid "wire-rpd-33-to-gnd"))
+  
+  ; Pull-down resistor connections to ESP32 unused pins
+  (wire (pts (xy 400 290) (xy 170 290)) (stroke (width 0) (type default)) (uuid "wire-rpd-14-to-pin"))  ; GPIO14/A6
+  (wire (pts (xy 420 290) (xy 170 285)) (stroke (width 0) (type default)) (uuid "wire-rpd-32-to-pin"))  ; GPIO32/A7
+  (wire (pts (xy 440 290) (xy 170 280)) (stroke (width 0) (type default)) (uuid "wire-rpd-15-to-pin"))  ; GPIO15/A8
+  (wire (pts (xy 460 290) (xy 170 275)) (stroke (width 0) (type default)) (uuid "wire-rpd-33-to-pin"))  ; GPIO33/A9
+  
+  ; I2C connections (SDA/SCL)
+  (wire (pts (xy 190 180) (xy 280 100)) (stroke (width 0) (type default)) (uuid "wire-sda-to-bme688"))   ; SDA ESP32 to BME688
+  (wire (pts (xy 190 175) (xy 280 95)) (stroke (width 0) (type default)) (uuid "wire-scl-to-bme688"))    ; SCL ESP32 to BME688
+  (wire (pts (xy 280 100) (xy 280 180)) (stroke (width 0) (type default)) (uuid "wire-sda-to-vl53l0x"))  ; SDA BME688 to VL53L0X
+  (wire (pts (xy 280 95) (xy 280 175)) (stroke (width 0) (type default)) (uuid "wire-scl-to-vl53l0x"))   ; SCL BME688 to VL53L0X
+  
+  ; UART connections for LoRaWAN
+  (wire (pts (xy 190 160) (xy 280 270)) (stroke (width 0) (type default)) (uuid "wire-tx-to-wio-e5"))    ; ESP32 TX to Wio-E5 RX
+  (wire (pts (xy 190 165) (xy 280 265)) (stroke (width 0) (type default)) (uuid "wire-rx-to-wio-e5"))    ; ESP32 RX to Wio-E5 TX
+  
+  ; UART connections for GPS (using different pins)
+  (wire (pts (xy 190 200) (xy 430 190)) (stroke (width 0) (type default)) (uuid "wire-tx2-to-gps"))      ; ESP32 GPIO16 to GPS RX
+  (wire (pts (xy 190 195) (xy 430 185)) (stroke (width 0) (type default)) (uuid "wire-rx2-to-gps"))      ; ESP32 GPIO17 to GPS TX
+
+  ; Sheet instances
+  (sheet_instances
+    (path "/" (page "1"))
+  )
+)
