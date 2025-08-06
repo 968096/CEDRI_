@@ -1547,6 +1547,359 @@
 				)
 			)
 		)
+		(symbol "Interface_Expansion:CommMux_SPI_I2C"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at -12.7 15.24 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "CommMux_SPI_I2C"
+				(at 2.54 15.24 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 -17.78 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 -20.32 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Communication Multiplexer for SPI/I2C interfaces to BME688 sensors"
+				(at 0 -22.86 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "CommMux_SPI_I2C_0_1"
+				(rectangle
+					(start -12.7 13.97)
+					(end 12.7 -13.97)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "CommMux_SPI_I2C_1_1"
+				(pin power_in line
+					(at 0 16.51 270)
+					(length 2.54)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -16.51 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -15.24 10.16 0)
+					(length 2.54)
+					(name "SCK_IN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -15.24 7.62 0)
+					(length 2.54)
+					(name "MOSI_IN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -15.24 5.08 0)
+					(length 2.54)
+					(name "MISO_IN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -15.24 2.54 0)
+					(length 2.54)
+					(name "CS1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -15.24 0 0)
+					(length 2.54)
+					(name "CS2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -15.24 -2.54 0)
+					(length 2.54)
+					(name "CS3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -15.24 -5.08 0)
+					(length 2.54)
+					(name "CS4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "9"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -15.24 -7.62 0)
+					(length 2.54)
+					(name "CS5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "10"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -15.24 -10.16 0)
+					(length 2.54)
+					(name "CS6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "11"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -15.24 -12.7 0)
+					(length 2.54)
+					(name "CS7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "12"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 15.24 12.7 180)
+					(length 2.54)
+					(name "CS8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "13"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 15.24 10.16 180)
+					(length 2.54)
+					(name "SCK_OUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "14"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 15.24 7.62 180)
+					(length 2.54)
+					(name "MOSI_OUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "15"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 15.24 5.08 180)
+					(length 2.54)
+					(name "MISO_OUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "16"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 	)
 	(junction
 		(at 125.73 35.56)
@@ -3303,6 +3656,435 @@
 				)
 			)
 		)
+	)
+	(symbol
+		(lib_id "Sensor_Environmental:BME688")
+		(at 193.04 175.26 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f0123456-789a-bcde-f012-90123456780f")
+		(property "Reference" "U6"
+			(at 193.04 163.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "BME688_2"
+			(at 193.04 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_LGA:Bosch_LGA-8_3x3mm_P0.8mm"
+			(at 193.04 187.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme688-ds000.pdf"
+			(at 193.04 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "4-in-1 digital gas, humidity, pressure and temperature sensor with AI and I²C/SPI interface"
+			(at 193.04 193.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f0123456-789a-bcde-f012-901234567810")
+		)
+		(pin "2"
+			(uuid "f0123456-789a-bcde-f012-901234567811")
+		)
+		(pin "3"
+			(uuid "f0123456-789a-bcde-f012-901234567812")
+		)
+		(pin "4"
+			(uuid "f0123456-789a-bcde-f012-901234567813")
+		)
+		(pin "5"
+			(uuid "f0123456-789a-bcde-f012-901234567814")
+		)
+		(pin "6"
+			(uuid "f0123456-789a-bcde-f012-901234567815")
+		)
+		(pin "7"
+			(uuid "f0123456-789a-bcde-f012-901234567816")
+		)
+		(pin "8"
+			(uuid "f0123456-789a-bcde-f012-901234567817")
+		)
+		(instances
+			(project "raicycle"
+				(path "/6a8c8c84-cd45-4f37-a9f9-6c7e8b7c6d5e"
+					(reference "U6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Sensor_Environmental:BME688")
+		(at 248.92 175.26 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f0123456-789a-bcde-f012-901234567818")
+		(property "Reference" "U7"
+			(at 248.92 163.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "BME688_3"
+			(at 248.92 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_LGA:Bosch_LGA-8_3x3mm_P0.8mm"
+			(at 248.92 187.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme688-ds000.pdf"
+			(at 248.92 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "4-in-1 digital gas, humidity, pressure and temperature sensor with AI and I²C/SPI interface"
+			(at 248.92 193.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f0123456-789a-bcde-f012-901234567819")
+		)
+		(pin "2"
+			(uuid "f0123456-789a-bcde-f012-90123456781a")
+		)
+		(pin "3"
+			(uuid "f0123456-789a-bcde-f012-90123456781b")
+		)
+		(pin "4"
+			(uuid "f0123456-789a-bcde-f012-90123456781c")
+		)
+		(pin "5"
+			(uuid "f0123456-789a-bcde-f012-90123456781d")
+		)
+		(pin "6"
+			(uuid "f0123456-789a-bcde-f012-90123456781e")
+		)
+		(pin "7"
+			(uuid "f0123456-789a-bcde-f012-90123456781f")
+		)
+		(pin "8"
+			(uuid "f0123456-789a-bcde-f012-901234567820")
+		)
+		(instances
+			(project "raicycle"
+				(path "/6a8c8c84-cd45-4f37-a9f9-6c7e8b7c6d5e"
+					(reference "U7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Sensor_Environmental:BME688")
+		(at 193.04 213.36 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f0123456-789a-bcde-f012-901234567821")
+		(property "Reference" "U8"
+			(at 193.04 201.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "BME688_4"
+			(at 193.04 204.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_LGA:Bosch_LGA-8_3x3mm_P0.8mm"
+			(at 193.04 226.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f0123456-789a-bcde-f012-901234567822")
+		)
+		(pin "2"
+			(uuid "f0123456-789a-bcde-f012-901234567823")
+		)
+		(pin "3"
+			(uuid "f0123456-789a-bcde-f012-901234567824")
+		)
+		(pin "4"
+			(uuid "f0123456-789a-bcde-f012-901234567825")
+		)
+		(pin "5"
+			(uuid "f0123456-789a-bcde-f012-901234567826")
+		)
+		(pin "6"
+			(uuid "f0123456-789a-bcde-f012-901234567827")
+		)
+		(pin "7"
+			(uuid "f0123456-789a-bcde-f012-901234567828")
+		)
+		(pin "8"
+			(uuid "f0123456-789a-bcde-f012-901234567829")
+		)
+		(instances
+			(project "raicycle"
+				(path "/6a8c8c84-cd45-4f37-a9f9-6c7e8b7c6d5e"
+					(reference "U8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Sensor_Environmental:BME688")
+		(at 248.92 213.36 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f0123456-789a-bcde-f012-90123456782a")
+		(property "Reference" "U9"
+			(at 248.92 201.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "BME688_5"
+			(at 248.92 204.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_LGA:Bosch_LGA-8_3x3mm_P0.8mm"
+			(at 248.92 226.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f0123456-789a-bcde-f012-90123456782b")
+		)
+		(pin "2"
+			(uuid "f0123456-789a-bcde-f012-90123456782c")
+		)
+		(pin "3"
+			(uuid "f0123456-789a-bcde-f012-90123456782d")
+		)
+		(pin "4"
+			(uuid "f0123456-789a-bcde-f012-90123456782e")
+		)
+		(pin "5"
+			(uuid "f0123456-789a-bcde-f012-90123456782f")
+		)
+		(pin "6"
+			(uuid "f0123456-789a-bcde-f012-901234567830")
+		)
+		(pin "7"
+			(uuid "f0123456-789a-bcde-f012-901234567831")
+		)
+		(pin "8"
+			(uuid "f0123456-789a-bcde-f012-901234567832")
+		)
+		(instances
+			(project "raicycle"
+				(path "/6a8c8c84-cd45-4f37-a9f9-6c7e8b7c6d5e"
+					(reference "U9")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Interface_Expansion:CommMux_SPI_I2C")
+		(at 139.7 93.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f0123456-789a-bcde-f012-901234567833")
+		(property "Reference" "U10"
+			(at 139.7 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "CommMux_SPI_I2C"
+			(at 139.7 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 139.7 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 139.7 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Communication Multiplexer for SPI/I2C interfaces to BME688 sensors"
+			(at 139.7 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f0123456-789a-bcde-f012-901234567834")
+		)
+		(pin "2"
+			(uuid "f0123456-789a-bcde-f012-901234567835")
+		)
+		(pin "3"
+			(uuid "f0123456-789a-bcde-f012-901234567836")
+		)
+		(pin "4"
+			(uuid "f0123456-789a-bcde-f012-901234567837")
+		)
+		(pin "5"
+			(uuid "f0123456-789a-bcde-f012-901234567838")
+		)
+		(pin "6"
+			(uuid "f0123456-789a-bcde-f012-901234567839")
+		)
+		(pin "7"
+			(uuid "f0123456-789a-bcde-f012-90123456783a")
+		)
+		(pin "8"
+			(uuid "f0123456-789a-bcde-f012-90123456783b")
+		)
+		(pin "9"
+			(uuid "f0123456-789a-bcde-f012-90123456783c")
+		)
+		(pin "10"
+			(uuid "f0123456-789a-bcde-f012-90123456783d")
+		)
+		(pin "11"
+			(uuid "f0123456-789a-bcde-f012-90123456783e")
+		)
+		(pin "12"
+			(uuid "f0123456-789a-bcde-f012-90123456783f")
+		)
+		(pin "13"
+			(uuid "f0123456-789a-bcde-f012-901234567840")
+		)
+		(pin "14"
+			(uuid "f0123456-789a-bcde-f012-901234567841")
+		)
+		(pin "15"
+			(uuid "f0123456-789a-bcde-f012-901234567842")
+		)
+		(pin "16"
+			(uuid "f0123456-789a-bcde-f012-901234567843")
+		)
+		(instances
+			(project "raicycle"
+				(path "/6a8c8c84-cd45-4f37-a9f9-6c7e8b7c6d5e"
+					(reference "U10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(text "NOTE: BME688 sensors U11-U17 (sensors 6-8) are connected via CommMux\nusing CS signals from ESP32 pins A10-A12 and shared SPI bus.\nEach sensor has unique heater profiles as described in implementation."
+		(exclude_from_sim no)
+		(at 304.8 93.98 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "f0123456-789a-bcde-f012-901234567844")
 	)
 	(sheet_instances
 		(path "/"
