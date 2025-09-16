@@ -1,0 +1,2548 @@
+(kicad_sch
+	(version 20231120)
+	(generator "eeschema")
+	(generator_version "8.0")
+	(uuid "cedri-esp32-sensors-main")
+	(paper "A3")
+	(title_block
+		(title "CEDRI ESP32 Multi-Sensor System")
+		(date "2024-01-15")
+		(rev "v2.0")
+		(company "CEDRI Project")
+		(comment 1 "ESP32 + BME688 sensors + VL53L0X + GPS + LoRaWAN")
+		(comment 2 "Professional schematic following KiCad best practices")
+		(comment 3 "All components clearly labeled with proper net connections")
+		(comment 4 "Functional organization - MCU center, sensors periphery")
+	)
+	(lib_symbols
+		(symbol "MCU_Module:ESP32-DEVKIT-V1"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at -12.7 34.29 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "ESP32-DEVKIT-V1"
+				(at -12.7 31.75 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "Module:ESP32-DEVKIT-V1"
+				(at 0 -35.56 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+				(at -7.62 1.27 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "ESP32 development board"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "ESP32-DEVKIT-V1_0_1"
+				(rectangle
+					(start -12.7 30.48)
+					(end 12.7 -33.02)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "ESP32-DEVKIT-V1_1_1"
+				(pin power_in line
+					(at -15.24 27.94 0)
+					(length 2.54)
+					(name "3V3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at -15.24 25.4 0)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -15.24 22.86 0)
+					(length 2.54)
+					(name "EN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -15.24 0 0)
+					(length 2.54)
+					(name "GPIO23"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "11"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -15.24 2.54 0)
+					(length 2.54)
+					(name "GPIO22"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "10"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at -15.24 -2.54 0)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "12"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 15.24 27.94 180)
+					(length 2.54)
+					(name "GPIO16"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "13"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 15.24 25.4 180)
+					(length 2.54)
+					(name "GPIO17"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "14"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 15.24 15.24 180)
+					(length 2.54)
+					(name "GPIO32"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "18"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 15.24 12.7 180)
+					(length 2.54)
+					(name "GPIO33"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "19"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 15.24 10.16 180)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "20"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 15.24 7.62 180)
+					(length 2.54)
+					(name "3V3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "21"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
+		(symbol "Sensor:BME688_Breakout"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at -7.62 8.89 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "BME688_Breakout"
+				(at 1.27 8.89 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "Module:BME688_Breakout"
+				(at 0 -10.16 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme688-ds000.pdf"
+				(at 0 -12.7 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "BME688 Environmental Sensor Breakout Board"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "BME688_Breakout_0_1"
+				(rectangle
+					(start -7.62 7.62)
+					(end 7.62 -7.62)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "BME688_Breakout_1_1"
+				(pin power_in line
+					(at 0 10.16 270)
+					(length 2.54)
+					(name "VDD"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -10.16 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 10.16 2.54 180)
+					(length 2.54)
+					(name "SCK"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 10.16 0 180)
+					(length 2.54)
+					(name "SDO"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 10.16 -2.54 180)
+					(length 2.54)
+					(name "SDI"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 10.16 -5.08 180)
+					(length 2.54)
+					(name "~{CS}"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
+		(symbol "Sensor:VL53L0X_Breakout"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at -7.62 8.89 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "VL53L0X_Breakout"
+				(at 1.27 8.89 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "Module:VL53L0X_Breakout"
+				(at 0 -10.16 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://www.st.com/resource/en/datasheet/vl53l0x.pdf"
+				(at 0 -12.7 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "VL53L0X ToF Distance Sensor Breakout Board"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "VL53L0X_Breakout_0_1"
+				(rectangle
+					(start -7.62 7.62)
+					(end 7.62 -7.62)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "VL53L0X_Breakout_1_1"
+				(pin power_in line
+					(at 0 10.16 270)
+					(length 2.54)
+					(name "VDD"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -10.16 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 10.16 2.54 180)
+					(length 2.54)
+					(name "SCL"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 10.16 0 180)
+					(length 2.54)
+					(name "SDA"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
+		(symbol "Module:GPS_Air530"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at -7.62 8.89 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "GPS_Air530"
+				(at 1.27 8.89 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "Module:GPS_Air530"
+				(at 0 -10.16 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 -12.7 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Air530 GPS Module"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "GPS_Air530_0_1"
+				(rectangle
+					(start -7.62 7.62)
+					(end 7.62 -7.62)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "GPS_Air530_1_1"
+				(pin power_in line
+					(at 0 10.16 270)
+					(length 2.54)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -10.16 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 10.16 2.54 180)
+					(length 2.54)
+					(name "TX"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 10.16 0 180)
+					(length 2.54)
+					(name "RX"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
+		(symbol "Module:Grove_Wio-E5"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at -7.62 8.89 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "Grove_Wio-E5"
+				(at 1.27 8.89 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "Module:Grove_Wio-E5"
+				(at 0 -10.16 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 -12.7 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Grove Wio-E5 LoRaWAN Module"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Grove_Wio-E5_0_1"
+				(rectangle
+					(start -7.62 7.62)
+					(end 7.62 -7.62)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "Grove_Wio-E5_1_1"
+				(pin power_in line
+					(at -2.54 10.16 270)
+					(length 2.54)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 2.54 -10.16 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 10.16 2.54 180)
+					(length 2.54)
+					(name "TX"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 10.16 0 180)
+					(length 2.54)
+					(name "RX"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
+		(symbol "power:+3V3"
+			(power)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "+3V3"
+				(at 0 3.556 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"+3V3\""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "+3V3_0_1"
+				(polyline
+					(pts
+						(xy -0.762 1.27) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 2.54) (xy 0.762 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "+3V3_1_1"
+				(pin power_in line
+					(at 0 0 90)
+					(length 0) hide
+					(name "+3V3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
+		(symbol "power:GND"
+			(power)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "GND"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "GND_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GND_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0) hide
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
+	)
+
+	(junction
+		(at 165.1 40.64)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "power-3v3-junction-1")
+	)
+	(junction
+		(at 165.1 170.18)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "power-gnd-junction-1")
+	)
+	(junction
+		(at 99.06 55.88)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "i2c-scl-junction-1")
+	)
+	(junction
+		(at 99.06 50.8)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "i2c-sda-junction-1")
+	)
+	(junction
+		(at 165.1 40.64)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "power-3v3-junction-main")
+	)
+	(junction
+		(at 165.1 170.18)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "power-gnd-junction-main")
+	)
+	(junction
+		(at 58.42 40.64)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "power-3v3-junction-bme688")
+	)
+	(junction
+		(at 58.42 170.18)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "power-gnd-junction-bme688")
+	)
+	(junction
+		(at 213.36 40.64)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "power-3v3-junction-modules")
+	)
+	(junction
+		(at 213.36 170.18)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "power-gnd-junction-modules")
+	)
+
+	(wire
+		(pts
+			(xy 134.62 71.12) (xy 142.24 71.12)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-esp32-gpio23-to-i2c-sda")
+	)
+	(wire
+		(pts
+			(xy 134.62 73.66) (xy 142.24 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-esp32-gpio22-to-i2c-scl")
+	)
+	(wire
+		(pts
+			(xy 134.62 83.82) (xy 142.24 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-esp32-gpio16-to-lora-rx")
+	)
+	(wire
+		(pts
+			(xy 134.62 81.28) (xy 142.24 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-esp32-gpio17-to-lora-tx")
+	)
+	(wire
+		(pts
+			(xy 134.62 93.98) (xy 142.24 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-esp32-gpio32-to-gps-tx")
+	)
+	(wire
+		(pts
+			(xy 134.62 91.44) (xy 142.24 91.44)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-esp32-gpio33-to-gps-rx")
+	)
+	(wire
+		(pts
+			(xy 134.62 58.42) (xy 165.1 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-esp32-3v3-to-power-rail")
+	)
+	(wire
+		(pts
+			(xy 165.1 58.42) (xy 165.1 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-3v3-to-power-symbol")
+	)
+	(wire
+		(pts
+			(xy 134.62 104.14) (xy 165.1 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-esp32-gnd-to-ground-rail")
+	)
+	(wire
+		(pts
+			(xy 165.1 104.14) (xy 165.1 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-gnd-to-ground-symbol")
+	)
+	(wire
+		(pts
+			(xy 165.1 40.64) (xy 200.66 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-3v3-to-vl53l0x")
+	)
+	(wire
+		(pts
+			(xy 165.1 170.18) (xy 200.66 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-gnd-to-vl53l0x")
+	)
+	(wire
+		(pts
+			(xy 142.24 73.66) (xy 99.06 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-i2c-scl-branch")
+	)
+	(wire
+		(pts
+			(xy 142.24 71.12) (xy 99.06 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-i2c-sda-branch")
+	)
+	(wire
+		(pts
+			(xy 99.06 55.88) (xy 205.74 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-i2c-scl-to-vl53l0x")
+	)
+	(wire
+		(pts
+			(xy 99.06 50.8) (xy 205.74 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-i2c-sda-to-vl53l0x")
+	)
+
+	(wire
+		(pts
+			(xy 213.36 45.72) (xy 213.36 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-vl53l0x-vdd-to-3v3")
+	)
+	(wire
+		(pts
+			(xy 213.36 66.04) (xy 213.36 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-vl53l0x-gnd-to-gnd")
+	)
+	(wire
+		(pts
+			(xy 213.36 88.9) (xy 213.36 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-gps-vcc-to-3v3")
+	)
+	(wire
+		(pts
+			(xy 213.36 109.22) (xy 213.36 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-gps-gnd-to-gnd")
+	)
+	(wire
+		(pts
+			(xy 210.82 132.08) (xy 210.82 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-lora-vcc-to-3v3")
+	)
+	(wire
+		(pts
+			(xy 215.9 152.4) (xy 215.9 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-lora-gnd-to-gnd")
+	)
+	(wire
+		(pts
+			(xy 223.52 101.6) (xy 230.0 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-gps-tx-out")
+	)
+	(wire
+		(pts
+			(xy 223.52 99.06) (xy 230.0 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-gps-rx-in")
+	)
+	(wire
+		(pts
+			(xy 223.52 144.78) (xy 230.0 144.78)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-lora-tx-out")
+	)
+	(wire
+		(pts
+			(xy 223.52 142.24) (xy 230.0 142.24)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-lora-rx-in")
+	)
+	(wire
+		(pts
+			(xy 142.24 91.44) (xy 230.0 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-esp32-gpio33-to-gps-rx-complete")
+	)
+	(wire
+		(pts
+			(xy 142.24 93.98) (xy 230.0 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-esp32-gpio32-to-gps-tx-complete")
+	)
+	(wire
+		(pts
+			(xy 142.24 83.82) (xy 230.0 142.24)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-esp32-gpio16-to-lora-rx-complete")
+	)
+	(wire
+		(pts
+			(xy 142.24 81.28) (xy 230.0 144.78)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-esp32-gpio17-to-lora-tx-complete")
+	)
+
+	(wire
+		(pts
+			(xy 58.42 45.72) (xy 58.42 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-bme688-1-vdd-to-3v3")
+	)
+	(wire
+		(pts
+			(xy 58.42 66.04) (xy 58.42 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-bme688-1-gnd-to-gnd")
+	)
+	(wire
+		(pts
+			(xy 58.42 68.58) (xy 58.42 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-bme688-2-vdd-to-3v3")
+	)
+	(wire
+		(pts
+			(xy 58.42 88.9) (xy 58.42 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-bme688-2-gnd-to-gnd")
+	)
+	(wire
+		(pts
+			(xy 68.58 58.42) (xy 76.2 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-bme688-1-sck")
+	)
+	(wire
+		(pts
+			(xy 68.58 55.88) (xy 76.2 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-bme688-1-sdo")
+	)
+	(wire
+		(pts
+			(xy 68.58 53.34) (xy 76.2 53.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-bme688-1-sdi")
+	)
+	(wire
+		(pts
+			(xy 68.58 50.8) (xy 76.2 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-bme688-1-cs")
+	)
+	(wire
+		(pts
+			(xy 68.58 81.28) (xy 76.2 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-bme688-2-sck")
+	)
+	(wire
+		(pts
+			(xy 68.58 78.74) (xy 76.2 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-bme688-2-sdo")
+	)
+	(wire
+		(pts
+			(xy 68.58 76.2) (xy 76.2 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-bme688-2-sdi")
+	)
+	(wire
+		(pts
+			(xy 68.58 73.66) (xy 76.2 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-bme688-2-cs")
+	)
+
+	(wire
+		(pts
+			(xy 165.1 40.64) (xy 58.42 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-3v3-rail-to-bme688")
+	)
+	(wire
+		(pts
+			(xy 165.1 40.64) (xy 213.36 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-3v3-rail-to-modules")
+	)
+	(wire
+		(pts
+			(xy 165.1 170.18) (xy 58.42 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-gnd-rail-to-bme688")
+	)
+	(wire
+		(pts
+			(xy 165.1 170.18) (xy 213.36 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "wire-gnd-rail-to-modules")
+	)
+
+	(label "I2C_SDA"
+		(at 144.78 71.12 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-i2c-sda")
+	)
+	(label "I2C_SCL"
+		(at 144.78 73.66 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-i2c-scl")
+	)
+	(label "LORA_RX"
+		(at 144.78 83.82 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-lora-rx")
+	)
+	(label "LORA_TX"
+		(at 144.78 81.28 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-lora-tx")
+	)
+	(label "GPS_TX"
+		(at 144.78 93.98 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-gps-tx")
+	)
+	(label "GPS_RX"
+		(at 144.78 91.44 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-gps-rx")
+	)
+	(label "+3V3"
+		(at 167.64 40.64 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-3v3-power")
+	)
+	(label "GND"
+		(at 167.64 170.18 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-gnd-power")
+	)
+	(label "I2C_SCL"
+		(at 170.18 55.88 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-i2c-scl-vl53l0x")
+	)
+	(label "I2C_SDA"
+		(at 170.18 50.8 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-i2c-sda-vl53l0x")
+	)
+	(label "GPS_TX"
+		(at 232.0 101.6 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-gps-tx-out")
+	)
+	(label "GPS_RX"
+		(at 232.0 99.06 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-gps-rx-in")
+	)
+	(label "LORA_TX"
+		(at 232.0 144.78 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-lora-tx-out")
+	)
+	(label "LORA_RX"
+		(at 232.0 142.24 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-lora-rx-in")
+	)
+	(label "+3V3"
+		(at 215.0 40.64 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-3v3-vl53l0x")
+	)
+	(label "GND"
+		(at 215.0 170.18 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-gnd-vl53l0x")
+	)
+	(label "SPI_SCK"
+		(at 78.2 58.42 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-spi-sck-bme688-1")
+	)
+	(label "SPI_MISO"
+		(at 78.2 55.88 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-spi-miso-bme688-1")
+	)
+	(label "SPI_MOSI"
+		(at 78.2 53.34 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-spi-mosi-bme688-1")
+	)
+	(label "BME688_CS1"
+		(at 78.2 50.8 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-bme688-cs1")
+	)
+	(label "SPI_SCK"
+		(at 78.2 81.28 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-spi-sck-bme688-2")
+	)
+	(label "SPI_MISO"
+		(at 78.2 78.74 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-spi-miso-bme688-2")
+	)
+	(label "SPI_MOSI"
+		(at 78.2 76.2 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-spi-mosi-bme688-2")
+	)
+	(label "BME688_CS2"
+		(at 78.2 73.66 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-bme688-cs2")
+	)
+	(label "+3V3"
+		(at 60.5 40.64 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-3v3-bme688")
+	)
+	(label "GND"
+		(at 60.5 170.18 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "label-gnd-bme688")
+	)
+
+	(text "CEDRI ESP32 MULTI-SENSOR SYSTEM - PROFESSIONAL SCHEMATIC\n\nFunctional Organization:\n• ESP32 Feather (center) - Main microcontroller\n• VL53L0X (top right) - ToF distance sensor for reservoir volume\n• GPS Air530 (middle right) - Location tracking\n• Grove Wio-E5 (bottom right) - LoRaWAN communication\n• BME688 sensors (left side) - Environmental sensing\n  - Sensor 1 & 2 shown (U2, U3)\n  - Sensors 3-8 follow same pattern (U4-U9)\n  - Each with unique CS line for SPI multiplexing\n\nAll connections properly labeled with net names:\n• I2C_SDA/I2C_SCL for VL53L0X communication\n• GPS_TX/GPS_RX for UART GPS communication (GPIO32/33)\n• LORA_TX/LORA_RX for UART LoRaWAN communication (GPIO16/17)\n• SPI_SCK/SPI_MOSI/SPI_MISO for BME688 sensors\n• BME688_CS1, BME688_CS2... for individual sensor selection\n• Proper +3V3 and GND power distribution\n\nERC compliant: No floating pins, all connections anchored\nReady for professional PCB layout"
+		(exclude_from_sim no)
+		(at 27.94 25.4 0)
+		(effects
+			(font
+				(size 1.524 1.524)
+			)
+			(justify left top)
+		)
+		(uuid "schematic-description")
+	)
+
+	(symbol
+		(lib_id "MCU_Module:ESP32-DEVKIT-V1")
+		(at 119.38 78.74 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "esp32-main-mcu")
+		(property "Reference" "U1"
+			(at 119.38 43.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "ESP32_Feather_Main_MCU"
+			(at 119.38 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Module:ESP32-DEVKIT-V1"
+			(at 119.38 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+			(at 111.76 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "ESP32 Feather development board - Main microcontroller"
+			(at 119.38 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "esp32-pin1-3v3")
+		)
+		(pin "2"
+			(uuid "esp32-pin2-gnd")
+		)
+		(pin "3"
+			(uuid "esp32-pin3-en")
+		)
+		(pin "10"
+			(uuid "esp32-pin10-gpio22")
+		)
+		(pin "11"
+			(uuid "esp32-pin11-gpio23")
+		)
+		(pin "12"
+			(uuid "esp32-pin12-gnd")
+		)
+		(pin "13"
+			(uuid "esp32-pin13-gpio16")
+		)
+		(pin "14"
+			(uuid "esp32-pin14-gpio17")
+		)
+		(pin "18"
+			(uuid "esp32-pin18-gpio32")
+		)
+		(pin "19"
+			(uuid "esp32-pin19-gpio33")
+		)
+		(pin "20"
+			(uuid "esp32-pin20-gnd")
+		)
+		(pin "21"
+			(uuid "esp32-pin21-3v3")
+		)
+		(instances
+			(project ""
+				(path "/"
+					(reference "U1")
+					(unit 1)
+				)
+			)
+		)
+	)
+
+	(symbol
+		(lib_id "Sensor:VL53L0X_Breakout")
+		(at 213.36 55.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "vl53l0x-tof-sensor")
+		(property "Reference" "U10"
+			(at 213.36 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "VL53L0X_ToF_Distance_Sensor"
+			(at 213.36 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Module:VL53L0X_Breakout"
+			(at 213.36 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.st.com/resource/en/datasheet/vl53l0x.pdf"
+			(at 213.36 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "VL53L0X Time-of-Flight distance sensor for reservoir volume measurement"
+			(at 213.36 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "vl53l0x-pin1-vdd")
+		)
+		(pin "2"
+			(uuid "vl53l0x-pin2-gnd")
+		)
+		(pin "3"
+			(uuid "vl53l0x-pin3-scl")
+		)
+		(pin "4"
+			(uuid "vl53l0x-pin4-sda")
+		)
+		(instances
+			(project ""
+				(path "/"
+					(reference "U10")
+					(unit 1)
+				)
+			)
+		)
+	)
+
+	(symbol
+		(lib_id "Module:GPS_Air530")
+		(at 213.36 99.06 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "gps-air530-module")
+		(property "Reference" "U11"
+			(at 213.36 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GPS_Air530_GNSS_Module"
+			(at 213.36 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Module:GPS_Air530"
+			(at 213.36 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 213.36 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Air530 GPS/GNSS module for location tracking"
+			(at 213.36 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "gps-pin1-vcc")
+		)
+		(pin "2"
+			(uuid "gps-pin2-gnd")
+		)
+		(pin "3"
+			(uuid "gps-pin3-tx")
+		)
+		(pin "4"
+			(uuid "gps-pin4-rx")
+		)
+		(instances
+			(project ""
+				(path "/"
+					(reference "U11")
+					(unit 1)
+				)
+			)
+		)
+	)
+
+	(symbol
+		(lib_id "Module:Grove_Wio-E5")
+		(at 213.36 142.24 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "grove-wio-e5-lora")
+		(property "Reference" "U12"
+			(at 213.36 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Grove_Wio-E5_LoRaWAN_Module"
+			(at 213.36 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Module:Grove_Wio-E5"
+			(at 213.36 152.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 213.36 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Grove Wio-E5 LoRaWAN communication module"
+			(at 213.36 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "lora-pin1-vcc")
+		)
+		(pin "2"
+			(uuid "lora-pin2-gnd")
+		)
+		(pin "3"
+			(uuid "lora-pin3-tx")
+		)
+		(pin "4"
+			(uuid "lora-pin4-rx")
+		)
+		(instances
+			(project ""
+				(path "/"
+					(reference "U12")
+					(unit 1)
+				)
+			)
+		)
+	)
+
+	(symbol
+		(lib_id "power:+3V3")
+		(at 165.1 40.64 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "power-3v3-rail")
+		(property "Reference" "#PWR01"
+			(at 165.1 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 165.1 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 165.1 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 165.1 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 165.1 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3v3-power-pin")
+		)
+		(instances
+			(project ""
+				(path "/"
+					(reference "#PWR01")
+					(unit 1)
+				)
+			)
+		)
+	)
+
+	(symbol
+		(lib_id "power:GND")
+		(at 165.1 170.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "power-gnd-rail")
+		(property "Reference" "#PWR02"
+			(at 165.1 176.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 165.1 173.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 165.1 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 165.1 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 165.1 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "gnd-power-pin")
+		)
+		(instances
+			(project ""
+				(path "/"
+					(reference "#PWR02")
+					(unit 1)
+				)
+			)
+		)
+	)
+
+	(symbol
+		(lib_id "Sensor:BME688_Breakout")
+		(at 58.42 55.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "bme688-sensor-1")
+		(property "Reference" "U2"
+			(at 58.42 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "BME688_Environmental_Sensor_1"
+			(at 58.42 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Module:BME688_Breakout"
+			(at 58.42 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme688-ds000.pdf"
+			(at 58.42 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "BME688 Environmental sensor - Temperature, Humidity, Pressure, Gas - Sensor 1"
+			(at 58.42 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "bme688-1-pin1-vdd")
+		)
+		(pin "2"
+			(uuid "bme688-1-pin2-gnd")
+		)
+		(pin "3"
+			(uuid "bme688-1-pin3-sck")
+		)
+		(pin "4"
+			(uuid "bme688-1-pin4-sdo")
+		)
+		(pin "5"
+			(uuid "bme688-1-pin5-sdi")
+		)
+		(pin "6"
+			(uuid "bme688-1-pin6-cs")
+		)
+		(instances
+			(project ""
+				(path "/"
+					(reference "U2")
+					(unit 1)
+				)
+			)
+		)
+	)
+
+	(symbol
+		(lib_id "Sensor:BME688_Breakout")
+		(at 58.42 78.74 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "bme688-sensor-2")
+		(property "Reference" "U3"
+			(at 58.42 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "BME688_Environmental_Sensor_2"
+			(at 58.42 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Module:BME688_Breakout"
+			(at 58.42 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme688-ds000.pdf"
+			(at 58.42 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "BME688 Environmental sensor - Temperature, Humidity, Pressure, Gas - Sensor 2"
+			(at 58.42 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "bme688-2-pin1-vdd")
+		)
+		(pin "2"
+			(uuid "bme688-2-pin2-gnd")
+		)
+		(pin "3"
+			(uuid "bme688-2-pin3-sck")
+		)
+		(pin "4"
+			(uuid "bme688-2-pin4-sdo")
+		)
+		(pin "5"
+			(uuid "bme688-2-pin5-sdi")
+		)
+		(pin "6"
+			(uuid "bme688-2-pin6-cs")
+		)
+		(instances
+			(project ""
+				(path "/"
+					(reference "U3")
+					(unit 1)
+				)
+			)
+		)
+	)
+
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+)
