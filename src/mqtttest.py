@@ -7,16 +7,16 @@ import csv
 import json
 from datetime import datetime
 import paho.mqtt.client as mqtt
-from measurement_pb2 import SensorGpsReading  # <-- Importa a mensagem única
+from measurement_pb2 import SensorGpsReading
 
-BROKER = "172.31.255.254"
+BROKER = "broker.emqx.io"
 PORT = 1883
-TOPIC = "application/3458bf8d-a319-4085-88cf-ca9cc9e11e6c/device/+/event/up"
-OUT_FILE  = "bme688_lora_data1.csv"
+TOPIC = "application/test/caio/bme688"
+OUT_FILE  = "bme688_64steps.csv"
 QOS       = 1
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("mqtt-lora-consumer")
+logger = logging.getLogger("mqtt-bme-consumer")
 
 CSV_FIELDS = [
     "device_id", "location_id", "sensor_id", "heater_profile",
@@ -25,7 +25,6 @@ CSV_FIELDS = [
     "latitude", "longitude", "volume_l"
 ]
 
-# Cria o CSV se não existir
 if not os.path.isfile(OUT_FILE) or os.path.getsize(OUT_FILE) == 0:
     with open(OUT_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
@@ -48,11 +47,9 @@ def on_message(client, userdata, msg):
 
         raw = base64.b64decode(b64_payload)
 
-        # Parse como SensorGpsReading
         reading = SensorGpsReading()
         try:
             reading.ParseFromString(raw)
-            # Só grava se device_id e GPS válidos
             if reading.device_id:
                 row = [
                     reading.device_id,
