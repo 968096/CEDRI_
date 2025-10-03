@@ -1,86 +1,96 @@
+#!/usr/bin/env python3
 import os
+import base64
 import signal
 import logging
 import csv
+import json
 from datetime import datetime
 import paho.mqtt.client as mqtt
-from measurement_pb2 import SensorReadingLite
+from measurement_pb2 import SensorGpsReading
 
-BROKER    = "broker.emqx.io"
-PORT      = 1883
-TOPIC     = "home/sensors/bme688_sequential101"
-OUT_FILE  = "bme688_data_protobuf.csv"
+BROKER = "broker.emqx.io"
+PORT = 1883
+TOPIC = "application/test/caio/bme688"
+OUT_FILE  = "bme688_64steps.csv"
 QOS       = 1
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-)
-logger = logging.getLogger("mqtt-csv-consumer")
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("mqtt-bme-consumer")
 
 CSV_FIELDS = [
     "device_id", "location_id", "sensor_id", "heater_profile",
     "measurement_step", "temp_c", "humidity_pct", "pressure_hpa",
-    "gas_resistance_ohm", "gas_valid", "heat_stable", "timestamp"
+    "gas_resistance_ohm", "gas_valid", "heat_stable", "timestamp",
+    "latitude", "longitude", "volume_l"
 ]
 
-if not os.path.isfile(OUT_FILE):
+if not os.path.isfile(OUT_FILE) or os.path.getsize(OUT_FILE) == 0:
     with open(OUT_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(CSV_FIELDS)
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        logger.info("Connected, subscribing to %s", TOPIC)
+        logger.info(f"✅ Connected to MQTT broker at {BROKER}:{PORT}")
         client.subscribe(TOPIC, qos=QOS)
+        logger.info(f"📡 Subscribed to topic: {TOPIC}")
     else:
-        logger.error("Connect failed (rc=%d)", rc)
+        logger.error("❌ Connection failed, return code %d", rc)
 
 def on_message(client, userdata, msg):
     try:
-        reading = SensorReadingLite()
-        reading.ParseFromString(msg.payload)
-        line = [
-            reading.device_id,
-            reading.location_id,
-            reading.sensor_id,
-            reading.heater_profile,
-            reading.measurement_step,
-            reading.temp_c,
-            reading.humidity_pct,
-            reading.pressure_hpa,
-            reading.gas_resistance_ohm,
-            int(reading.gas_valid),
-            int(reading.heat_stable),
-            reading.timestamp
-        ]
-        with open(OUT_FILE, "a", newline="", encoding="utf-8") as f:
-            writer = csv.writer(f)
-            writer.writerow(line)
-        payload_size = len(msg.payload)
-        print(f"[{datetime.now():%Y-%m-%d %H:%M:%S}] Payload bytes: {payload_size} | CSV: {','.join(str(x) for x in line)}")
+        payload_json = json.loads(msg.payload.decode("utf-8"))
+        b64_payload = payload_json.get("data")
+        if not b64_payload:
+            return
+
+        raw = base64.b64decode(b64_payload)
+
+        reading = SensorGpsReading()
+        try:
+            reading.ParseFromString(raw)
+            if reading.device_id:
+                row = [
+                    reading.device_id,
+                    reading.location_id,
+                    reading.sensor_id,
+                    reading.heater_profile,
+                    reading.measurement_step,
+                    reading.temp_c,
+                    reading.humidity_pct,
+                    reading.pressure_hpa,
+                    reading.gas_resistance_ohm,
+                    int(reading.gas_valid),
+                    int(reading.heat_stable),
+                    reading.timestamp,
+                    reading.latitude,
+                    reading.longitude,
+                    reading.volume_l
+                ]
+                with open(OUT_FILE, "a", newline="", encoding="utf-8") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(row)
+                print(f"[{datetime.now():%Y-%m-%d %H:%M:%S}] CSV: {','.join(map(str, row))}")
+                return
+        except Exception as e:
+            logger.error(f"❌ Failed to decode protobuf: {e}")
+
     except Exception as e:
-        logger.error("Failed to parse Protobuf message: %s", e)
+        logger.error(f"❌ Failed to decode message: {e}")
 
-def on_disconnect(client, userdata, rc):
-    if rc != 0:
-        logger.warning("Unexpected disconnect (rc=%d)", rc)
-    else:
-        logger.info("Clean disconnect")
-
-client = mqtt.Client(client_id=f"ProtobufConsumer_{os.getpid()}")
-client.on_connect = on_connect
-client.on_message = on_message
-client.on_disconnect = on_disconnect
-
-def _shutdown(signum, frame):
-    logger.info("Shutting down…")
+def _shutdown(sig, frame):
+    logger.info("🛑 Gracefully shutting down…")
     client.disconnect()
     exit(0)
 
-signal.signal(signal.SIGINT,  _shutdown)
+signal.signal(signal.SIGINT, _shutdown)
 signal.signal(signal.SIGTERM, _shutdown)
 
-logger.info("Connecting to %s:%d…", BROKER, PORT)
+client = mqtt.Client(client_id=f"protobuf_consumer_{os.getpid()}")
+client.on_connect = on_connect
+client.on_message = on_message
+
+logger.info("🔌 Connecting to broker…")
 client.connect(BROKER, PORT, keepalive=60)
 client.loop_forever()
