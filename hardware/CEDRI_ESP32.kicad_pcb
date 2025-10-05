@@ -1,0 +1,218 @@
+(kicad_pcb
+  (version 20240108)
+  (generator "pcbnew")
+  (generator_version "8.0")
+
+  (general
+    (thickness 1.6)
+    (legacy_teardrops no)
+  )
+
+  (paper "A4")
+  (layers
+    (0 "F.Cu" signal)
+    (31 "B.Cu" signal)
+    (32 "B.Adhes" user "B.Adhesive")
+    (33 "F.Adhes" user "F.Adhesive")
+    (34 "B.Paste" user)
+    (35 "F.Paste" user)
+    (36 "B.SilkS" user "B.Silkscreen")
+    (37 "F.SilkS" user "F.Silkscreen")
+    (38 "B.Mask" user)
+    (39 "F.Mask" user)
+    (40 "Dwgs.User" user "User.Drawings")
+    (41 "Cmts.User" user "User.Comments")
+    (42 "Eco1.User" user "User.Eco1")
+    (43 "Eco2.User" user "User.Eco2")
+    (44 "Edge.Cuts" user)
+    (45 "Margin" user)
+    (46 "B.CrtYd" user "B.Courtyard")
+    (47 "F.CrtYd" user "F.Courtyard")
+    (48 "B.Fab" user)
+    (49 "F.Fab" user)
+    (50 "User.1" user)
+    (51 "User.2" user)
+    (52 "User.3" user)
+    (53 "User.4" user)
+    (54 "User.5" user)
+    (55 "User.6" user)
+    (56 "User.7" user)
+    (57 "User.8" user)
+    (58 "User.9" user)
+  )
+
+  (setup
+    (pad_to_mask_clearance 0)
+    (allow_soldermask_bridges_in_footprints no)
+    (pcbplotparams
+      (layerselection 0x00010fc_ffffffff)
+      (plot_on_all_layers_selection 0x0000000_00000000)
+      (disableapertmacros no)
+      (usegerberextensions no)
+      (usegerberattributes yes)
+      (usegerberadvancedattributes yes)
+      (creategerberjobfile yes)
+      (dashed_line_dash_ratio 12.000000)
+      (dashed_line_gap_ratio 3.000000)
+      (svgprecision 4)
+      (plotframeref no)
+      (viasonmask no)
+      (mode 1)
+      (useauxorigin no)
+      (hpglpennumber 1)
+      (hpglpenspeed 20)
+      (hpglpendiameter 15.000000)
+      (pdf_front_fp_property_popups yes)
+      (pdf_back_fp_property_popups yes)
+      (dxfpolygonmode yes)
+      (dxfimperialunits yes)
+      (dxfusepcbnewfont yes)
+      (psnegative no)
+      (psa4output no)
+      (plotreference yes)
+      (plotvalue yes)
+      (plotfptext yes)
+      (plotinvisibletext no)
+      (sketchpadsonfab no)
+      (subtractmaskfromsilk no)
+      (outputformat 1)
+      (mirror no)
+      (drillshape 1)
+      (scaleselection 1)
+      (outputdirectory "")
+    )
+  )
+
+  (net 0 "")
+  (net 1 "GND")
+  (net 2 "+3V3")
+  (net 3 "VBAT_IN")
+  (net 4 "SDA")
+  (net 5 "SCL")
+  (net 6 "ESP32_TX")
+  (net 7 "ESP32_RX")
+  (net 8 "GPIO16")
+  (net 9 "GPIO17")
+  (net 10 "GPIO14")
+  (net 11 "GPIO32")
+  (net 12 "GPIO15")
+  (net 13 "GPIO33")
+
+  ; Board outline - 100mm x 80mm PCB
+  (gr_rect 
+    (start 10 10) (end 110 90)
+    (stroke (width 0.1) (type solid)) (layer "Edge.Cuts") (tstamp edge-cuts-rect)
+  )
+
+  ; Ground plane zone on bottom layer
+  (zone
+    (net 1) (net_name "GND") (layer "B.Cu") (tstamp zone-gnd-bottom)
+    (hatch edge 0.5)
+    (priority 1)
+    (connect_pads (clearance 0.2))
+    (min_thickness 0.2)
+    (filled_areas_thickness no)
+    (fill yes (thermal_gap 0.2) (thermal_bridge_width 0.4))
+    (polygon
+      (pts
+        (xy 12 12)
+        (xy 108 12)
+        (xy 108 88)
+        (xy 12 88)
+      )
+    )
+  )
+
+  ; 3V3 plane zone on top layer
+  (zone
+    (net 2) (net_name "+3V3") (layer "F.Cu") (tstamp zone-3v3-top)
+    (hatch edge 0.5)
+    (priority 2)
+    (connect_pads (clearance 0.2))
+    (min_thickness 0.2)
+    (filled_areas_thickness no)
+    (fill yes (thermal_gap 0.2) (thermal_bridge_width 0.4))
+    (polygon
+      (pts
+        (xy 12 12)
+        (xy 108 12)
+        (xy 108 88)
+        (xy 12 88)
+      )
+    )
+  )
+
+  ; Text annotations for documentation
+  (gr_text "+3V3 PLANE (TOP LAYER)" 
+    (at 60 15 0) (layer "F.SilkS") (tstamp text-3v3-plane)
+    (effects (font (size 1.2 1.2) (thickness 0.2)) (justify center))
+  )
+
+  (gr_text "GND PLANE (BOTTOM LAYER)" 
+    (at 60 85 0) (layer "B.SilkS") (tstamp text-gnd-plane)
+    (effects (font (size 1.2 1.2) (thickness 0.2)) (justify center))
+  )
+
+  (gr_text "CEDRI ESP32 MULTI-SENSOR PCB" 
+    (at 60 25 0) (layer "F.SilkS") (tstamp text-title)
+    (effects (font (size 1.5 1.5) (thickness 0.2) bold) (justify center))
+  )
+
+  (gr_text "REV 1.0 - 2024-12-06" 
+    (at 60 30 0) (layer "F.SilkS") (tstamp text-rev)
+    (effects (font (size 1.0 1.0) (thickness 0.15)) (justify center))
+  )
+
+  ; Component placement areas (just for reference)
+  (gr_rect 
+    (start 20 35) (end 50 65)
+    (stroke (width 0.1) (type default)) (layer "Dwgs.User") (tstamp comp-area-esp32)
+  )
+  
+  (gr_text "ESP32 FEATHER" 
+    (at 35 50 0) (layer "Dwgs.User") (tstamp text-esp32-area)
+    (effects (font (size 0.8 0.8) (thickness 0.1)) (justify center))
+  )
+
+  (gr_rect 
+    (start 60 35) (end 80 50)
+    (stroke (width 0.1) (type default)) (layer "Dwgs.User") (tstamp comp-area-bme688)
+  )
+  
+  (gr_text "BME688 WING" 
+    (at 70 42.5 0) (layer "Dwgs.User") (tstamp text-bme688-area)
+    (effects (font (size 0.8 0.8) (thickness 0.1)) (justify center))
+  )
+
+  (gr_rect 
+    (start 60 55) (end 80 70)
+    (stroke (width 0.1) (type default)) (layer "Dwgs.User") (tstamp comp-area-sensors)
+  )
+  
+  (gr_text "VL53L0X + GPS" 
+    (at 70 62.5 0) (layer "Dwgs.User") (tstamp text-sensors-area)
+    (effects (font (size 0.8 0.8) (thickness 0.1)) (justify center))
+  )
+
+  (gr_rect 
+    (start 85 40) (end 105 60)
+    (stroke (width 0.1) (type default)) (layer "Dwgs.User") (tstamp comp-area-lorawan)
+  )
+  
+  (gr_text "LoRaWAN" 
+    (at 95 50 0) (layer "Dwgs.User") (tstamp text-lorawan-area)
+    (effects (font (size 0.8 0.8) (thickness 0.1)) (justify center))
+  )
+
+  ; Resistor placement areas for pull-downs
+  (gr_rect 
+    (start 15 70) (end 45 80)
+    (stroke (width 0.1) (type default)) (layer "Dwgs.User") (tstamp comp-area-resistors)
+  )
+  
+  (gr_text "PULL-DOWN RESISTORS" 
+    (at 30 75 0) (layer "Dwgs.User") (tstamp text-resistors-area)
+    (effects (font (size 0.8 0.8) (thickness 0.1)) (justify center))
+  )
+
+)
