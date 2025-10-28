@@ -6,7 +6,10 @@
 #error Regenerate this file with the current version of nanopb generator.
 #endif
 
-PB_BIND(cedri_SensorGpsReading, cedri_SensorGpsReading, AUTO)
+PB_BIND(cedri_SensorReading, cedri_SensorReading, AUTO)
+
+
+PB_BIND(cedri_VOCReading, cedri_VOCReading, AUTO)
 
 
 

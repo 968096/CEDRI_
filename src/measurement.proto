@@ -1,39 +1,32 @@
 syntax = "proto3";
+
 package cedri;
 
 enum HeaterProfile {
-  HP_411 = 0;
-  HP_412 = 1;
-  HP_413 = 2;
-  HP_414 = 3;
-  HP_501 = 4;
-  HP_502 = 5;
-  HP_503 = 6;
-  HP_504 = 7;
+  HP_354 = 0;
+  HP_301 = 1;
+  HP_321 = 2;
+  HP_322 = 3;
+  HP_323 = 4;
+  HP_324 = 5;
+  HP_331 = 6;
+  HP_332 = 7;
 }
 
-message SensorGpsReading {
-  uint32 device_id           = 1;
-  uint32 location_id         = 2;
-  uint32 sensor_id           = 3;
+message SensorReading {
+  uint32 device_id = 1;
+  float battery = 2;
+  uint32 version = 3;
+  float temp_c = 6;
+  float humidity_pct = 7;
+  float pressure_hpa = 8;
+  float latitude = 13;
+  float longitude = 14;
+  float volume_l = 15;
+}
+message VOCReading {
+  uint32 device_id = 1;
+  uint32 sensor_id = 3;
   HeaterProfile heater_profile = 4;
-  uint32 measurement_step    = 5;   // now 0..63
-  float  temp_c              = 6;
-  float  humidity_pct        = 7;
-  float  pressure_hpa        = 8;
-  uint32 gas_resistance_ohm  = 9;
-  bool   gas_valid           = 10;
-  bool   heat_stable         = 11;
-  uint32 timestamp           = 12;
-  float  latitude            = 13;
-  float  longitude           = 14;
-  float  volume_l            = 15;
-
-  // --- Optional metadata for fixed-cycle / more-steps ---
-  uint32 total_steps         = 16;   // e.g., 64
-  uint32 step_window_ms      = 17;   // e.g., cycle_period_ms / total_steps
-  uint32 cycle_period_ms     = 18;   // e.g., 150000
-  uint32 cycle_index         = 19;   // increments every full cycle (if you track it)
-  float  heater_setpoint_c   = 20;   // tempProfiles[s][step] actually used
-  uint32 heater_duration_ms  = 21;   // durProfiles[s][step] actually used
+  uint32 gas_resistance_ohm = 9;
 }

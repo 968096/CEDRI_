@@ -11,41 +11,35 @@
 
 /* Enum definitions */
 typedef enum _cedri_HeaterProfile {
-    cedri_HeaterProfile_HP_411 = 0,
-    cedri_HeaterProfile_HP_412 = 1,
-    cedri_HeaterProfile_HP_413 = 2,
-    cedri_HeaterProfile_HP_414 = 3,
-    cedri_HeaterProfile_HP_501 = 4,
-    cedri_HeaterProfile_HP_502 = 5,
-    cedri_HeaterProfile_HP_503 = 6,
-    cedri_HeaterProfile_HP_504 = 7
+    cedri_HeaterProfile_HP_354 = 0,
+    cedri_HeaterProfile_HP_301 = 1,
+    cedri_HeaterProfile_HP_321 = 2,
+    cedri_HeaterProfile_HP_322 = 3,
+    cedri_HeaterProfile_HP_323 = 4,
+    cedri_HeaterProfile_HP_324 = 5,
+    cedri_HeaterProfile_HP_331 = 6,
+    cedri_HeaterProfile_HP_332 = 7
 } cedri_HeaterProfile;
 
 /* Struct definitions */
-typedef struct _cedri_SensorGpsReading {
+typedef struct _cedri_SensorReading {
     uint32_t device_id;
-    uint32_t location_id;
-    uint32_t sensor_id;
-    cedri_HeaterProfile heater_profile;
-    uint32_t measurement_step; /* now 0..63 */
+    float battery;
+    uint32_t version;
     float temp_c;
     float humidity_pct;
     float pressure_hpa;
-    uint32_t gas_resistance_ohm;
-    bool gas_valid;
-    bool heat_stable;
-    uint32_t timestamp;
     float latitude;
     float longitude;
     float volume_l;
-    /* --- Optional metadata for fixed-cycle / more-steps --- */
-    uint32_t total_steps; /* e.g., 64 */
-    uint32_t step_window_ms; /* e.g., cycle_period_ms / total_steps */
-    uint32_t cycle_period_ms; /* e.g., 150000 */
-    uint32_t cycle_index; /* increments every full cycle (if you track it) */
-    float heater_setpoint_c; /* tempProfiles[s][step] actually used */
-    uint32_t heater_duration_ms; /* durProfiles[s][step] actually used */
-} cedri_SensorGpsReading;
+} cedri_SensorReading;
+
+typedef struct _cedri_VOCReading {
+    uint32_t device_id;
+    uint32_t sensor_id;
+    cedri_HeaterProfile heater_profile;
+    uint32_t gas_resistance_ohm;
+} cedri_VOCReading;
 
 
 #ifdef __cplusplus
@@ -53,74 +47,68 @@ extern "C" {
 #endif
 
 /* Helper constants for enums */
-#define _cedri_HeaterProfile_MIN cedri_HeaterProfile_HP_411
-#define _cedri_HeaterProfile_MAX cedri_HeaterProfile_HP_504
-#define _cedri_HeaterProfile_ARRAYSIZE ((cedri_HeaterProfile)(cedri_HeaterProfile_HP_504+1))
+#define _cedri_HeaterProfile_MIN cedri_HeaterProfile_HP_354
+#define _cedri_HeaterProfile_MAX cedri_HeaterProfile_HP_332
+#define _cedri_HeaterProfile_ARRAYSIZE ((cedri_HeaterProfile)(cedri_HeaterProfile_HP_332+1))
 
-#define cedri_SensorGpsReading_heater_profile_ENUMTYPE cedri_HeaterProfile
+
+#define cedri_VOCReading_heater_profile_ENUMTYPE cedri_HeaterProfile
 
 
 /* Initializer values for message structs */
-#define cedri_SensorGpsReading_init_default      {0, 0, 0, _cedri_HeaterProfile_MIN, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-#define cedri_SensorGpsReading_init_zero         {0, 0, 0, _cedri_HeaterProfile_MIN, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define cedri_SensorReading_init_default         {0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define cedri_VOCReading_init_default            {0, 0, _cedri_HeaterProfile_MIN, 0}
+#define cedri_SensorReading_init_zero            {0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define cedri_VOCReading_init_zero               {0, 0, _cedri_HeaterProfile_MIN, 0}
 
 /* Field tags (for use in manual encoding/decoding) */
-#define cedri_SensorGpsReading_device_id_tag     1
-#define cedri_SensorGpsReading_location_id_tag   2
-#define cedri_SensorGpsReading_sensor_id_tag     3
-#define cedri_SensorGpsReading_heater_profile_tag 4
-#define cedri_SensorGpsReading_measurement_step_tag 5
-#define cedri_SensorGpsReading_temp_c_tag        6
-#define cedri_SensorGpsReading_humidity_pct_tag  7
-#define cedri_SensorGpsReading_pressure_hpa_tag  8
-#define cedri_SensorGpsReading_gas_resistance_ohm_tag 9
-#define cedri_SensorGpsReading_gas_valid_tag     10
-#define cedri_SensorGpsReading_heat_stable_tag   11
-#define cedri_SensorGpsReading_timestamp_tag     12
-#define cedri_SensorGpsReading_latitude_tag      13
-#define cedri_SensorGpsReading_longitude_tag     14
-#define cedri_SensorGpsReading_volume_l_tag      15
-#define cedri_SensorGpsReading_total_steps_tag   16
-#define cedri_SensorGpsReading_step_window_ms_tag 17
-#define cedri_SensorGpsReading_cycle_period_ms_tag 18
-#define cedri_SensorGpsReading_cycle_index_tag   19
-#define cedri_SensorGpsReading_heater_setpoint_c_tag 20
-#define cedri_SensorGpsReading_heater_duration_ms_tag 21
+#define cedri_SensorReading_device_id_tag        1
+#define cedri_SensorReading_battery_tag          2
+#define cedri_SensorReading_version_tag          3
+#define cedri_SensorReading_temp_c_tag           6
+#define cedri_SensorReading_humidity_pct_tag     7
+#define cedri_SensorReading_pressure_hpa_tag     8
+#define cedri_SensorReading_latitude_tag         13
+#define cedri_SensorReading_longitude_tag        14
+#define cedri_SensorReading_volume_l_tag         15
+#define cedri_VOCReading_device_id_tag           1
+#define cedri_VOCReading_sensor_id_tag           3
+#define cedri_VOCReading_heater_profile_tag      4
+#define cedri_VOCReading_gas_resistance_ohm_tag  9
 
 /* Struct field encoding specification for nanopb */
-#define cedri_SensorGpsReading_FIELDLIST(X, a) \
+#define cedri_SensorReading_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT32,   device_id,         1) \
-X(a, STATIC,   SINGULAR, UINT32,   location_id,       2) \
-X(a, STATIC,   SINGULAR, UINT32,   sensor_id,         3) \
-X(a, STATIC,   SINGULAR, UENUM,    heater_profile,    4) \
-X(a, STATIC,   SINGULAR, UINT32,   measurement_step,   5) \
+X(a, STATIC,   SINGULAR, FLOAT,    battery,           2) \
+X(a, STATIC,   SINGULAR, UINT32,   version,           3) \
 X(a, STATIC,   SINGULAR, FLOAT,    temp_c,            6) \
 X(a, STATIC,   SINGULAR, FLOAT,    humidity_pct,      7) \
 X(a, STATIC,   SINGULAR, FLOAT,    pressure_hpa,      8) \
-X(a, STATIC,   SINGULAR, UINT32,   gas_resistance_ohm,   9) \
-X(a, STATIC,   SINGULAR, BOOL,     gas_valid,        10) \
-X(a, STATIC,   SINGULAR, BOOL,     heat_stable,      11) \
-X(a, STATIC,   SINGULAR, UINT32,   timestamp,        12) \
 X(a, STATIC,   SINGULAR, FLOAT,    latitude,         13) \
 X(a, STATIC,   SINGULAR, FLOAT,    longitude,        14) \
-X(a, STATIC,   SINGULAR, FLOAT,    volume_l,         15) \
-X(a, STATIC,   SINGULAR, UINT32,   total_steps,      16) \
-X(a, STATIC,   SINGULAR, UINT32,   step_window_ms,   17) \
-X(a, STATIC,   SINGULAR, UINT32,   cycle_period_ms,  18) \
-X(a, STATIC,   SINGULAR, UINT32,   cycle_index,      19) \
-X(a, STATIC,   SINGULAR, FLOAT,    heater_setpoint_c,  20) \
-X(a, STATIC,   SINGULAR, UINT32,   heater_duration_ms,  21)
-#define cedri_SensorGpsReading_CALLBACK NULL
-#define cedri_SensorGpsReading_DEFAULT NULL
+X(a, STATIC,   SINGULAR, FLOAT,    volume_l,         15)
+#define cedri_SensorReading_CALLBACK NULL
+#define cedri_SensorReading_DEFAULT NULL
 
-extern const pb_msgdesc_t cedri_SensorGpsReading_msg;
+#define cedri_VOCReading_FIELDLIST(X, a) \
+X(a, STATIC,   SINGULAR, UINT32,   device_id,         1) \
+X(a, STATIC,   SINGULAR, UINT32,   sensor_id,         3) \
+X(a, STATIC,   SINGULAR, UENUM,    heater_profile,    4) \
+X(a, STATIC,   SINGULAR, UINT32,   gas_resistance_ohm,   9)
+#define cedri_VOCReading_CALLBACK NULL
+#define cedri_VOCReading_DEFAULT NULL
+
+extern const pb_msgdesc_t cedri_SensorReading_msg;
+extern const pb_msgdesc_t cedri_VOCReading_msg;
 
 /* Defines for backwards compatibility with code written before nanopb-0.4.0 */
-#define cedri_SensorGpsReading_fields &cedri_SensorGpsReading_msg
+#define cedri_SensorReading_fields &cedri_SensorReading_msg
+#define cedri_VOCReading_fields &cedri_VOCReading_msg
 
 /* Maximum encoded size of messages (where known) */
-#define CEDRI_MEASUREMENT_PB_H_MAX_SIZE          cedri_SensorGpsReading_size
-#define cedri_SensorGpsReading_size              113
+#define CEDRI_MEASUREMENT_PB_H_MAX_SIZE          cedri_SensorReading_size
+#define cedri_SensorReading_size                 47
+#define cedri_VOCReading_size                    20
 
 #ifdef __cplusplus
 } /* extern "C" */

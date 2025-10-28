@@ -11,7 +11,7 @@ from measurement_pb2 import SensorGpsReading  # gerado do seu .proto
 BROKER   = "broker.emqx.io"
 PORT     = 1883
 TOPIC    = "application/test/caio/bme688"
-OUT_FILE = "bme68816_oil_.csv"
+OUT_FILE = "data16steps/bme68816_coffeeandoilmixed_.csv"
 QOS      = 1
 
 logging.basicConfig(level=logging.INFO)

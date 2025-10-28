@@ -1,92 +1,39 @@
-# CEDRI ESP32 FreeRTOS Synchronization Improvements
+Change library API - Lorawan - so we can get fragmentation in the headers.
+current -> sylvainmontagny/LoRaWAN-Seeed-Grove-Wio-E5 -----
 
-## Overview
-This project implements robust concurrent operation for an ESP32 FreeRTOS system with BME688 sensors (SPI), VL53L0X (I2C), LoRaWAN uplink, and GPS functionality.
 
-## Changes Made
 
-### 1. Mutex Protection for Shared Resources
-- **GPS Data**: Protected shared GPS variables (lat, lon, sats) with `gpsMutex`
-- **SPI Bus**: Protected SPI access for BME688 sensors with `spiMutex`
-- **I2C Bus**: Protected I2C access for VL53L0X and I2C expander with `i2cMutex`
-- **LoRaWAN**: Protected LoRaWAN serial communication with `lorawanMutex`
-- **Serial Debug**: Protected debug serial output with `serialMutex`
-- **Sensor State**: Protected global sensor state variables with `sensorStateMutex`
+Gas resistance -
+temperatura --
+sensor id -- nao remover
 
-### 2. Timeout Handling
-- Replaced `portMAX_DELAY` with configurable `MUTEX_TIMEOUT_TICKS` (1000ms)
-- Added proper error handling for mutex acquisition failures
-- Implemented graceful degradation when mutexes cannot be acquired
+location id -- remover
+Step - talvez tirar
+gas valid e heat stable = talvez mudar de bool para int e verificar
 
-### 3. Thread-Safe Helper Functions
-- **GPS Access**: Safe getter functions for GPS data
-- **Sensor State**: Safe getter/setter functions for sensor states
-- **Serial Output**: Safe printing functions (`safePrint`, `safePrintln`, `safePrintf`)
-- **CommMux Wrappers**: Thread-safe wrappers for SPI/I2C communication
 
-### 4. Task Core Optimization
-- **Measurement Task**: Core 1 (performance core), Priority 3 (highest)
-- **GPS Task**: Core 0 (efficiency core), Priority 2
-- **Self-Test Task**: Core 0 (efficiency core), Priority 1 (lowest)
 
-### 5. Improved Error Handling
-- Added mutex creation verification in setup
-- Added timeout error messages for debugging
-- Improved error recovery in communication functions
+1 senssorgpsreading (sensores gerais e infos gerais)
+1 vez a cada vez que é acordado
 
-### 6. Race Condition Elimination
-- Protected all shared resource access with appropriate mutexes
-- Ensured atomic operations for critical sections
-- Prevented concurrent access to SPI/I2C buses
 
-## FreeRTOS Best Practices Implemented
+2 sensorvocreading  precisa ser enviado em todo ciclo de leitura ao ser acordado
+(bme688)
 
-### Synchronization
-- Used mutexes for resource protection (not binary semaphores)
-- Proper mutex acquisition/release patterns
-- Consistent timeout values across all operations
 
-### Task Management
-- Optimized core placement for performance
-- Appropriate task priorities
-- Adequate stack sizes for each task
 
-### Error Handling
-- Graceful handling of mutex timeouts
-- Proper cleanup on errors
-- Non-blocking error recovery
 
-## Security Considerations
-- No shared resources accessed without proper synchronization
-- Prevented deadlock scenarios with consistent timeout values
-- Maintained deterministic behavior under load
 
-## Performance Optimizations
-- Minimized mutex hold times
-- Efficient core utilization (measurement on core 1, others on core 0)
-- Reduced task switching overhead through proper prioritization
+-------------
 
-## Testing Recommendations
-- Verify all mutex operations under load
-- Test timeout scenarios and error recovery
-- Validate GPS data integrity under concurrent access
-- Ensure LoRaWAN transmission reliability
-- Test sensor reading accuracy with multiple concurrent tasks
+forced mode = run, 10 measurements steps, send 5x for 8 sensor, and after that go to sleep 30 minutes.
 
-## Robustness Features
-- Timeout-based error recovery
-- Graceful degradation on mutex failures
-- Proper resource cleanup
-- Deterministic behavior under all conditions
+------------------
 
-## Code Quality Improvements
-- Clear separation of concerns
-- Consistent error handling patterns
-- Improved code readability
-- Better maintainability through helper functions
 
-## Future Enhancements
-- Add task monitoring/watchdog functionality
-- Implement priority inheritance for mutexes
-- Add performance metrics collection
-- Consider using recursive mutexes where appropriate
+fazer alteração no codigo para colocar um duration especifico para cada heater profile  (que seja menos de 30 segundos)-----
+
+
+check to duty cycle in the firmware, to see if the duration is by heater profile or can be modify or by all
+
+also to check if the heater profile is for all of the sensors or if its idenpedent, ? different duration by different sensors? check if is possible in paralelel mode ------  Forced mode VVVVVV- ---- check if its possible to use to pareallel mode possible to put to sleep or only on forced mode. Use to paralele mode and SLEEP after 10 readings!!! -----
