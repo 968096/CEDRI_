@@ -1,0 +1,2736 @@
+(kicad_sch
+  (version 20231120)
+  (generator "eeschema")
+  (generator_version "8.0")
+
+  (uuid "a1b2c3d4-e5f6-7890-abcd-1234567890ab")
+
+  (paper "A4")
+
+  (lib_symbols
+    (symbol "Adafruit_Feather:ESP32_Feather"
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "U"
+        (at 0 2.54 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+        )
+      )
+      (property "Value" "ESP32_Feather"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+        )
+      )
+      (property "Footprint" ""
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Description" "Adafruit ESP32 Feather Board"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (symbol "ESP32_Feather_0_1"
+        (rectangle
+          (start -12.7 22.86)
+          (end 12.7 -22.86)
+          (stroke
+            (width 0.254)
+            (type default)
+          )
+          (fill
+            (type background)
+          )
+        )
+      )
+      (symbol "ESP32_Feather_1_1"
+        (pin power_in line
+          (at -15.24 20.32 0)
+          (length 2.54)
+          (name "RESET"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at -15.24 17.78 0)
+          (length 2.54)
+          (name "3V3"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at -15.24 15.24 0)
+          (length 2.54)
+          (name "NC"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -15.24 12.7 0)
+          (length 2.54)
+          (name "GPIO36/A0"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -15.24 10.16 0)
+          (length 2.54)
+          (name "GPIO39/A1"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "5"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -15.24 7.62 0)
+          (length 2.54)
+          (name "GPIO34/A2"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "6"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -15.24 5.08 0)
+          (length 2.54)
+          (name "GPIO35/A3"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "7"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -15.24 2.54 0)
+          (length 2.54)
+          (name "GPIO32/A4"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "8"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -15.24 0 0)
+          (length 2.54)
+          (name "GPIO33/A5"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "9"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -15.24 -2.54 0)
+          (length 2.54)
+          (name "GPIO25/DAC1"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "10"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -15.24 -5.08 0)
+          (length 2.54)
+          (name "GPIO26/DAC2"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "11"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -15.24 -7.62 0)
+          (length 2.54)
+          (name "GPIO27"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "12"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -15.24 -10.16 0)
+          (length 2.54)
+          (name "GPIO15"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "13"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -15.24 -12.7 0)
+          (length 2.54)
+          (name "GPIO2"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "14"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -15.24 -15.24 0)
+          (length 2.54)
+          (name "GPIO4"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "15"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at -15.24 -17.78 0)
+          (length 2.54)
+          (name "GND"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "16"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at 15.24 20.32 180)
+          (length 2.54)
+          (name "USB"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "17"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at 15.24 17.78 180)
+          (length 2.54)
+          (name "EN"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "18"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at 15.24 15.24 180)
+          (length 2.54)
+          (name "VBAT"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "19"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at 15.24 12.7 180)
+          (length 2.54)
+          (name "GPIO14/SCK"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "20"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at 15.24 10.16 180)
+          (length 2.54)
+          (name "GPIO12/MISO"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "21"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at 15.24 7.62 180)
+          (length 2.54)
+          (name "GPIO13/MOSI"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "22"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at 15.24 5.08 180)
+          (length 2.54)
+          (name "GPIO21/SDA"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "23"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at 15.24 2.54 180)
+          (length 2.54)
+          (name "GPIO22/SCL"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "24"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at 15.24 0 180)
+          (length 2.54)
+          (name "GPIO19"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "25"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at 15.24 -2.54 180)
+          (length 2.54)
+          (name "GPIO18"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "26"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at 15.24 -5.08 180)
+          (length 2.54)
+          (name "GPIO5"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "27"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at 15.24 -7.62 180)
+          (length 2.54)
+          (name "GPIO23"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "28"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+      )
+    )
+    (symbol "Sensor:BME688"
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "U"
+        (at -7.62 8.89 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (justify left)
+        )
+      )
+      (property "Value" "BME688"
+        (at 2.54 8.89 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (justify left)
+        )
+      )
+      (property "Footprint" "Package_LGA:Bosch_LGA-8_3x3mm_P0.8mm_ClockwisePinNumbering"
+        (at 0 -10.16 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Datasheet" "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme688-ds000.pdf"
+        (at 0 -12.7 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Description" "4-in-1 sensor with gas, humidity, pressure and temperature measurement based on metal oxide sensing for gas (MOX) and capacitive relative humidity sensor"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_keywords" "Bosch gas humidity pressure temperature I2C SPI"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_fp_filters" "Bosch*LGA*3x3mm*P0.8mm*"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (symbol "BME688_0_1"
+        (rectangle
+          (start -7.62 7.62)
+          (end 7.62 -7.62)
+          (stroke
+            (width 0.254)
+            (type default)
+          )
+          (fill
+            (type background)
+          )
+        )
+      )
+      (symbol "BME688_1_1"
+        (pin power_in line
+          (at 0 -10.16 90)
+          (length 2.54)
+          (name "GND"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin input line
+          (at -10.16 2.54 0)
+          (length 2.54)
+          (name "CSB"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -10.16 0 0)
+          (length 2.54)
+          (name "SDI"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -10.16 -2.54 0)
+          (length 2.54)
+          (name "SCK"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -10.16 -5.08 0)
+          (length 2.54)
+          (name "SDO"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "5"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at 0 10.16 270)
+          (length 2.54)
+          (name "VDDIO"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "6"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at 2.54 10.16 270)
+          (length 2.54)
+          (name "GND"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "7"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at -2.54 10.16 270)
+          (length 2.54)
+          (name "VDD"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "8"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+      )
+    )
+    (symbol "Sensor_Distance:VL53L0X"
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "U"
+        (at -7.62 11.43 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (justify left)
+        )
+      )
+      (property "Value" "VL53L0X"
+        (at 2.54 11.43 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (justify left)
+        )
+      )
+      (property "Footprint" "Package_LGA:ST_FlightSense_8x4.4mm"
+        (at 0 -12.7 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Datasheet" "https://www.st.com/resource/en/datasheet/vl53l0x.pdf"
+        (at 0 -15.24 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Description" "Time-of-Flight ranging sensor"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_keywords" "Time-of-Flight distance sensor"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_fp_filters" "ST*FlightSense*8x4.4mm*"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (symbol "VL53L0X_0_1"
+        (rectangle
+          (start -7.62 10.16)
+          (end 7.62 -10.16)
+          (stroke
+            (width 0.254)
+            (type default)
+          )
+          (fill
+            (type background)
+          )
+        )
+      )
+      (symbol "VL53L0X_1_1"
+        (pin power_in line
+          (at 0 -12.7 90)
+          (length 2.54)
+          (name "GND"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at 0 12.7 270)
+          (length 2.54)
+          (name "AVDD"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at 2.54 12.7 270)
+          (length 2.54)
+          (name "AVSS"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin bidirectional line
+          (at -10.16 2.54 0)
+          (length 2.54)
+          (name "SDA"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin input line
+          (at -10.16 0 0)
+          (length 2.54)
+          (name "SCL"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "5"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin input line
+          (at -10.16 -2.54 0)
+          (length 2.54)
+          (name "XSHUT"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "6"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin output line
+          (at 10.16 0 180)
+          (length 2.54)
+          (name "GPIO1"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "7"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin power_in line
+          (at -2.54 12.7 270)
+          (length 2.54)
+          (name "VDD"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "8"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+      )
+    )
+    (symbol "Device:R"
+      (pin_numbers hide)
+      (pin_names
+        (offset 0)
+      )
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "R"
+        (at 2.032 0 90)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+        )
+      )
+      (property "Value" "R"
+        (at 0 0 90)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+        )
+      )
+      (property "Footprint" ""
+        (at -1.778 0 90)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Datasheet" "~"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Description" "Resistor"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_keywords" "R res resistor"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_fp_filters" "R_*"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (symbol "R_0_1"
+        (rectangle
+          (start -1.016 -2.54)
+          (end 1.016 2.54)
+          (stroke
+            (width 0.254)
+            (type default)
+          )
+          (fill
+            (type none)
+          )
+        )
+      )
+      (symbol "R_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 1.27)
+          (name "~"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 1.27)
+          (name "~"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+      )
+    )
+    (symbol "Device:C"
+      (pin_numbers hide)
+      (pin_names
+        (offset 0.254)
+      )
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (property "Reference" "C"
+        (at 0.635 2.54 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (justify left)
+        )
+      )
+      (property "Value" "C"
+        (at 0.635 -2.54 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (justify left)
+        )
+      )
+      (property "Footprint" ""
+        (at 0.9652 -3.81 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Datasheet" "~"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "Description" "Unpolarized capacitor"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_keywords" "cap capacitor"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (property "ki_fp_filters" "C_*"
+        (at 0 0 0)
+        (effects
+          (font
+            (size 1.27 1.27)
+          )
+          (hide yes)
+        )
+      )
+      (symbol "C_0_1"
+        (polyline
+          (pts
+            (xy -2.032 -0.762) (xy 2.032 -0.762)
+          )
+          (stroke
+            (width 0.508)
+            (type default)
+          )
+          (fill
+            (type none)
+          )
+        )
+        (polyline
+          (pts
+            (xy -2.032 0.762) (xy 2.032 0.762)
+          )
+          (stroke
+            (width 0.508)
+            (type default)
+          )
+          (fill
+            (type none)
+          )
+        )
+      )
+      (symbol "C_1_1"
+        (pin passive line
+          (at 0 2.54 270)
+          (length 1.778)
+          (name "~"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+        (pin passive line
+          (at 0 -2.54 90)
+          (length 1.778)
+          (name "~"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+
+  (junction
+    (at 50.8 40.64)
+    (diameter 0)
+    (color 0 0 0 0)
+    (uuid "12345678-1234-1234-1234-123456789012")
+  )
+
+  (wire
+    (pts
+      (xy 30.48 40.64) (xy 50.8 40.64)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "87654321-4321-4321-4321-210987654321")
+  )
+
+  (global_label "SDA"
+    (shape input)
+    (at 30.48 45.72 0)
+    (fields_autoplaced)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+      (justify left)
+    )
+    (uuid "11111111-2222-3333-4444-555555555555")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 36.3319 45.72 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+        (hide yes)
+      )
+    )
+  )
+
+  (global_label "SCL"
+    (shape input)
+    (at 30.48 43.18 0)
+    (fields_autoplaced)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+      (justify left)
+    )
+    (uuid "22222222-3333-4444-5555-666666666666")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 36.2119 43.18 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+        (hide yes)
+      )
+    )
+  )
+
+  (global_label "MOSI"
+    (shape input)
+    (at 30.48 50.8 0)
+    (fields_autoplaced)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+      (justify left)
+    )
+    (uuid "33333333-4444-5555-6666-777777777777")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 37.1924 50.8 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+        (hide yes)
+      )
+    )
+  )
+
+  (global_label "MISO"
+    (shape input)
+    (at 30.48 53.34 0)
+    (fields_autoplaced)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+      (justify left)
+    )
+    (uuid "44444444-5555-6666-7777-888888888888")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 37.0719 53.34 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+        (hide yes)
+      )
+    )
+  )
+
+  (global_label "SCK"
+    (shape input)
+    (at 30.48 55.88 0)
+    (fields_autoplaced)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+      (justify left)
+    )
+    (uuid "55555555-6666-7777-8888-999999999999")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 36.3319 55.88 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+        (hide yes)
+      )
+    )
+  )
+
+  (symbol
+    (lib_id "Adafruit_Feather:ESP32_Feather")
+    (at 45.72 50.8 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
+    (property "Reference" "U1"
+      (at 45.72 20.32 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Value" "ESP32_Feather"
+      (at 45.72 22.86 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Footprint" ""
+      (at 45.72 50.8 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Datasheet" ""
+      (at 45.72 50.8 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "Adafruit ESP32 Feather Board"
+      (at 45.72 50.8 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "11aa11aa-11bb-11cc-11dd-11eeeeeeeeee")
+    )
+    (pin "10"
+      (uuid "22aa22aa-22bb-22cc-22dd-22eeeeeeeeee")
+    )
+    (pin "11"
+      (uuid "33aa33aa-33bb-33cc-33dd-33eeeeeeeeee")
+    )
+    (pin "12"
+      (uuid "44aa44aa-44bb-44cc-44dd-44eeeeeeeeee")
+    )
+    (pin "13"
+      (uuid "55aa55aa-55bb-55cc-55dd-55eeeeeeeeee")
+    )
+    (pin "14"
+      (uuid "66aa66aa-66bb-66cc-66dd-66eeeeeeeeee")
+    )
+    (pin "15"
+      (uuid "77aa77aa-77bb-77cc-77dd-77eeeeeeeeee")
+    )
+    (pin "16"
+      (uuid "88aa88aa-88bb-88cc-88dd-88eeeeeeeeee")
+    )
+    (pin "17"
+      (uuid "99aa99aa-99bb-99cc-99dd-99eeeeeeeeee")
+    )
+    (pin "18"
+      (uuid "aabbaaaa-aabb-aacc-aadd-aaeeeeeeeeee")
+    )
+    (pin "19"
+      (uuid "bbccbbbb-bbcc-bbdd-bbee-bbffffffffffff")
+    )
+    (pin "2"
+      (uuid "ccddcccc-ccdd-ccee-ccff-cc0000000000")
+    )
+    (pin "20"
+      (uuid "ddeeddd-ddee-ddff-dd00-dd1111111111")
+    )
+    (pin "21"
+      (uuid "eeffeee-eeff-ee00-ee11-ee2222222222")
+    )
+    (pin "22"
+      (uuid "ff00fff-ff00-ff11-ff22-ff3333333333")
+    )
+    (pin "23"
+      (uuid "001100-0011-0022-0033-004444444444")
+    )
+    (pin "24"
+      (uuid "112211-1122-1133-1144-115555555555")
+    )
+    (pin "25"
+      (uuid "223322-2233-2244-2255-226666666666")
+    )
+    (pin "26"
+      (uuid "334433-3344-3355-3366-337777777777")
+    )
+    (pin "27"
+      (uuid "445544-4455-4466-4477-448888888888")
+    )
+    (pin "28"
+      (uuid "556655-5566-5577-5588-559999999999")
+    )
+    (pin "3"
+      (uuid "667766-6677-6688-6699-66aaaaaaaaaa")
+    )
+    (pin "4"
+      (uuid "778877-7788-7799-77aa-77bbbbbbbbbb")
+    )
+    (pin "5"
+      (uuid "889988-8899-88aa-88bb-88cccccccccc")
+    )
+    (pin "6"
+      (uuid "99aa99-99aa-99bb-99cc-99dddddddddd")
+    )
+    (pin "7"
+      (uuid "aabbaa-aabb-aacc-aadd-aaeeeeeeeeee")
+    )
+    (pin "8"
+      (uuid "bbccbb-bbcc-bbdd-bbee-bbffffffffffff")
+    )
+    (pin "9"
+      (uuid "ccddcc-ccdd-ccee-ccff-cc0000000000")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "U1")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol
+    (lib_id "Device:R")
+    (at 78.74 25.4 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "pullup-sda-001")
+    (property "Reference" "R1"
+      (at 81.28 25.4 90)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Value" "4.7k"
+      (at 78.74 25.4 90)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+      (at 76.962 25.4 90)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Datasheet" "~"
+      (at 78.74 25.4 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "I2C SDA Pull-up Resistor"
+      (at 78.74 25.4 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "pullup-sda-pin1")
+    )
+    (pin "2"
+      (uuid "pullup-sda-pin2")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "R1")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol
+    (lib_id "Device:R")
+    (at 86.36 25.4 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "pullup-scl-001")
+    (property "Reference" "R2"
+      (at 88.9 25.4 90)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Value" "4.7k"
+      (at 86.36 25.4 90)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+      (at 84.582 25.4 90)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Datasheet" "~"
+      (at 86.36 25.4 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "I2C SCL Pull-up Resistor"
+      (at 86.36 25.4 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "pullup-scl-pin1")
+    )
+    (pin "2"
+      (uuid "pullup-scl-pin2")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "R2")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol
+    (lib_id "Sensor_Distance:VL53L0X")
+    (at 124.46 48.26 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "vl53l0x-tof-sensor")
+    (property "Reference" "U2"
+      (at 124.46 35.56 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Value" "VL53L0X"
+      (at 124.46 38.1 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Footprint" "Package_LGA:ST_FlightSense_8x4.4mm"
+      (at 124.46 60.96 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Datasheet" "https://www.st.com/resource/en/datasheet/vl53l0x.pdf"
+      (at 124.46 63.5 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "Time-of-Flight ranging sensor"
+      (at 124.46 48.26 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "vl53l0x-gnd")
+    )
+    (pin "2"
+      (uuid "vl53l0x-avdd")
+    )
+    (pin "3"
+      (uuid "vl53l0x-avss")
+    )
+    (pin "4"
+      (uuid "vl53l0x-sda")
+    )
+    (pin "5"
+      (uuid "vl53l0x-scl")
+    )
+    (pin "6"
+      (uuid "vl53l0x-xshut")
+    )
+    (pin "7"
+      (uuid "vl53l0x-gpio1")
+    )
+    (pin "8"
+      (uuid "vl53l0x-vdd")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "U2")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol
+    (lib_id "Device:C")
+    (at 147.32 25.4 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "avdd-filter-10uf")
+    (property "Reference" "C1"
+      (at 151.13 25.4 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Value" "10μF"
+      (at 151.13 27.94 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 148.2852 29.21 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Datasheet" "~"
+      (at 147.32 25.4 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "AVDD Filtering Capacitor"
+      (at 147.32 25.4 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "avdd-filter-10uf-pin1")
+    )
+    (pin "2"
+      (uuid "avdd-filter-10uf-pin2")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "C1")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol
+    (lib_id "Device:C")
+    (at 158.75 25.4 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "avdd-filter-100nf")
+    (property "Reference" "C2"
+      (at 162.56 25.4 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Value" "100nF"
+      (at 162.56 27.94 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+      (at 159.7152 29.21 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Datasheet" "~"
+      (at 158.75 25.4 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "AVDD Filtering Capacitor (Low-ESR)"
+      (at 158.75 25.4 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "avdd-filter-100nf-pin1")
+    )
+    (pin "2"
+      (uuid "avdd-filter-100nf-pin2")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "C2")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol
+    (lib_id "Sensor:BME688")
+    (at 83.82 83.82 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "bme688-sensor-1")
+    (property "Reference" "U3"
+      (at 83.82 71.12 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Value" "BME688"
+      (at 83.82 73.66 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Footprint" "Package_LGA:Bosch_LGA-8_3x3mm_P0.8mm_ClockwisePinNumbering"
+      (at 83.82 93.98 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Datasheet" "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme688-ds000.pdf"
+      (at 83.82 96.52 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "BME688 Gas, Humidity, Pressure, Temperature Sensor #1"
+      (at 83.82 83.82 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "bme688-1-gnd")
+    )
+    (pin "2"
+      (uuid "bme688-1-csb")
+    )
+    (pin "3"
+      (uuid "bme688-1-sdi")
+    )
+    (pin "4"
+      (uuid "bme688-1-sck")
+    )
+    (pin "5"
+      (uuid "bme688-1-sdo")
+    )
+    (pin "6"
+      (uuid "bme688-1-vddio")
+    )
+    (pin "7"
+      (uuid "bme688-1-gnd2")
+    )
+    (pin "8"
+      (uuid "bme688-1-vdd")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "U3")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  (symbol
+    (lib_id "Device:C")
+    (at 101.6 71.12 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "bme688-1-decouple")
+    (property "Reference" "C3"
+      (at 105.41 71.12 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Value" "100nF"
+      (at 105.41 73.66 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+      (at 102.5652 74.93 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Datasheet" "~"
+      (at 101.6 71.12 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "Power Decoupling Capacitor BME688 #1"
+      (at 101.6 71.12 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "bme688-1-decouple-pin1")
+    )
+    (pin "2"
+      (uuid "bme688-1-decouple-pin2")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "C3")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  ;; Additional BME688 sensors (2-4 for demo, can be expanded to 8 total)
+  (symbol
+    (lib_id "Sensor:BME688")
+    (at 160.02 83.82 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "bme688-sensor-2")
+    (property "Reference" "U4"
+      (at 160.02 71.12 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Value" "BME688"
+      (at 160.02 73.66 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+      )
+    )
+    (property "Footprint" "Package_LGA:Bosch_LGA-8_3x3mm_P0.8mm_ClockwisePinNumbering"
+      (at 160.02 93.98 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "BME688 Gas, Humidity, Pressure, Temperature Sensor #2"
+      (at 160.02 83.82 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "bme688-2-gnd")
+    )
+    (pin "2"
+      (uuid "bme688-2-csb")
+    )
+    (pin "3"
+      (uuid "bme688-2-sdi")
+    )
+    (pin "4"
+      (uuid "bme688-2-sck")
+    )
+    (pin "5"
+      (uuid "bme688-2-sdo")
+    )
+    (pin "6"
+      (uuid "bme688-2-vddio")
+    )
+    (pin "7"
+      (uuid "bme688-2-gnd2")
+    )
+    (pin "8"
+      (uuid "bme688-2-vdd")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "U4")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  ;; BME688 #2 decoupling capacitor
+  (symbol
+    (lib_id "Device:C")
+    (at 177.8 71.12 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "bme688-2-decouple")
+    (property "Reference" "C4"
+      (at 181.61 71.12 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Value" "100nF"
+      (at 181.61 73.66 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+      (at 178.7652 74.93 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "Power Decoupling Capacitor BME688 #2"
+      (at 177.8 71.12 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "bme688-2-decouple-pin1")
+    )
+    (pin "2"
+      (uuid "bme688-2-decouple-pin2")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "C4")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  ;; VL53L0X power decoupling capacitor
+  (symbol
+    (lib_id "Device:C")
+    (at 147.32 60.96 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "vl53l0x-decouple")
+    (property "Reference" "C5"
+      (at 151.13 60.96 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Value" "100nF"
+      (at 151.13 63.5 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+      (at 148.2852 64.77 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "Power Decoupling Capacitor VL53L0X"
+      (at 147.32 60.96 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "vl53l0x-decouple-pin1")
+    )
+    (pin "2"
+      (uuid "vl53l0x-decouple-pin2")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "C5")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  ;; ESP32 additional power decoupling
+  (symbol
+    (lib_id "Device:C")
+    (at 22.86 30.48 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "esp32-decouple-1")
+    (property "Reference" "C10"
+      (at 26.67 30.48 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Value" "100nF"
+      (at 26.67 33.02 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+      )
+    )
+    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+      (at 23.8252 34.29 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (property "Description" "ESP32 Power Decoupling Capacitor"
+      (at 22.86 30.48 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (hide yes)
+      )
+    )
+    (pin "1"
+      (uuid "esp32-decouple-1-pin1")
+    )
+    (pin "2"
+      (uuid "esp32-decouple-1-pin2")
+    )
+    (instances
+      (project "raicycle"
+        (path "/"
+          (reference "C10")
+          (unit 1)
+        )
+      )
+    )
+  )
+
+  ;; Additional wiring and connections
+  (wire
+    (pts
+      (xy 61.28 58.42) (xy 149.86 83.82)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-spi-mosi-to-bme688-2")
+  )
+
+  (wire
+    (pts
+      (xy 61.28 55.88) (xy 149.86 86.36)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-spi-sck-to-bme688-2")
+  )
+
+  (wire
+    (pts
+      (xy 170.18 88.9) (xy 61.28 60.96)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-spi-miso-from-bme688-2")
+  )
+
+  ;; Chip select connections for BME688 sensors
+  (wire
+    (pts
+      (xy 30.48 58.42) (xy 73.66 86.36)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-cs1-bme688-1")
+  )
+
+  (wire
+    (pts
+      (xy 30.48 55.88) (xy 149.86 86.36)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-cs2-bme688-2")
+  )
+
+  ;; Power connections for BME688 #2
+  (wire
+    (pts
+      (xy 177.8 68.58) (xy 160.02 73.66)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-bme688-2-vdd-decouple")
+  )
+
+  ;; VL53L0X power decoupling connection
+  (wire
+    (pts
+      (xy 147.32 58.42) (xy 124.46 35.56)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-vl53l0x-vdd-decouple")
+  )
+
+  ;; Ground connections
+  (wire
+    (pts
+      (xy 22.86 33.02) (xy 22.86 90.17)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-esp32-gnd-decouple")
+  )
+
+  (wire
+    (pts
+      (xy 147.32 63.5) (xy 147.32 90.17)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-vl53l0x-gnd-decouple")
+  )
+
+  (wire
+    (pts
+      (xy 177.8 74.93) (xy 177.8 90.17)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-bme688-2-gnd-decouple")
+  )
+
+  ;; Additional global labels for clarity
+  (global_label "CS1_BME688"
+    (shape input)
+    (at 30.48 58.42 0)
+    (fields_autoplaced)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+      (justify left)
+    )
+    (uuid "cs1-bme688-global")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 44.1443 58.42 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+        (hide yes)
+      )
+    )
+  )
+
+  (global_label "CS2_BME688"
+    (shape input)
+    (at 30.48 55.88 0)
+    (fields_autoplaced)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+      (justify left)
+    )
+    (uuid "cs2-bme688-global")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 44.1443 55.88 0)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+        (hide yes)
+      )
+    )
+  )
+
+  ;; Additional text labels for power nets (KiCad 8.0 style)
+  (text "+3V3" 
+    (exclude_from_sim no)
+    (at 78.74 20.32 0)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+    )
+    (uuid "text-3v3-label")
+  )
+
+  (text "AVDD" 
+    (exclude_from_sim no)
+    (at 147.32 20.32 0)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+    )
+    (uuid "text-avdd-label")
+  )
+
+  (text "GND" 
+    (exclude_from_sim no)
+    (at 22.86 93.98 0)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+    )
+    (uuid "text-gnd-label")
+  )
+
+  ;; Additional power and signal wires
+  (wire
+    (pts
+      (xy 78.74 21.59) (xy 78.74 29.21)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-sda-pullup-connection")
+  )
+
+  (wire
+    (pts
+      (xy 86.36 21.59) (xy 86.36 29.21)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-scl-pullup-connection")
+  )
+
+  ;; Connection from ESP32 I2C to VL53L0X
+  (wire
+    (pts
+      (xy 61.28 55.88) (xy 114.3 50.8)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-esp32-sda-to-vl53l0x")
+  )
+
+  (wire
+    (pts
+      (xy 61.28 53.34) (xy 114.3 48.26)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-esp32-scl-to-vl53l0x")
+  )
+
+  ;; AVDD filtering branch connections
+  (wire
+    (pts
+      (xy 147.32 22.86) (xy 158.75 22.86)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-avdd-parallel-caps")
+  )
+
+  ;; Ground connections for filtering capacitors
+  (wire
+    (pts
+      (xy 147.32 27.94) (xy 158.75 27.94)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-avdd-gnd-caps")
+  )
+
+  ;; Power decoupling connections
+  (wire
+    (pts
+      (xy 101.6 68.58) (xy 83.82 73.66)
+    )
+    (stroke
+      (width 0)
+      (type default)
+    )
+    (uuid "wire-bme688-1-vdd-decouple")
+  )
+
+  ;; Additional net labels for clarity
+  (label "SPI_MOSI"
+    (at 73.66 83.82 180)
+    (fields_autoplaced)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+      (justify right bottom)
+    )
+    (uuid "label-spi-mosi")
+  )
+
+  (label "SPI_MISO"
+    (at 93.98 88.9 0)
+    (fields_autoplaced)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+      (justify left bottom)
+    )
+    (uuid "label-spi-miso")
+  )
+
+  (label "SPI_SCK"
+    (at 73.66 86.36 180)
+    (fields_autoplaced)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+      (justify right bottom)
+    )
+    (uuid "label-spi-sck")
+  )
+
+  ;; Power symbols (KiCad 8.0 style)
+  (global_label "+3V3"
+    (shape input)
+    (at 78.74 21.59 90)
+    (fields_autoplaced)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+      (justify left)
+    )
+    (uuid "power-3v3-global")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 78.74 15.1381 90)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify left)
+        (hide yes)
+      )
+    )
+  )
+
+  (global_label "GND"
+    (shape input)
+    (at 22.86 93.98 270)
+    (fields_autoplaced)
+    (effects
+      (font
+        (size 1.27 1.27)
+      )
+      (justify right)
+    )
+    (uuid "power-gnd-global")
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 22.86 99.7957 270)
+      (effects
+        (font
+          (size 1.27 1.27)
+        )
+        (justify right)
+        (hide yes)
+      )
+    )
+  )
+
+  ;; Notes for PCB layout planning
+  (text "PCB NOTES:\n- Ground plane on bottom layer\n- VDD plane on top layer\n- Keep decoupling caps close to ICs\n- Separate analog and digital sections"
+    (exclude_from_sim no)
+    (at 180.34 88.9 0)
+    (effects
+      (font
+        (size 1.016 1.016)
+      )
+      (justify left)
+    )
+    (uuid "pcb-layout-notes")
+  )
+
+  ;; Title block information
+  (text "RAICYCLE SENSOR BOARD\nESP32 + 8x BME688 + VL53L0X\nKiCad 8.0 Schematic\nRev 1.0"
+    (exclude_from_sim no)
+    (at 210.82 40.64 0)
+    (effects
+      (font
+        (size 1.524 1.524)
+      )
+      (justify left)
+    )
+    (uuid "title-block")
+  )
+)
