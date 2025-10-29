@@ -12,3 +12,10 @@
 *.o
 *.pyc
 __pycache__/
+
+# KiCad temporary files
+*.kicad_prl
+*.kicad_pro-bak
+*-backups/
+*-cache.lib
+fp-info-cache
