@@ -15,7 +15,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x11measurement.proto\x12\x05\x63\x65\x64ri\"\xa9\x02\n\x11SensorReadingLite\x12\x11\n\tdevice_id\x18\x01 \x01(\r\x12\x13\n\x0blocation_id\x18\x02 \x01(\r\x12\x11\n\tsensor_id\x18\x03 \x01(\r\x12,\n\x0eheater_profile\x18\x04 \x01(\x0e\x32\x14.cedri.HeaterProfile\x12\x18\n\x10measurement_step\x18\x05 \x01(\r\x12\x0e\n\x06temp_c\x18\x06 \x01(\x02\x12\x14\n\x0chumidity_pct\x18\x07 \x01(\x02\x12\x14\n\x0cpressure_hpa\x18\x08 \x01(\x02\x12\x1a\n\x12gas_resistance_ohm\x18\t \x01(\r\x12\x11\n\tgas_valid\x18\n \x01(\x08\x12\x13\n\x0bheat_stable\x18\x0b \x01(\x08\x12\x11\n\ttimestamp\x18\x0c \x01(\r*o\n\rHeaterProfile\x12\n\n\x06HP_354\x10\x00\x12\n\n\x06HP_301\x10\x01\x12\n\n\x06HP_321\x10\x02\x12\n\n\x06HP_322\x10\x03\x12\n\n\x06HP_323\x10\x04\x12\n\n\x06HP_324\x10\x05\x12\n\n\x06HP_331\x10\x06\x12\n\n\x06HP_332\x10\x07\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x11measurement.proto\x12\x05\x63\x65\x64ri\"\xb7\x01\n\rSensorReading\x12\x11\n\tdevice_id\x18\x01 \x01(\r\x12\x0f\n\x07\x62\x61ttery\x18\x02 \x01(\x02\x12\x0f\n\x07version\x18\x03 \x01(\r\x12\x0e\n\x06temp_c\x18\x06 \x01(\x02\x12\x14\n\x0chumidity_pct\x18\x07 \x01(\x02\x12\x14\n\x0cpressure_hpa\x18\x08 \x01(\x02\x12\x10\n\x08latitude\x18\r \x01(\x02\x12\x11\n\tlongitude\x18\x0e \x01(\x02\x12\x10\n\x08volume_l\x18\x0f \x01(\x02\"|\n\nVOCReading\x12\x11\n\tdevice_id\x18\x01 \x01(\r\x12\x11\n\tsensor_id\x18\x03 \x01(\r\x12,\n\x0eheater_profile\x18\x04 \x01(\x0e\x32\x14.cedri.HeaterProfile\x12\x1a\n\x12gas_resistance_ohm\x18\t \x01(\r*o\n\rHeaterProfile\x12\n\n\x06HP_354\x10\x00\x12\n\n\x06HP_301\x10\x01\x12\n\n\x06HP_321\x10\x02\x12\n\n\x06HP_322\x10\x03\x12\n\n\x06HP_323\x10\x04\x12\n\n\x06HP_324\x10\x05\x12\n\n\x06HP_331\x10\x06\x12\n\n\x06HP_332\x10\x07\x62\x06proto3')
 
 _HEATERPROFILE = DESCRIPTOR.enum_types_by_name['HeaterProfile']
 HeaterProfile = enum_type_wrapper.EnumTypeWrapper(_HEATERPROFILE)
@@ -29,19 +29,29 @@ HP_331 = 6
 HP_332 = 7
 
 
-_SENSORREADINGLITE = DESCRIPTOR.message_types_by_name['SensorReadingLite']
-SensorReadingLite = _reflection.GeneratedProtocolMessageType('SensorReadingLite', (_message.Message,), {
-  'DESCRIPTOR' : _SENSORREADINGLITE,
+_SENSORREADING = DESCRIPTOR.message_types_by_name['SensorReading']
+_VOCREADING = DESCRIPTOR.message_types_by_name['VOCReading']
+SensorReading = _reflection.GeneratedProtocolMessageType('SensorReading', (_message.Message,), {
+  'DESCRIPTOR' : _SENSORREADING,
   '__module__' : 'measurement_pb2'
-  # @@protoc_insertion_point(class_scope:cedri.SensorReadingLite)
+  # @@protoc_insertion_point(class_scope:cedri.SensorReading)
   })
-_sym_db.RegisterMessage(SensorReadingLite)
+_sym_db.RegisterMessage(SensorReading)
+
+VOCReading = _reflection.GeneratedProtocolMessageType('VOCReading', (_message.Message,), {
+  'DESCRIPTOR' : _VOCREADING,
+  '__module__' : 'measurement_pb2'
+  # @@protoc_insertion_point(class_scope:cedri.VOCReading)
+  })
+_sym_db.RegisterMessage(VOCReading)
 
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _HEATERPROFILE._serialized_start=328
-  _HEATERPROFILE._serialized_end=439
-  _SENSORREADINGLITE._serialized_start=29
-  _SENSORREADINGLITE._serialized_end=326
+  _HEATERPROFILE._serialized_start=340
+  _HEATERPROFILE._serialized_end=451
+  _SENSORREADING._serialized_start=29
+  _SENSORREADING._serialized_end=212
+  _VOCREADING._serialized_start=214
+  _VOCREADING._serialized_end=338
 # @@protoc_insertion_point(module_scope)

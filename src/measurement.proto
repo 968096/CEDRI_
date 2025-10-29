@@ -13,17 +13,20 @@ enum HeaterProfile {
   HP_332 = 7;
 }
 
-message SensorReadingLite {
-  uint32 device_id = 1;       // Use uint32 for 0..255 (will only use one byte for small numbers)
-  uint32 location_id = 2;     // Same as above
-  uint32 sensor_id = 3;       // 0..7 for 8 sensors
-  HeaterProfile heater_profile = 4;
-  uint32 measurement_step = 5; // 0..9
+message SensorReading {
+  uint32 device_id = 1;
+  float battery = 2;
+  uint32 version = 3;
   float temp_c = 6;
   float humidity_pct = 7;
   float pressure_hpa = 8;
+  float latitude = 13;
+  float longitude = 14;
+  float volume_l = 15;
+}
+message VOCReading {
+  uint32 device_id = 1;
+  uint32 sensor_id = 3;
+  HeaterProfile heater_profile = 4;
   uint32 gas_resistance_ohm = 9;
-  bool gas_valid = 10;
-  bool heat_stable = 11;
-  uint32 timestamp = 12;
 }

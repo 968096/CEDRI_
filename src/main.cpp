@@ -1,275 +1,197 @@
-/**
- * BME688_Forced_Mode_MQTT.ino
- *
- * BME688 Multi-Sensor System using FORCED MODE for precise control
- * Manual control of 10-step heating profiles with synchronized measurements
- * With MQTT publishing capability for reliable data transmission
- *
- * Hardware: ESP32 Feather + BME688 Dev Kit (8 sensors)
- * Communication: I2C (pins 23,22) + SPI for sensor data
- */
-
-#define MQTT_MAX_PACKET_SIZE 4096
-
+#include <Arduino.h>
+#include <Wire.h>
+#include <SPI.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
-#include <ArduinoJson.h>
-#include "bme68xLibrary.h"
 #include <commMux.h>
+#include "bme68xLibrary.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "freertos/queue.h"
 #include "freertos/semphr.h"
-#include "protobuf_handler.h"
+#include "pb_encode.h"
 #include "measurement.pb.h"
+#include "mbedtls/base64.h"
 
-// ────────────────────────────────────────────────────────────────
-// Configuration
-// ────────────────────────────────────────────────────────────────
-#define N_KIT_SENS       8
-#define MAX_MEASUREMENTS 10
-#define STEP_DURATION    5000  // ms
-#define HEAT_STABILIZE   2000  // ms
+// ===================== CONFIG =====================
+#define N_SENSORS       8
+#define N_STEPS         10
+#define N_RUNS          5
+#define SLEEP_MINUTES   5
+#define HEAT_STABILIZE_MS 700
 
-// 🌐 NETWORK SETTINGS
-const char* WIFI_SSID   = "Quiet House";
+// 🌐 WiFi + MQTT
+const char* WIFI_SSID   = "Quiet House1";
 const char* WIFI_PASS   = "quiethouse2025@";
 const char* MQTT_BROKER = "broker.emqx.io";
-const uint16_t MQTT_PORT= 1883;
-const char* MQTT_TOPIC  = "home/sensors/bme688_sequential101";
+const uint16_t MQTT_PORT = 1883;
+const char* MQTT_TOPIC  = "application/test/caio/bme688";
 
-// Device metadata
-const char* DEVICE_ID = "sensor1";
-const char* LOCATION  = "disney";
-const float  VOLUME_L = 1.5f;
+const uint16_t DEVICE_ID   = 1;
+const uint16_t LOCATION_ID = 1;
 
-// ────────────────────────────────────────────────────────────────
-// Profiles (unchanged)
-// ────────────────────────────────────────────────────────────────
-uint16_t tempProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
-  {320,100,100,100,200,200,200,320,320,320},
-  {100,100,200,200,200,200,320,320,320,320},
-  {100,320,320,200,200,200,320,320,320,320},
-  {100,320,320,200,200,200,320,320,320,320},
-  {100,320,320,200,200,200,320,320,320,320},
-  {100,320,320,200,200,200,320,320,320,320},
-  { 50, 50,350,350,350,140,140,350,350,350},
-  { 50, 50,350,350,350,140,140,350,350,350}
+// ===================== HEATER PROFILES =====================
+static const uint16_t tempBase[N_SENSORS][N_STEPS] = {
+  {100,320,170,320,240,240,240,320,320,320},
+  {100,320,170,320,240,240,240,320,320,320},
+  { 70,350,163,350,256,256,256,350,350,350},
+  { 70,350,163,350,256,256,256,350,350,350},
+  {210,265,265,320,320,265,210,155,100,155},
+  {210,265,265,320,320,265,210,155,100,155},
+  {210,280,280,350,350,280,210,140, 70,140},
+  {210,280,280,350,350,280,210,140, 70,140}
 };
 
-uint16_t durProfiles[N_KIT_SENS][MAX_MEASUREMENTS] = {
-  {  700,  280, 1400, 4200,  700,  700,  700,  700,  700,  700},
-  {  280, 5740,  280,  280, 1680, 1960, 1960,  280, 1960, 3920},
-  { 6020,  280,  280,  280, 2940, 2940,  280, 1960, 1960, 1960},
-  { 8960,  280,  280,  280, 4340, 4340,  280, 2800, 2940, 2940},
-  { 6020,  280,  280,  280, 2940, 2940,  280, 1960, 1960, 1960},
-  { 8960,  280,  280,  280, 4340, 4340,  280, 2800, 2940, 2940},
-  { 9800, 9800,  140,  140,19320, 9800, 9800,  140,  140,19320},
-  {14000,14000,  140,  140,27720,14000,14000,  140,  140,27720}
+static const uint32_t durBaseAbs[N_SENSORS][N_STEPS] = {
+  {6020,6300,12320,12600,12880,15680,18620,18900,21700,24640},
+  {8960,9240,18200,18480,18760,23100,27580,27860,32200,36680},
+  {6020,6300,12320,12600,12880,15680,18620,18900,21700,24640},
+  {8960,9240,18200,18480,18760,23100,27580,27860,32200,36680},
+  {3360,3640,6720,7000,10080,13440,16800,20160,23520,26880},
+  {4480,4760,8960,9240,13440,17920,22400,26880,31360,35840},
+  {3360,3640,6720,7000,10080,13440,16800,20160,23520,26880},
+  {4480,4760,8960,9240,13440,17920,22400,26880,31360,35840}
 };
 
-// ────────────────────────────────────────────────────────────────
-// Only use the HP-names now
-// ────────────────────────────────────────────────────────────────
-const char* hpNames[N_KIT_SENS] = {
-  "HP-354","HP-301","HP-321","HP-322",
-  "HP-323","HP-324","HP-331","HP-332"
-};
+// ===================== GLOBALS =====================
+Bme68x bme[N_SENSORS];
+comm_mux commSetup[N_SENSORS];
+bool sensorActive[N_SENSORS] = {false};
+SemaphoreHandle_t busMutex;
 
-// ────────────────────────────────────────────────────────────────
-// Hardware & RTOS objects
-// ────────────────────────────────────────────────────────────────
-Bme68x            bme[N_KIT_SENS];
-comm_mux           commSetup[N_KIT_SENS];
-WiFiClient        wifiClient;
-PubSubClient      mqtt(wifiClient);
-SemaphoreHandle_t spiMutex;
+WiFiClient wifiClient;
+PubSubClient mqtt(wifiClient);
 
-// Tracking
-bool     sensorActive[N_KIT_SENS]  = {false};
-uint32_t totalReadings[N_KIT_SENS] = {0};
-uint32_t validReadings[N_KIT_SENS] = {0};
-uint32_t profileCycles            = 0;
-uint8_t  currentStep              = 0;
-
-// ────────────────────────────────────────────────────────────────
-// Print status
-// ────────────────────────────────────────────────────────────────
-void printStatus() {
-  Serial.println("\n=== SENSOR STATUS ===");
-  int active=0;
-  uint32_t tot=0, val=0;
-  for(uint8_t i=0;i<N_KIT_SENS;i++){
-    Serial.printf("Sensor %u (%s): ", i, hpNames[i]);
-    if(sensorActive[i]){
-      active++; tot+=totalReadings[i]; val+=validReadings[i];
-      Serial.printf("ACTIVE | Total:%u | Valid:%u | Cur:%u°C\n",
-                    totalReadings[i], validReadings[i], tempProfiles[i][currentStep]);
-    } else {
-      Serial.println("INACTIVE");
-    }
-  }
-  Serial.printf("\nActive %d/%d | Step:%u | Cycles:%u\n",
-                active, N_KIT_SENS, currentStep, profileCycles);
-  Serial.printf("Tot:%u | Valid:%u ", tot, val);
-  if(tot) Serial.printf("| Success:%u%%\n",(val*100)/tot);
-  Serial.printf("Heap:%u bytes | Uptime:%us\n",
-                ESP.getFreeHeap(), millis()/1000);
-  Serial.println("=====================\n");
-}
-
-// ────────────────────────────────────────────────────────────────
-// WiFi / MQTT helpers
-// ────────────────────────────────────────────────────────────────
-void connectWiFi(){
-  WiFi.begin(WIFI_SSID,WIFI_PASS);
+// ===================== HELPERS =====================
+static void connectWiFi() {
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
   Serial.print("Connecting to WiFi");
-  while(WiFi.status()!=WL_CONNECTED){Serial.print('.');delay(500);}
-  Serial.println(" ✓");
+  while (WiFi.status() != WL_CONNECTED) { delay(500); Serial.print("."); }
+  Serial.printf(" ✓  IP: %s\n", WiFi.localIP().toString().c_str());
 }
 
-void connectMQTT(){
-  while(!mqtt.connected()){
-    if(mqtt.connect("ESP32_BME688_CLIENT")) Serial.println("MQTT connected");
-    else {Serial.printf("MQTT fail rc=%d\n",mqtt.state());delay(2000);}  }
-}
-
-// ────────────────────────────────────────────────────────────────
-// Queue Protobuf for MQTT
-// ────────────────────────────────────────────────────────────────
-void queueProtobufForMQTT(uint8_t id, const char* profile, uint8_t step, float tc, float hu, float pr, uint32_t gr, bool gv, bool hs, uint64_t ts) {
-  uint8_t protobufBuffer[MQTT_MAX_PACKET_SIZE];
-  size_t messageLength;
-  bool success = ProtobufHandler::packSensorReading(
-    id, profile, step, tc, hu, pr, gr, gv, hs, ts,
-    protobufBuffer, sizeof(protobufBuffer), &messageLength);
-
-  if (success) {
-    mqtt.publish(MQTT_TOPIC, protobufBuffer, messageLength);
-  } else {
-    Serial.println("Failed to encode Protobuf message");
+static void connectMQTT() {
+  while (!mqtt.connected()) {
+    String cid = "ESP32_BME688_" + String((uint32_t)ESP.getEfuseMac(), HEX);
+    if (mqtt.connect(cid.c_str())) Serial.println("MQTT connected");
+    else { Serial.printf("MQTT fail rc=%d\n", mqtt.state()); delay(1000); }
   }
 }
 
-// ────────────────────────────────────────────────────────────────
-// Trigger one forced-mode measurement
-// ────────────────────────────────────────────────────────────────
-void triggerMeasurement(uint8_t id,uint8_t step){
-  if(!sensorActive[id]) return;
-  uint16_t t=tempProfiles[id][step];
-  uint16_t d=durProfiles[id][step];
-  bme[id].setHeaterProf(t,d);
-  bme[id].setOpMode(BME68X_FORCED_MODE);
-  uint32_t us=bme[id].getMeasDur(BME68X_FORCED_MODE);
-  delay((us+999)/1000);
+// ===================== MQTT / PROTOBUF =====================
+static bool publishVOC(uint8_t sensor_idx, uint8_t step, const bme68xData &d) {
+  if (WiFi.status() != WL_CONNECTED || !mqtt.connected()) return false;
+
+  cedri_VOCReading proto = cedri_VOCReading_init_zero;
+  proto.device_id          = DEVICE_ID;
+  proto.sensor_id          = sensor_idx;
+  proto.heater_profile     = (cedri_HeaterProfile)sensor_idx;
+  proto.gas_resistance_ohm = d.gas_resistance;
+
+  uint8_t buf[256];
+  pb_ostream_t os = pb_ostream_from_buffer(buf, sizeof(buf));
+  if (!pb_encode(&os, cedri_VOCReading_fields, &proto)) return false;
+
+  uint8_t out_buf[400]; size_t out_len = 0;
+  if (mbedtls_base64_encode(out_buf, sizeof(out_buf), &out_len, buf, os.bytes_written) != 0) return false;
+
+  String json = "{\"data\":\"" + String((char*)out_buf, out_len) + "\"}";
+  mqtt.publish(MQTT_TOPIC, json.c_str(), false);
+  return true;
 }
 
-// ────────────────────────────────────────────────────────────────
-// Collect data and queue Protobuf
-// ────────────────────────────────────────────────────────────────
-void collectResults(uint8_t step){
-  for(uint8_t i=0;i<N_KIT_SENS;i++){
-    if(!sensorActive[i]) continue;
-    if(bme[i].fetchData()){
-      bme68xData data;
-      uint8_t left;
-      do {
-        left = bme[i].getData(data);
-        if(data.status & BME68X_NEW_DATA_MSK){
-          totalReadings[i]++;
-          bool gv = data.status & BME68X_GASM_VALID_MSK;
-          bool hs = data.status & BME68X_HEAT_STAB_MSK;
-          if(gv && hs) validReadings[i]++;
-          queueProtobufForMQTT(i, hpNames[i], step, data.temperature, data.humidity, data.pressure, data.gas_resistance, gv, hs, millis());
+// ===================== MEASUREMENT TASK =====================
+static void measurementTask(void*) {
+  vTaskDelay(pdMS_TO_TICKS(1000));
+
+  for (uint8_t run = 0; run < N_RUNS; run++) {
+    Serial.printf("\n🚀 Run %u/%u started...\n", run + 1, N_RUNS);
+
+    for (uint8_t step = 0; step < N_STEPS; step++) {
+      uint32_t maxDur = 0;
+      Serial.printf("[Step %u/%u]\n", step + 1, N_STEPS);
+
+      // --------- Força medição em modo FORCED -----------
+      for (uint8_t i = 0; i < N_SENSORS; i++) {
+        if (!sensorActive[i]) continue;
+
+        if (xSemaphoreTake(busMutex, pdMS_TO_TICKS(400))) {
+          uint16_t temp = tempBase[i][step];
+          uint32_t dur  = durBaseAbs[i][step];
+          bme[i].setHeaterProf(temp, dur);
+          bme[i].setOpMode(BME68X_FORCED_MODE);
+          if (dur > maxDur) maxDur = dur;
+          xSemaphoreGive(busMutex);
         }
-      } while(left);
+      }
+
+      // Aguarda tempo máximo + estabilização
+      vTaskDelay(pdMS_TO_TICKS(maxDur + HEAT_STABILIZE_MS));
+
+      // --------- Coleta e envia resultados -------------
+      for (uint8_t i = 0; i < N_SENSORS; i++) {
+        if (!sensorActive[i]) continue;
+        if (xSemaphoreTake(busMutex, pdMS_TO_TICKS(400))) {
+          bme68xData d{};
+          if (bme[i].fetchData() && (bme[i].getData(d), d.status & BME68X_NEW_DATA_MSK)) {
+            publishVOC(i, step, d);
+            Serial.printf("Sensor %u | T=%.1f°C | H=%.1f%% | P=%.1f hPa | Rgas=%.0fΩ\n",
+                          i, d.temperature, d.humidity, d.pressure, d.gas_resistance);
+          }
+          xSemaphoreGive(busMutex);
+        }
+      }
     }
+    Serial.printf("✅ Run %u/%u complete.\n", run + 1, N_RUNS);
   }
+
+  Serial.println("🛌 Deep sleep for 5 minutes...");
+  vTaskDelay(pdMS_TO_TICKS(500));
+  esp_sleep_enable_timer_wakeup(SLEEP_MINUTES * 60ULL * 1000000ULL);
+  esp_deep_sleep_start();
 }
 
-// ────────────────────────────────────────────────────────────────
-// MQTT Task
-// ────────────────────────────────────────────────────────────────
-void mqttTask(void*){
-  connectWiFi(); connectMQTT();
-  while(true){
-    mqtt.loop();
-    vTaskDelay(pdMS_TO_TICKS(10));
-  }
-}
-
-// ────────────────────────────────────────────────────────────────
-// Measurement Task
-// ────────────────────────────────────────────────────────────────
-void measurementTask(void*){
-  TickType_t lastWake = xTaskGetTickCount();
-  for(;;){
-    collectResults(currentStep);
-    currentStep = (currentStep+1)%MAX_MEASUREMENTS;
-    if(currentStep==0){
-      profileCycles++;
-      Serial.printf("=== Completed cycle %u ===\n\n",profileCycles);
-    }
-    Serial.printf("Starting step %u…\n",currentStep);
-    for(uint8_t i=0;i<N_KIT_SENS;i++){
-      if(sensorActive[i]) triggerMeasurement(i,currentStep);
-    }
-    delay(HEAT_STABILIZE);
-
-    // Debug: print stack usage
-    UBaseType_t stackHighWater = uxTaskGetStackHighWaterMark(NULL);
-    Serial.printf("Measure task stack high water mark: %u bytes\n", stackHighWater * sizeof(StackType_t));
-
-    vTaskDelayUntil(&lastWake,pdMS_TO_TICKS(STEP_DURATION));
-  }
-}
-
-// ────────────────────────────────────────────────────────────────
-// Status Task
-// ────────────────────────────────────────────────────────────────
-void statusTask(void*){
-  for(;;){
-    vTaskDelay(pdMS_TO_TICKS(60000));
-    printStatus();
-  }
-}
-
-// ────────────────────────────────────────────────────────────────
-// setup() and loop()
-// ────────────────────────────────────────────────────────────────
-void setup(){
+// ===================== SETUP / LOOP =====================
+void setup() {
   Serial.begin(115200);
-  while(!Serial) delay(10);
-  Serial.println("=== BME688 Forced Mode + MQTT (RTOS) ===");
+  while (!Serial) delay(10);
+  Serial.println("\n=== BME688 Forced Mode | 10 steps × 5 runs ===");
 
-  Wire.begin(23,22);
+  busMutex = xSemaphoreCreateMutex();
+
+  connectWiFi();
+  mqtt.setServer(MQTT_BROKER, MQTT_PORT);
+  mqtt.setKeepAlive(60);
+  mqtt.setBufferSize(2048);
+  connectMQTT();
+
+  Wire.begin(23, 22);
   Wire.setClock(400000);
   SPI.begin();
-  comm_mux_begin(Wire,SPI);
+  comm_mux_begin(Wire, SPI);
 
-  // init sensors
-  for(uint8_t i=0;i<N_KIT_SENS;i++){
-    commSetup[i]=comm_mux_set_config(Wire,SPI,i,commSetup[i]);
-    bme[i].begin(BME68X_SPI_INTF,
-                 comm_mux_read,comm_mux_write,comm_mux_delay,
-                 &commSetup[i]);
-    if(bme[i].checkStatus()) sensorActive[i]=false;
-    else { bme[i].setTPH(); bme[i].setOpMode(BME68X_FORCED_MODE); sensorActive[i]=true; }
+  Serial.println("Initializing 8x BME688...");
+  for (uint8_t i = 0; i < N_SENSORS; i++) {
+    vTaskDelay(pdMS_TO_TICKS(50));
+    commSetup[i] = comm_mux_set_config(Wire, SPI, i, commSetup[i]);
+    bme[i].begin(BME68X_SPI_INTF, comm_mux_read, comm_mux_write, comm_mux_delay, &commSetup[i]);
+
+    if (bme[i].checkStatus() == 0) {
+      bme[i].setTPH(BME68X_OS_2X, BME68X_OS_16X, BME68X_OS_1X);
+      bme[i].setOpMode(BME68X_FORCED_MODE);
+      sensorActive[i] = true;
+      Serial.printf("✓ Sensor %u ready\n", i);
+    } else {
+      Serial.printf("✗ Sensor %u failed: %s\n", i, bme[i].statusString());
+    }
   }
 
-  mqtt.setBufferSize(MQTT_MAX_PACKET_SIZE);
-  mqtt.setServer(MQTT_BROKER,MQTT_PORT);
-  mqtt.setKeepAlive(60);
-
-  spiMutex  = xSemaphoreCreateMutex();
-
-  // Increase stack size for measurement task to avoid overflow
-  const uint32_t MEASURE_TASK_STACK = 12288; // 12 KB
-  xTaskCreatePinnedToCore(measurementTask, "Measure", MEASURE_TASK_STACK, NULL, 2, NULL, 1);
-  xTaskCreatePinnedToCore(mqttTask,       "MQTT",    4096, NULL, 1, NULL, 0);
-  xTaskCreatePinnedToCore(statusTask,     "Status",  2048, NULL, 1, NULL, 1);
+  xTaskCreatePinnedToCore(measurementTask, "Measure", 8192, NULL, 2, NULL, 1);
 }
 
-void loop(){
-  vTaskDelay(pdMS_TO_TICKS(1000));
+void loop() {
+  if (WiFi.status() == WL_CONNECTED) {
+    if (!mqtt.connected()) connectMQTT();
+    mqtt.loop();
+  }
+  delay(20);
 }
